@@ -1,0 +1,161 @@
+# views.py
+
+from rest_framework import generics, permissions
+from rest_framework.response import Response
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+# from .models import User, DataModel, CLRModel
+from .models import User, ShipmentStatus, CLRModel, PortStatus, CityWiseTracker
+
+from .serializers import UserSerializer, ClrSerializer, ShipmentSerializer, PortSerializer, CityWiseTrackerSerializer
+from rest_framework import status
+from .permissions import IsAdmin, IsStaff,IsCustomer
+from rest_framework.views import APIView
+from django.db import connection  # Import connection
+from django.http import JsonResponse
+
+
+class UserRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (permissions.AllowAny,)
+
+class UserLoginView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key})
+
+class UserLogoutView(generics.DestroyAPIView):
+    queryset = Token.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def delete(self, request, *args, **kwargs):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class GetUser(generics.ListAPIView):
+    queryset = User.objects.filter(role='staff')
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,IsStaff)
+
+
+class ClrInfo(generics.CreateAPIView):
+
+    # class MyModelListCreateAPIView(generics.ListCreateAPIView):
+    # queryset = MyModel.objects.all()
+    # serializer_class = MyModelSerializer
+
+    # def post(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # class MyModelListCreateAPIView(generics.ListCreateAPIView):
+
+    # post
+    queryset = CLRModel.objects.all()
+    serializer_class = ClrSerializer
+
+    # def get(self, request):
+    #     clrs = CLRModel.objects.all()
+    #     clrs_list = list(clrs.values())  # Convert queryset to list of dictionaries
+    #     return JsonResponse({'clrs': clrs_list})
+
+class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CLRModel.objects.all()
+    serializer_class = ClrSerializer
+
+
+    # permission_classes = [permissions.IsAuthenticated, IsAdmin]
+
+    # def get(self, request):
+    #     return Response({'data': "ClrInfo"}, status=status.HTTP_200_OK)
+    
+class ShipmentInfo(generics.CreateAPIView):
+    # permission_classes = [permissions.IsAuthenticated, IsAdmin]
+    queryset = ShipmentStatus.objects.all()
+    serializer_class = ShipmentSerializer
+
+    # def get(self, request):
+    #     return Response({'data': "ShipmentInfo"}, status=status.HTTP_200_OK)
+
+class PortInfo(generics.CreateAPIView):
+    # permission_classes = [permissions.IsAuthenticated, IsAdmin]
+    queryset = PortStatus.objects.all()
+    serializer_class = PortSerializer
+    
+
+    # def get(self, request):
+    #     return Response({'data': "TrackerInfo"}, status=status.HTTP_200_OK)
+
+class TrackerInfo(generics.CreateAPIView):
+    queryset = CityWiseTracker.objects.all()
+    serializer_class = CityWiseTrackerSerializer
+    # permission_classes = [permissions.IsAuthenticated, IsAdmin]
+
+    # def get(self, request):
+    #     return Response({'data': "TrackerInfo"}, status=status.HTTP_200_OK) 
+
+
+""""
+#===========================================================================
+class TeacherAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsAdmin]
+
+    def get(self, request):
+        # if hasattr(request.user, 'role') and request.user.role in ['teacher', 'administrator']:
+        #     # Your logic here
+        #     dat = 'd3+312'
+        return Response({'data': "dat"}, status=status.HTTP_200_OK)
+
+class DataAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+
+    def post(self, request):
+        serializer = DataSerializer(data=request.data)
+        if serializer.is_valid():
+            # Save the validated data to the database
+            serializer.save()
+            return Response({'message': 'Data inserted successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        # # Query all data from DataModel
+        # data_objects = DataModel.objects.all()
+        # # Serialize the queryset
+        # serializer = DataSerializer(data_objects, many=True)
+        # return Response(serializer.data)
+
+
+        # # Retrieve data where n is equal to "uyt"
+        # data_objects = DataModel.objects.filter(n="uyt")
+        # # Serialize the queryset
+        # serializer = DataSerializer(data_objects, many=True)
+        # return Response(serializer.data)
+
+        sql_query = "SELECT * FROM apis_datamodel WHERE name = 'aziz'"
+        # Execute the SQL query
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query)
+            # Fetch all rows from the result
+            rows = cursor.fetchall()
+
+        # Serialize the rows
+        data_objects = []
+        for row in rows:
+            data_objects.append({
+                'name': row[0],
+                'BL': row[1],
+                'CL': row[2],
+            })
+
+        # Serialize the queryset
+        serializer = DataSerializer(data_objects, many=True)
+        return Response(serializer.data)
+"""
