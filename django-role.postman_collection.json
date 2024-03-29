@@ -96,13 +96,13 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/teacher/",
+			"name": "get list of users (admin)",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 6074bd7fbc267f3f3c56f9c3a4a6d9c030fd83ba",
+						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
 						"type": "default"
 					},
 					{
@@ -113,7 +113,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8000/api/teacher/",
+					"raw": "http://localhost:8000/api/users",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -121,30 +121,55 @@
 					"port": "8000",
 					"path": [
 						"api",
-						"teacher",
-						""
+						"users"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/data/",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
+			"name": "get clrs (any)",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 6074bd7fbc267f3f3c56f9c3a4a6d9c030fd83ba",
+						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/clr",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"clr"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post create clr (staff)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\":\"azizre\",\n    \"BL\":\"iuuiyuyy\",\n    \"CL\": \"99trff\"\n}",
+					"raw": "{   \"shipper_reference\":\"dsadddfsadf\",\n    \"shipper\": \"LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-03-30\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -152,23 +177,26 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/data/",
+					"raw": "http://127.0.0.1:8000/api/clr/create",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "8000",
 					"path": [
 						"api",
-						"data",
-						""
+						"clr",
+						"create"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "getclr",
+			"name": "get shipment (any)",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -192,10 +220,165 @@
 			"response": []
 		},
 		{
-			"name": "post clr",
+			"name": "post create shipment (staff)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"book_no\": \"OSL-2567/21\",\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"no_container\": \"6\",\n    \"eta_departure\": \"2024-03-07\",\n    \"eta_arrival\": \"2024-04-24\",\n    \"port\": \"KICT\",\n    \"docs\": \"2024-04-17\",\n    \"surrender\": \"2024-04-25\",\n    \"containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"status\": \"pending\",\n    \"attachment\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/shipment/create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"shipment",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get port (any)",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post create port (staff)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"delivery_at\": \"AFG\",\n    \"gd_no\": \"123213-23213\",\n    \"clearing_agent\": \"Khan\",\n    \"transporter\": \"ACDF\",\n    \"truck_no\": \"123DDD\",\n    \"driver_name\": \"Mohsin\",\n    \"driver_mobile_no\": \"12312131,12312131\",\n    \"truck_placement_date\": \"2024-03-01\",\n    \"truck_out_date\": \"2024-03-01\",\n    \"attachment\": null,\n    \"status\": \"pending\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port/create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get tracker (any)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/tracker",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"tracker"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post create tracker (staff)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bl_containers\": \"gg23s423adf\",\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"curent_location\": \"SIBI\",\n    \"date\": \"2024-03-29\",\n    \"status\": \"pending\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/tracker/create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"tracker",
+						"create"
+					]
+				}
 			},
 			"response": []
 		}

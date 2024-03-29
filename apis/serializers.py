@@ -29,14 +29,15 @@ class ClrSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # print("validated_data: ",validated_data['attachment'].name)
         # Extract filename from validated_data['file'] and store it in 'filename' field
-        validated_data['filename'] =  validated_data['attachment'].name
+        if validated_data.get('filename'):
+            validated_data['filename'] =  validated_data['attachment'].name
         return super().create(validated_data)
 
 class ShipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShipmentStatus
-        fields = ['uid', 'book_no', 'bl', 'no_container', 'eta_arrival', 'port', \
-          'docs', 'surrender', 'containers', 'attachment','status']
+        fields = ['uid', 'book_no', 'bl', 'no_container', 'eta_departure', 'eta_arrival', 'port', \
+          'docs', 'surrender', 'containers','attachment',  'status']
         read_only_fields = ['uid']
 
     def update(self, instance, validated_data):

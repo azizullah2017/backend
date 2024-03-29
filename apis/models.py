@@ -15,6 +15,13 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
 
+class ExpiringToken(Token):
+    expiration = models.DateTimeField()
+
+    class Meta:
+        verbose_name = 'Expiring Token'
+        verbose_name_plural = 'Expiring Tokens'
+
 class CLRModel(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
     shipper = models.CharField(max_length=100)
@@ -27,11 +34,11 @@ class CLRModel(models.Model):
     port_of_loading = models.CharField(max_length=100)
     port_of_departure = models.CharField(max_length=100)
     final_port_of_destination = models.CharField(max_length=100)
-    eta  = models.DateField(blank=True, null=True)
+    eta  =  models.DateField(blank=True, null=True)
     vessel  = models.CharField(max_length=100)
     status  = models.CharField(blank=True, null=True,max_length=100)
     eta_karachi  = models.DateField()
-    attachment = models.FileField(upload_to='clr/')
+    attachment = models.FileField(upload_to='static/media/clr/',blank=True, null=True)
     filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
@@ -44,13 +51,13 @@ class ShipmentStatus(models.Model):
     bl = models.CharField(max_length=100)
     no_container = models.CharField(max_length=100)
     eta_departure = models.DateField()
-    eta_arrival = models.CharField(max_length=100)
+    eta_arrival = models.DateField()
     port = models.CharField(max_length=100)
     docs = models.DateField()
     surrender  = models.DateField(blank=True, null=True)
     containers  = models.CharField(max_length=300)
     status  = models.CharField(blank=True, null=True,max_length=100)
-    attachment = models.FileField(upload_to='shipment/')
+    attachment = models.FileField(upload_to='static/media/shipment/',blank=True, null=True)
     filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
@@ -70,7 +77,7 @@ class PortStatus(models.Model):
     driver_mobile_no = models.CharField(max_length=100)
     truck_placement_date = models.DateField()
     truck_out_date = models.DateField()
-    attachment = models.FileField(upload_to='port/')
+    attachment = models.FileField(upload_to='static/media/port/', blank=True, null=True)
     filename = models.CharField(max_length=255, blank=True, null=True)
     status  = models.CharField(blank=True, null=True,max_length=100)
     
@@ -84,7 +91,7 @@ class CityWiseTracker(models.Model):
     bl_containers  = models.CharField(max_length=300)
     bl = models.CharField(max_length=100)
     curent_location = models.CharField(max_length=100)
-    date  = models.CharField(blank=True, null=True,max_length=100)
+    date = models.DateField()
     status  = models.CharField(blank=True, null=True,max_length=100)
 
     def __str__(self):
@@ -93,8 +100,8 @@ class CityWiseTracker(models.Model):
 
 class EmptyContainerStatus(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
-    bl_containers  = models.CharField(max_length=300)
-    date  = models.CharField(blank=True, null=True,max_length=100)
+    bl_container  = models.CharField(max_length=300)
+    date = models.DateField()
     status  = models.CharField(blank=True, null=True,max_length=100)
 
     def __str__(self):
