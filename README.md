@@ -1,10 +1,10 @@
 ## Creating envirnoment
-python -m venv venv
+python3 -m venv venv
 ## activating envirnoment 
 source venv/bin/activate
 
 ## install requirements packages
-pip install -r requirements.tx
+pip3 install -r requirements.tx
 
 # Migrations
 1. python manage.py makemigrations apis
@@ -12,6 +12,8 @@ pip install -r requirements.tx
 3. python manage.py makemigrations
 5. python manage.py migrate
 
+# Start the application
+python manage.py runserver
 
 ## Routes
 
