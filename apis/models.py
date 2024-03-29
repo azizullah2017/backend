@@ -10,7 +10,7 @@ class User(AbstractUser):
         ('customer', 'Customer'),
         ('staff', 'Staff'),
     )
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
+    uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
     username = models.CharField(max_length=40, unique=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)

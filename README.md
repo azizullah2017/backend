@@ -1,19 +1,34 @@
+## Creating virtual envirnoment Linux Pakackage
+```
+sudo apt-get install python3-venv
+```
+
 ## Creating envirnoment
+```
 python3 -m venv venv
-## activating envirnoment 
+```
+
+## Activating envirnoment 
+```
 source venv/bin/activate
+```
 
 ## install requirements packages
-pip3 install -r requirements.tx
-
+```
+pip3 install -r requirements.txt 
+```
 # Migrations
+```
 1. python manage.py makemigrations apis
-2. python manage.py migrate --run-syncdb
-3. python manage.py makemigrations
-5. python manage.py migrate
+2. python manage.py migrate --run-syncdb 
+3. python manage.py makemigrations 
+5. python manage.py migrate 
+```
 
 # Start the application
+```
 python manage.py runserver
+```
 
 ## Routes
 
@@ -28,7 +43,7 @@ python manage.py runserver
 - api/uses [name='users']
 admin/
 
-## browse APIs in web
+## Browse APIs in Web
 1. http://127.0.0.1:8000/api/auth/register/
 2. http://127.0.0.1:8000/api/clr/create
 3. http://127.0.0.1:8000/api/shipment/create
