@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import CLRForm from "./CLRForm";
 import { DataTable } from "@/components/ui/data-tables";
 import { columns } from "./columns";
 import Pagination from "@/components/Pagination";
+import CLRActions from "./CLRActions";
 
-const data = [
+const tableData = [
     {
         bookingNo: "123",
         shipper: "MOI FOODS",
@@ -80,35 +80,29 @@ const CLRInformation = ({
 }: {
     searchParams: { page: string };
 }) => {
-    const [isShowing, setIsShowing] = useState(false);
+    const [isShowing, setIsShowing] = useState<boolean>(false);
+    const [data, setData] = useState(tableData);
     const page = parseInt(searchParams.page) || 1;
     const pageSize = 1;
 
     return (
         <>
-            <div className="flex">
-                <div className="flex justify-end w-full">
-                    <Button
-                        className="bg-[#11047A] hover:bg-[#422AFB]"
-                        onClick={() => setIsShowing((isShowing) => !isShowing)}
-                    >
-                        Add Record
-                    </Button>
-                </div>
+            <div className="flex flex-col">
+                <CLRActions setIsShowing={setIsShowing} setData={setData} />
                 <div className="z-10">
                     <CLRForm
                         isShowing={isShowing}
                         setIsShowing={setIsShowing}
                     />
                 </div>
-            </div>
-            <div className="mt-10">
-                <DataTable columns={columns} data={data} />
-                <Pagination
-                    itemCount={data.length}
-                    pageSize={pageSize}
-                    currentPage={page}
-                />
+                <div className="mt-5">
+                    <DataTable columns={columns} data={data} />
+                    <Pagination
+                        itemCount={data.length}
+                        pageSize={pageSize}
+                        currentPage={page}
+                    />
+                </div>
             </div>
         </>
     );

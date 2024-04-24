@@ -34,7 +34,7 @@ const Pagination = ({
     };
 
     return (
-        <div className="flex items-center gap-2 mt-5">
+        <div className="flex justify-end items-center gap-2 mt-5">
             <div className="hidden md:block">
                 Page {currentPage} of {pageCount}
             </div>

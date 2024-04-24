@@ -21,10 +21,43 @@ export type CLRInformation = {
     email: string;
 };
 
+let newUrl = "";
+
+const setNewParams = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    console.log(window.location.search);
+
+    params.set("orderBy", "bookingNo");
+    // params.forEach((value, key) => {
+    //     if (key !== "orderBy") {
+    //         params.append(key, value);
+    //     }
+    //     console.log("here");
+    // });
+
+    newUrl = `${window.location.origin}${
+        window.location.pathname
+    }?${params.toString()}`;
+
+    window.location.href = newUrl;
+};
+
 export const columns: ColumnDef<CLRInformation>[] = [
     {
         accessorKey: "bookingNo",
-        header: "Booking No.",
+        header: () => {
+            console.log(newUrl);
+            return (
+                <Link
+                    href={newUrl}
+                    className="cursor-pointer"
+                    onClick={setNewParams}
+                >
+                    Booking No.
+                </Link>
+            );
+        },
     },
     {
         accessorKey: "shipper",
