@@ -81,7 +81,7 @@ const CLRInformation = ({
     searchParams: { page: string };
 }) => {
     const [isShowing, setIsShowing] = useState(false);
-    const page = parseInt(searchParams.page);
+    const page = parseInt(searchParams.page) || 1;
     const pageSize = 1;
 
     return (

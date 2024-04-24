@@ -8,7 +8,6 @@ import {
     MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 
 type PaginationPropType = {
     itemCount: number;
@@ -33,12 +32,6 @@ const Pagination = ({
         params.set("page", page.toString());
         router.push("?" + params.toString());
     };
-
-    useEffect(() => {
-        if (!params.has("page")) {
-            changePage(1);
-        }
-    }, []);
 
     return (
         <div className="flex items-center gap-2 mt-5">
