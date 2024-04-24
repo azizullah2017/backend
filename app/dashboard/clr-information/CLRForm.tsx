@@ -37,21 +37,27 @@ const CLRForm = ({
     const form = useForm();
 
     const onSubmit = async (data: { [key: string]: string }) => {
-        const res = await fetch("http://localhost:8000/api/clr/create", {
-            method: "POST",
-            headers: {
-                Authorization: "Token 78bc1e0cd8d83d82a198be8cf0ebcaae3566ff2a",
-            },
-            body: JSON.stringify(data),
-        });
 
-        
+            const response = await fetch("http://0.0.0.0:8000/api/clr/create", {
+                method: 'POST',
+                headers: {
+                    Authorization: 'Token c1fa087e7459ca8ba2a6625df2b15487aa659698',
+                    'Content-Type': 'application/json'
 
-        if (!res.ok) {
-            throw new Error("Something went wrong");
-        } else {
-            toast({ title: "Success", description: "CLR Added Successfully!" });
-        }
+                },
+                body: JSON.stringify(data),
+            });
+
+            const responseData = await response.json();
+
+
+
+            if (!response.ok) {
+                throw new Error("Something went wrong");
+            } else {
+                toast({ title: "Success", description: "CLR Added Successfully!" });
+            }
+  
         setStaffInfo();
         setStaffInfo({ bookingNo: data.book_no });
         router.push("/dashboard/shipment-status");
