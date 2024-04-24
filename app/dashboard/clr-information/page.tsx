@@ -5,8 +5,61 @@ import { useState } from "react";
 import CLRForm from "./CLRForm";
 import { DataTable } from "@/components/ui/data-tables";
 import { columns } from "./columns";
+import Pagination from "@/components/Pagination";
 
-const payments = [
+const data = [
+    {
+        bookingNo: "123",
+        shipper: "MOI FOODS",
+        consignee: "Silver Globe",
+        count: "6",
+        product: "Coconut Oil",
+        pol: "PGU",
+        pod: "KHI",
+        fpod: "TASH",
+        vessel: "test",
+        etaKarachi: "11-04-2024",
+        status: "pending",
+    },
+    {
+        bookingNo: "123",
+        shipper: "MOI FOODS",
+        consignee: "Silver Globe",
+        count: "6",
+        product: "Coconut Oil",
+        pol: "PGU",
+        pod: "KHI",
+        fpod: "TASH",
+        vessel: "test",
+        etaKarachi: "11-04-2024",
+        status: "pending",
+    },
+    {
+        bookingNo: "123",
+        shipper: "MOI FOODS",
+        consignee: "Silver Globe",
+        count: "6",
+        product: "Coconut Oil",
+        pol: "PGU",
+        pod: "KHI",
+        fpod: "TASH",
+        vessel: "test",
+        etaKarachi: "11-04-2024",
+        status: "pending",
+    },
+    {
+        bookingNo: "123",
+        shipper: "MOI FOODS",
+        consignee: "Silver Globe",
+        count: "6",
+        product: "Coconut Oil",
+        pol: "PGU",
+        pod: "KHI",
+        fpod: "TASH",
+        vessel: "test",
+        etaKarachi: "11-04-2024",
+        status: "pending",
+    },
     {
         bookingNo: "123",
         shipper: "MOI FOODS",
@@ -22,8 +75,14 @@ const payments = [
     },
 ];
 
-const CLRInformation = () => {
+const CLRInformation = ({
+    searchParams,
+}: {
+    searchParams: { page: string };
+}) => {
     const [isShowing, setIsShowing] = useState(false);
+    const page = parseInt(searchParams.page);
+    const pageSize = 1;
 
     return (
         <>
@@ -44,7 +103,12 @@ const CLRInformation = () => {
                 </div>
             </div>
             <div className="mt-10">
-                <DataTable columns={columns} data={payments} />
+                <DataTable columns={columns} data={data} />
+                <Pagination
+                    itemCount={data.length}
+                    pageSize={pageSize}
+                    currentPage={page}
+                />
             </div>
         </>
     );

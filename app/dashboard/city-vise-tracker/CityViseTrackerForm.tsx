@@ -1,7 +1,6 @@
 "use client";
 
 import { Transition } from "@headlessui/react";
-import { useForm } from "react-hook-form";
 import { CgClose } from "react-icons/cg";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,14 +24,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -85,6 +76,10 @@ const CityViseTrackerForm = ({
     }, [bl, containers]);
 
     console.log(open);
+
+    const submitForm = async () => {
+        console.log("hello world");
+    };
 
     return (
         <Transition
@@ -186,7 +181,12 @@ const CityViseTrackerForm = ({
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit">Save changes</Button>
+                                <Button
+                                    type="button"
+                                    onChange={() => submitForm()}
+                                >
+                                    Save changes
+                                </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
