@@ -1,7 +1,7 @@
 import TableFilter from "@/components/TableFilter";
 import { Button } from "@/components/ui/button";
 
-const CLRActions = ({
+const StaffTableActions = ({
     setIsShowing,
     setData,
 }: {
@@ -21,4 +21,4 @@ const CLRActions = ({
     );
 };
 
-export default CLRActions;
+export default StaffTableActions;

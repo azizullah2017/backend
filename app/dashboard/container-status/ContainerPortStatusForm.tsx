@@ -84,189 +84,226 @@ const ContainerPortStatusForm = ({
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="flex flex-col gap-4 p-7">
-                            <FormField
-                                control={form.control}
-                                name="bl"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>BL Number</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder=""
-                                                {...field}
-                                                disabled
-                                            />
-                                        </FormControl>
-                                        {/* <FormMessage /> */}
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="bl_containers"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Containers</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder=""
-                                                {...field}
-                                                disabled
-                                            />
-                                        </FormControl>
-                                        {/* <FormMessage /> */}
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="delivery_at"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Deliver At</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
-                                        {/* <FormMessage /> */}
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="gd_no"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>GD No.</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="clearing_agent"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Clearing Agent</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="transporter"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Transporter</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="truck_no"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Truck No.</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="driver_name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Driver Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="driver_mobile_no"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Mobile No.</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="truck_placement_date"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Truck Placement Date
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="date"
-                                                placeholder=""
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="truck_out_date"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Truck Out Date</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="date"
-                                                placeholder=""
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="status"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Current Status</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
+                            <div className="flex flex-wrap gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="bl"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>BL Number</FormLabel>
                                             <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a status" />
-                                                </SelectTrigger>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                    disabled
+                                                />
                                             </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="pending">
-                                                    Pending
-                                                </SelectItem>
-                                                <SelectItem value="inprogress">
-                                                    In Progress
-                                                </SelectItem>
-                                                <SelectItem value="done">
-                                                    Done
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormItem>
-                                )}
-                            />
+                                            {/* <FormMessage /> */}
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="bl_containers"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>Containers</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                    disabled
+                                                />
+                                            </FormControl>
+                                            {/* <FormMessage /> */}
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="delivery_at"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>Deliver At</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            {/* <FormMessage /> */}
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className="flex flex-wrap gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="gd_no"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>GD No.</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="clearing_agent"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>
+                                                Clearing Agent
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className="flex flex-wrap gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="transporter"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>Transporter</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="truck_no"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>Truck No.</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className="flex flex-wrap gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="driver_name"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>Driver Name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="driver_mobile_no"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>Mobile No.</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className="flex flex-wrap gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="truck_placement_date"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>
+                                                Truck Placement Date
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="date"
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="truck_out_date"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>
+                                                Truck Out Date
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="date"
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>
+                                                Current Status
+                                            </FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a status" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="pending">
+                                                        Pending
+                                                    </SelectItem>
+                                                    <SelectItem value="inprogress">
+                                                        In Progress
+                                                    </SelectItem>
+                                                    <SelectItem value="done">
+                                                        Done
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                             <FormField
                                 control={form.control}
                                 name="attachment"

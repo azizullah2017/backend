@@ -4,8 +4,8 @@ import { useState } from "react";
 import CLRForm from "./CLRForm";
 import { DataTable } from "@/components/ui/data-tables";
 import { columns } from "./columns";
-import Pagination from "@/components/Pagination";
 import CLRActions from "./CLRActions";
+import StaffTableActions from "@/components/StaffTableActions";
 
 const tableData = [
     {
@@ -88,7 +88,10 @@ const CLRInformation = ({
     return (
         <>
             <div className="flex flex-col">
-                <CLRActions setIsShowing={setIsShowing} setData={setData} />
+                <StaffTableActions
+                    setIsShowing={setIsShowing}
+                    setData={setData}
+                />
                 <div className="z-10">
                     <CLRForm
                         isShowing={isShowing}
@@ -96,9 +99,9 @@ const CLRInformation = ({
                     />
                 </div>
                 <div className="mt-5">
-                    <DataTable columns={columns} data={data} />
-                    <Pagination
-                        itemCount={data.length}
+                    <DataTable
+                        columns={columns}
+                        data={data}
                         pageSize={pageSize}
                         currentPage={page}
                     />

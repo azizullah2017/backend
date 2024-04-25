@@ -15,6 +15,12 @@ const TableFilter = ({ setData }: { setData: () => void }) => {
             setDebouncedText(searchText);
         }, 500);
 
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [searchText]);
+
+    useEffect(() => {
         const params = new URLSearchParams(searchParams);
         params.set("page", "1");
         if (searchText) {
@@ -23,13 +29,6 @@ const TableFilter = ({ setData }: { setData: () => void }) => {
             params.delete("search");
         }
         replace(`${pathname}?${params.toString()}`);
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [searchText]);
-
-    useEffect(() => {
         console.log("API Call here!");
         // setData();
     }, [debouncedText]);

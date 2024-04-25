@@ -13,6 +13,7 @@ import { MoreHorizontal } from "lucide-react";
 import { TbEdit, TbTrash } from "react-icons/tb";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { useSearchParams } from "next/navigation";
 
 export type CLRInformation = {
     id: string;
@@ -21,42 +22,44 @@ export type CLRInformation = {
     email: string;
 };
 
-let newUrl = "";
-
 const setNewParams = () => {
-    const params = new URLSearchParams(window.location.search);
+    const timeout = setTimeout(() => {
+        const params = new URLSearchParams(window.location.search);
 
-    console.log(window.location.search);
+        console.log(window.location.search);
 
-    params.set("orderBy", "bookingNo");
-    // params.forEach((value, key) => {
-    //     if (key !== "orderBy") {
-    //         params.append(key, value);
-    //     }
-    //     console.log("here");
-    // });
+        if (!params.has("orderBy")) {
+            params.set("orderBy", "bookingNo");
+        }
+        if (params.has("page")) params.set("page", "1");
+        if (params.has("search"))
+            params.set("search", params.get("search") as string);
 
-    newUrl = `${window.location.origin}${
-        window.location.pathname
-    }?${params.toString()}`;
+        const newUrl = `${window.location.origin}${
+            window.location.pathname
+        }?${params.toString()}`;
 
-    window.location.href = newUrl;
+        console.log(newUrl);
+
+        return <Link href={newUrl}></Link>;
+
+        // alert(params.toString());
+    }, 1000);
+
+    // window.location.href = newUrl;
 };
 
 export const columns: ColumnDef<CLRInformation>[] = [
     {
         accessorKey: "bookingNo",
         header: () => {
-            console.log(newUrl);
-            return (
-                <Link
-                    href={newUrl}
-                    className="cursor-pointer"
-                    onClick={setNewParams}
-                >
-                    Booking No.
-                </Link>
-            );
+            {
+                return (
+                    <div className="cursor-pointer" onClick={setNewParams}>
+                        Booking No.
+                    </div>
+                );
+            }
         },
     },
     {
