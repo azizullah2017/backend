@@ -73,7 +73,7 @@ const ShipmentStatusForm = ({
             containers = data.container_id_1;
         }
 
-        const updatedDate = {
+        const updatedData = {
             bl: data.bl,
             book_no: data.book_no,
             containers,
@@ -84,7 +84,7 @@ const ShipmentStatusForm = ({
             port: data.port,
             status: data.status,
             surrender: data.surrender,
-            attachment: file,
+            attachment: file ? file : null,
         };
 
         const res = await fetch("http://localhost:8000/api/shipment/create", {
@@ -93,7 +93,7 @@ const ShipmentStatusForm = ({
                 Authorization: "Token 44642ff29cfadaa8605d83abacdc2cb09172b5ee",
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(updatedDate),
+            body: JSON.stringify(updatedData),
         });
 
         if (!res.ok) {

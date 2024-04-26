@@ -18,6 +18,7 @@ import {
     CommandGroup,
     CommandInput,
     CommandItem,
+    CommandList,
 } from "@/components/ui/command";
 import {
     Popover,
@@ -31,6 +32,34 @@ import { useEffect, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStaffInformation } from "@/context/StaffInformationContext";
+import { toast } from "@/components/ui/use-toast";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
+const locations = [
+    {
+        value: "khuzdar",
+        label: "Khuzdar",
+    },
+    {
+        value: "sibi",
+        label: "sibi",
+    },
+    {
+        value: "karachi",
+        label: "Karaachi",
+    },
+    {
+        value: "dubai",
+        label: "Dubai",
+    },
+];
 
 const CityViseTrackerForm = ({
     isShowing,
@@ -39,34 +68,13 @@ const CityViseTrackerForm = ({
     isShowing: boolean;
     setIsShowing: () => void;
 }) => {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("");
-    const [showDialog, setShowDialog] = useState(false);
+    const [open, setOpen] = useState<boolean>(false);
+    const [currentLocation, setCurrentLocation] = useState<string>("");
+    const [status, setStatus] = useState<string>("");
+    const [date, setDate] = useState<string>("");
     const [bl, setBl] = useState<string>("");
     const [containers, setContainers] = useState<string>("");
     const { staffInfo } = useStaffInformation();
-    const [frameworks, setFrameworks] = useState([
-        {
-            value: "next.js",
-            label: "Next.js",
-        },
-        {
-            value: "sveltekit",
-            label: "SvelteKit",
-        },
-        {
-            value: "nuxt.js",
-            label: "Nuxt.js",
-        },
-        {
-            value: "remix",
-            label: "Remix",
-        },
-        {
-            value: "astro",
-            label: "Astro",
-        },
-    ]);
 
     useEffect(() => {
         if (staffInfo.bl && staffInfo.containers) {
@@ -75,10 +83,35 @@ const CityViseTrackerForm = ({
         }
     }, [bl, containers]);
 
-    console.log(open);
-
     const submitForm = async () => {
-        console.log("hello world");
+        const data = {
+            bl_containers: containers ? containers : "123,123",
+            bl: bl ? bl : "test",
+            curent_location: currentLocation,
+            date,
+            status,
+        };
+
+        const res = await fetch("http://localhost:8000/api/tracker/create", {
+            method: "POST",
+            headers: {
+                Authorization: "Token 44642ff29cfadaa8605d83abacdc2cb09172b5ee",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            throw new Error("Something went wrong");
+        } else {
+            toast({
+                title: "Success",
+                description: "Shipment Status Added Successfully!",
+                className: "bg-green-200",
+            });
+
+            const responseData = await res.json();
+        }
     };
 
     return (
@@ -125,11 +158,11 @@ const CityViseTrackerForm = ({
                                                 aria-expanded={open}
                                                 className="w-[200px] justify-between"
                                             >
-                                                {value
-                                                    ? frameworks.find(
-                                                          (framework) =>
-                                                              framework.value ===
-                                                              value
+                                                {locations
+                                                    ? locations.find(
+                                                          (location) =>
+                                                              location.value ===
+                                                              currentLocation
                                                       )?.label
                                                     : "Select City..."}
                                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -138,37 +171,58 @@ const CityViseTrackerForm = ({
                                         <PopoverContent className="w-[200px] p-0">
                                             <Command>
                                                 <CommandInput placeholder="Search City..." />
-                                                <CommandEmpty>
-                                                    No framework found.
-                                                </CommandEmpty>
-                                                <CommandGroup>
-                                                    {console.log(frameworks)}
-                                                    {frameworks.map(
-                                                        (framework) => (
-                                                            <CommandItem>
-                                                                <Check
-                                                                    className={cn(
-                                                                        "mr-2 h-4 w-4",
-                                                                        value ===
-                                                                            framework.value
-                                                                            ? "opacity-100"
-                                                                            : "opacity-0"
-                                                                    )}
-                                                                />
-                                                                {
-                                                                    framework.label
-                                                                }
-                                                            </CommandItem>
-                                                        )
-                                                    )}
-                                                </CommandGroup>
+                                                <CommandList>
+                                                    <CommandEmpty>
+                                                        No framework found.
+                                                    </CommandEmpty>
+                                                    <CommandGroup>
+                                                        {locations.map(
+                                                            (location) => (
+                                                                <CommandItem
+                                                                    key={
+                                                                        location.value
+                                                                    }
+                                                                    value={
+                                                                        location.value
+                                                                    }
+                                                                    onSelect={(
+                                                                        currentValue
+                                                                    ) => {
+                                                                        setCurrentLocation(
+                                                                            currentValue ===
+                                                                                currentLocation
+                                                                                ? ""
+                                                                                : currentValue
+                                                                        );
+                                                                        setOpen(
+                                                                            false
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <Check
+                                                                        className={cn(
+                                                                            "mr-2 h-4 w-4",
+                                                                            currentLocation ===
+                                                                                location.value
+                                                                                ? "opacity-100"
+                                                                                : "opacity-0"
+                                                                        )}
+                                                                    />
+                                                                    {
+                                                                        location.label
+                                                                    }
+                                                                </CommandItem>
+                                                            )
+                                                        )}
+                                                    </CommandGroup>
+                                                </CommandList>
                                             </Command>
                                         </PopoverContent>
                                     </Popover>
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label
-                                        htmlFor="username"
+                                        htmlFor="date"
                                         className="text-right"
                                     >
                                         Date
@@ -177,14 +231,44 @@ const CityViseTrackerForm = ({
                                         id="date"
                                         type="date"
                                         className="col-span-2"
+                                        onChange={(e) =>
+                                            setDate(e.target.value)
+                                        }
                                     />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label
+                                        htmlFor="status"
+                                        className="text-right"
+                                    >
+                                        Status
+                                    </Label>
+                                    <Select
+                                        onValueChange={(value) =>
+                                            setStatus(value)
+                                        }
+                                    >
+                                        <SelectTrigger className="w-[180px]">
+                                            <SelectValue placeholder="Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="pending">
+                                                    Pending
+                                                </SelectItem>
+                                                <SelectItem value="inprogress">
+                                                    In Progress
+                                                </SelectItem>
+                                                <SelectItem value="done">
+                                                    Done
+                                                </SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button
-                                    type="button"
-                                    onChange={() => submitForm()}
-                                >
+                                <Button type="button" onClick={submitForm}>
                                     Save changes
                                 </Button>
                             </DialogFooter>

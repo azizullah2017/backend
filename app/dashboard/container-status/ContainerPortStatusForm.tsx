@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
 const ContainerPortStatusForm = ({
     isShowing,
@@ -32,7 +33,7 @@ const ContainerPortStatusForm = ({
     setIsShowing: () => void;
 }) => {
     const { staffInfo, setStaffInfo } = useStaffInformation();
-    const [files, setFiles] = useState<File[]>();
+    const [files, setFiles] = useState<string[]>([]);
     const router = useRouter();
 
     const form = useForm({
@@ -42,26 +43,69 @@ const ContainerPortStatusForm = ({
         },
     });
 
-    const onSubmit = (data) => {
-        const formData = new FormData();
+    const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const fileInputs = e.target.files;
+        const myFiles = Array.from(fileInputs);
 
-        formData.append("attachment", files);
-        formData.append("book_no", data.book_no);
-        formData.append("bl", data.bl);
-        formData.append("delivery_at", data.delivery_at);
-        formData.append("gd_no", data.gd_no);
-        formData.append("clearing_agent", data.clearing_agent);
-        formData.append("transporter", data.transporter);
-        formData.append("truck_no", data.truck_no);
-        formData.append("driver_name", data.driver_name);
-        formData.append("driver_mobile_no", data.driver_mobile_no);
-        formData.append("truck_placement_date", data.truck_placement_date);
-        formData.append("truck_out_date", data.truck_out_date);
-        formData.append("bl_containers", data.bl_containers);
-        formData.append("status", data.status);
+        myFiles.forEach((file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file as File);
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    // console.log(reader.result);
+                    setFiles((prevValue) => [
+                        ...prevValue,
+                        reader.result as string,
+                    ]);
+                }
+            };
+        });
+    };
 
-        setStaffInfo((prevValue) => ({ ...prevValue, truckNo: data.truck_no }));
-        router.push("/dashboard/city-vise-tracker");
+    const onSubmit = async (data) => {
+        const updatedData = {
+            book_no: data.book_no,
+            bl: data.bl,
+            delivery_at: data.delivery_at,
+            gd_no: data.gd_no,
+            clearing_agent: data.clearing_agent,
+            transporter: data.transporter,
+            truck_no: data.truck_no,
+            driver_name: data.driver_name,
+            driver_mobile_no: data.driver_mobile_no,
+            truck_placement_date: data.truck_placement_date,
+            truck_out_date: data.truck_out_date,
+            bl_containers: data.bl_containers,
+            status: data.status,
+            attachment: files.length ? files : null,
+        };
+
+        const res = await fetch("http://localhost:8000/api/port/create", {
+            method: "POST",
+            headers: {
+                Authorization: "Token 44642ff29cfadaa8605d83abacdc2cb09172b5ee",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedData),
+        });
+
+        if (!res.ok) {
+            throw new Error("Something went wrong");
+        } else {
+            toast({
+                title: "Success",
+                description: "Shipment Status Added Successfully!",
+                className: "bg-green-200",
+            });
+
+            const responseData = await res.json();
+
+            setStaffInfo((prevValue) => ({
+                ...prevValue,
+                truckNo: responseData.truck_no,
+            }));
+            router.push("/dashboard/city-vise-tracker");
+        }
     };
 
     return (
@@ -319,7 +363,7 @@ const ContainerPortStatusForm = ({
                                                 {...field}
                                                 multiple
                                                 onChange={(e) => {
-                                                    setFiles(e.target.files);
+                                                    fileChangeHandler(e);
                                                 }}
                                             />
                                         </FormControl>
