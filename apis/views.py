@@ -22,10 +22,15 @@ class UserLoginView(ObtainAuthToken):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        print(serializer.validated_data)
         token, created = Token.objects.get_or_create(user=user)
         if not created:
             token.created = timezone.now()
             token.save()
+
+        # Retrieve additional user data such as username and role
+        user_serializer = UserSerializer(user)
+        user_data = user_serializer.data
 
         # Set token expiration to 10 minutes
         expiration_time = token.created + timezone.timedelta(minutes=5)
@@ -33,7 +38,15 @@ class UserLoginView(ObtainAuthToken):
         token.expiration = expiration_time
         token.save()
 
-        return Response({'token': token.key})
+        # Include username, role, and token in the response
+        response_data = {
+            'token': token.key,
+            'username': user_data['username'],
+            'role': user_data['role'],
+        }
+        return Response(response_data)
+    
+        # return Response({'token': token.key , "username": user})
 
 class UserLogoutView(generics.DestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)
