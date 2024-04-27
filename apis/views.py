@@ -160,6 +160,19 @@ class TrackerInfo(generics.CreateAPIView):
         trackers = list(trackers.values())
         return Response({'trackers': trackers}, status=status.HTTP_200_OK) 
 
+class CityInfo(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    # serializer_class = CityWiseTrackerSerializer
+    http_method_names = ['get']
+    
+    def get(self, request):
+        trackers = CityWiseTracker.objects.all()
+        trackers = list(trackers.values())
+
+        cities = ["Karachi","Lasbella","Wadh","Khuzdar","Quetta","ChamanYard","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Mardab","Torkham","Ghulam khan","Salang","Hairtan","Torkham","Jalal abad","Kabul","Salang","Hairtan","Chaman","Spin Boldak","Kandahar","Ghazni","Salang","Hairtan"]
+        return Response({'cities': cities}, status=status.HTTP_200_OK) 
+
+
 
 """"
 #===========================================================================
