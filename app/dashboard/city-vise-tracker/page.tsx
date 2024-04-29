@@ -5,6 +5,8 @@ import { useState } from "react";
 import CityViseTrackerForm from "./CityViseTrackerForm";
 import { DataTable } from "@/components/ui/data-tables";
 import { columns } from "./columns";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const data = [
     {
@@ -24,6 +26,12 @@ const data = [
 
 const CityViseTracker = () => {
     const [isShowing, setIsShowing] = useState(false);
+    const { userData } = useAuth();
+    const router = useRouter();
+
+    if (userData.role === "") return router.push("/login");
+    if (userData.role !== "" && userData.role !== "staff")
+        return router.push(`/dashboard/${userData.role}`);
 
     return (
         <>

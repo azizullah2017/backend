@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
+import { BASE_URL } from "@/lib/constants";
+import { useAuth } from "@/context/AuthContext";
 
 const ShipmentStatusForm = ({
     isShowing,
@@ -38,12 +40,9 @@ const ShipmentStatusForm = ({
     const { staffInfo, setStaffInfo } = useStaffInformation();
     const [file, setFile] = useState<string>();
     const router = useRouter();
+    const { userData } = useAuth();
 
-    const form = useForm({
-        defaultValues: {
-            book_no: staffInfo.bookingNo,
-        },
-    });
+    const form = useForm();
 
     const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const myFile = e.target.files?.[0];
@@ -87,10 +86,10 @@ const ShipmentStatusForm = ({
             attachment: file ? file : null,
         };
 
-        const res = await fetch("http://localhost:8000/api/shipment/create", {
+        const res = await fetch(`${BASE_URL}/api/shipment/create`, {
             method: "POST",
             headers: {
-                Authorization: "Token 44642ff29cfadaa8605d83abacdc2cb09172b5ee",
+                Authorization: `Token ${userData.token}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(updatedData),
@@ -107,9 +106,9 @@ const ShipmentStatusForm = ({
 
             const responseData = await res.json();
 
-            setStaffInfo((prevValue) => ({
+            setStaffInfo((prevValue: Object) => ({
                 ...prevValue,
-                bl: responseData.bl,
+                blNumber: responseData.bl,
                 containers: responseData.containers,
             }));
             router.push("/dashboard/container-status");
@@ -158,6 +157,7 @@ const ShipmentStatusForm = ({
                                 <FormField
                                     control={form.control}
                                     name="book_no"
+                                    defaultValue={staffInfo.bookingNumber}
                                     render={({ field }) => (
                                         <FormItem className="w-full lg:flex-1">
                                             <FormLabel>

@@ -24,6 +24,8 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
+import { BASE_URL } from "@/lib/constants";
+import { useAuth } from "@/context/AuthContext";
 
 const ContainerPortStatusForm = ({
     isShowing,
@@ -32,16 +34,12 @@ const ContainerPortStatusForm = ({
     isShowing: boolean;
     setIsShowing: () => void;
 }) => {
-    const { staffInfo, setStaffInfo } = useStaffInformation();
+    const { staffInfo } = useStaffInformation();
     const [files, setFiles] = useState<string[]>([]);
     const router = useRouter();
+    const { userData } = useAuth();
 
-    const form = useForm({
-        defaultValues: {
-            bl: staffInfo.bl,
-            bl_containers: staffInfo.containers,
-        },
-    });
+    const form = useForm();
 
     const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const fileInputs = e.target.files;
@@ -80,10 +78,10 @@ const ContainerPortStatusForm = ({
             attachment: files.length ? files : null,
         };
 
-        const res = await fetch("http://localhost:8000/api/port/create", {
+        const res = await fetch(`${BASE_URL}/api/port/create`, {
             method: "POST",
             headers: {
-                Authorization: "Token 44642ff29cfadaa8605d83abacdc2cb09172b5ee",
+                Authorization: `Token ${userData.token}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(updatedData),
@@ -98,12 +96,6 @@ const ContainerPortStatusForm = ({
                 className: "bg-green-200",
             });
 
-            const responseData = await res.json();
-
-            setStaffInfo((prevValue) => ({
-                ...prevValue,
-                truckNo: responseData.truck_no,
-            }));
             router.push("/dashboard/city-vise-tracker");
         }
     };
@@ -132,6 +124,7 @@ const ContainerPortStatusForm = ({
                                 <FormField
                                     control={form.control}
                                     name="bl"
+                                    defaultValue={staffInfo.blNumber}
                                     render={({ field }) => (
                                         <FormItem className="w-full lg:flex-1">
                                             <FormLabel>BL Number</FormLabel>
@@ -149,6 +142,7 @@ const ContainerPortStatusForm = ({
                                 <FormField
                                     control={form.control}
                                     name="bl_containers"
+                                    defaultValue={staffInfo.containers}
                                     render={({ field }) => (
                                         <FormItem className="w-full lg:flex-1">
                                             <FormLabel>Containers</FormLabel>

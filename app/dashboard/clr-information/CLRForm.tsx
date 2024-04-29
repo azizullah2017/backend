@@ -23,6 +23,8 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { useStaffInformation } from "@/context/StaffInformationContext";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/lib/constants";
+import { useAuth } from "@/context/AuthContext";
 
 const CLRForm = ({
     isShowing,
@@ -31,16 +33,17 @@ const CLRForm = ({
     isShowing: boolean;
     setIsShowing: () => void;
 }) => {
-    const { staffInfo, setStaffInfo } = useStaffInformation();
+    const { setStaffInfo } = useStaffInformation();
     const router = useRouter();
+    const { userData } = useAuth();
 
     const form = useForm();
 
     const onSubmit = async (data: { [key: string]: string }) => {
-        const res = await fetch("http://localhost:8000/api/clr/create", {
+        const res = await fetch(`${BASE_URL}/api/clr/create`, {
             method: "POST",
             headers: {
-                Authorization: "Token 44642ff29cfadaa8605d83abacdc2cb09172b5ee",
+                Authorization: `Token ${userData.token}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
@@ -57,8 +60,8 @@ const CLRForm = ({
 
             const responseData = await res.json();
 
-            setStaffInfo();
-            setStaffInfo({ bookingNo: responseData.book_no });
+            setStaffInfo({});
+            setStaffInfo({ bookingNumber: responseData.book_no });
             router.push("/dashboard/shipment-status");
         }
     };

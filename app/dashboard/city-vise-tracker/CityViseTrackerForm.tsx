@@ -41,6 +41,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { BASE_URL } from "@/lib/constants";
+import { useAuth } from "@/context/AuthContext";
 
 const locations = [
     {
@@ -75,16 +77,18 @@ const CityViseTrackerForm = ({
     const [bl, setBl] = useState<string>("");
     const [containers, setContainers] = useState<string>("");
     const { staffInfo } = useStaffInformation();
+    const { userData } = useAuth();
 
     useEffect(() => {
-        if (staffInfo.bl && staffInfo.containers) {
+        if (staffInfo.blNumber && staffInfo.containers) {
             setContainers(staffInfo.containers);
-            setBl(staffInfo.bl);
+            setBl(staffInfo.blNumber);
         }
     }, [bl, containers]);
 
     const submitForm = async () => {
         const data = {
+            //Todo: change this before deployment
             bl_containers: containers ? containers : "123,123",
             bl: bl ? bl : "test",
             curent_location: currentLocation,
@@ -92,10 +96,10 @@ const CityViseTrackerForm = ({
             status,
         };
 
-        const res = await fetch("http://localhost:8000/api/tracker/create", {
+        const res = await fetch(`${BASE_URL}/api/tracker/create`, {
             method: "POST",
             headers: {
-                Authorization: "Token 44642ff29cfadaa8605d83abacdc2cb09172b5ee",
+                Authorization: `Token ${userData.token}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
@@ -109,8 +113,6 @@ const CityViseTrackerForm = ({
                 description: "Shipment Status Added Successfully!",
                 className: "bg-green-200",
             });
-
-            const responseData = await res.json();
         }
     };
 
