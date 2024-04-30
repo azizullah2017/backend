@@ -1,9 +1,12 @@
+"use client";
+
 import { IconType } from "react-icons";
 import { GiDigitalTrace, GiProgression } from "react-icons/gi";
 import { HiInformationCircle } from "react-icons/hi";
 import { ImHome } from "react-icons/im";
 import MenuLink from "./MenuLink";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 export type menuItemsType = {
     title: string;
@@ -52,7 +55,7 @@ const menuItems: menuItemsType[] = [
 ];
 
 const SideBar = () => {
-    const role = "staff";
+    const { userData } = useAuth();
 
     return (
         <div className="sticky top-10">
@@ -62,7 +65,7 @@ const SideBar = () => {
             <hr />
             <ul className="list-none mt-5">
                 {menuItems
-                    .filter((item) => item.role === role)
+                    .filter((item) => item.role === userData.role)
                     .map((item) => (
                         <li key={item.title} className="mt-2">
                             {<MenuLink item={item} key={item.title} />}

@@ -1,12 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ContainerPortStatusForm from "./ContainerPortStatusForm";
 import { DataTable } from "@/components/ui/data-tables";
 import { columns } from "./columns";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import StaffTableActions from "@/components/StaffTableActions";
 
-const data = [
+const tableData = [
     {
         bookingNo: "123",
         bl: "MOI FOODS",
@@ -24,20 +27,32 @@ const data = [
     },
 ];
 
-const ContainerStatus = () => {
+const ContainerStatus = ({
+    searchParams,
+}: {
+    searchParams: { page: string };
+}) => {
     const [isShowing, setIsShowing] = useState(false);
+    const [data, setData] = useState(tableData);
+    const router = useRouter();
+    const { userData } = useAuth();
+    const isAuthenticated = userData.role !== "";
+    const isAuthorized = userData.role !== "" && userData.role === "staff";
+    const page = parseInt(searchParams.page) || 1;
+    const pageSize = 1;
+
+    useEffect(() => {
+        if (!isAuthenticated) return router.push("/login");
+        if (!isAuthorized) return router.push(`/dashboard/${userData.role}`);
+    }, []);
 
     return (
         <>
             <div className="flex">
-                <div className="flex justify-end w-full">
-                    <Button
-                        className="bg-[#11047A] hover:bg-[#422AFB]"
-                        onClick={() => setIsShowing((isShowing) => !isShowing)}
-                    >
-                        Add Record
-                    </Button>
-                </div>
+                <StaffTableActions
+                    setIsShowing={setIsShowing}
+                    setData={setData}
+                />
                 <div className="z-10">
                     <ContainerPortStatusForm
                         isShowing={isShowing}
@@ -46,7 +61,12 @@ const ContainerStatus = () => {
                 </div>
             </div>
             <div className="mt-10">
-                <DataTable columns={columns} data={data} />
+                <DataTable
+                    columns={columns}
+                    data={data}
+                    pageSize={pageSize}
+                    currentPage={page}
+                />
             </div>
         </>
     );

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CLRForm from "./CLRForm";
 import { DataTable } from "@/components/ui/data-tables";
 import { columns } from "./columns";
 import CLRActions from "./CLRActions";
 import StaffTableActions from "@/components/StaffTableActions";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const tableData = [
     {
@@ -84,6 +86,15 @@ const CLRInformation = ({
     const [data, setData] = useState(tableData);
     const page = parseInt(searchParams.page) || 1;
     const pageSize = 1;
+    const router = useRouter();
+    const { userData } = useAuth();
+    const isAuthenticated = userData.role !== "";
+    const isAuthorized = userData.role !== "" && userData.role === "staff";
+
+    useEffect(() => {
+        if (!isAuthenticated) return router.push("/login");
+        if (!isAuthorized) return router.push(`/dashboard/${userData.role}`);
+    }, []);
 
     return (
         <>
