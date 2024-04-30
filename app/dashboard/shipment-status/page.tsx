@@ -57,7 +57,7 @@ const ShipmentStatus = ({
                     />
                 </div>
             </div>
-            <div className="mt-10">
+            <div className="mt-5">
                 <DataTable
                     columns={columns}
                     data={data}
