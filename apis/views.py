@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from django.db import connection  # Import connection
 from django.http import JsonResponse
 from django.utils import timezone
-
+from django.db.models import Q
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -22,7 +22,7 @@ class UserLoginView(ObtainAuthToken):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        print(serializer.validated_data)
+        # print(serializer.validated_data)
         token, created = Token.objects.get_or_create(user=user)
         if not created:
             token.created = timezone.now()
@@ -65,105 +65,142 @@ class GetUser(generics.ListAPIView):
     serializer_class = UserSerializer
     http_method_names = ['get'] 
 
-
-class CreateClrInfo(generics.CreateAPIView):
-
-    # class MyModelListCreateAPIView(generics.ListCreateAPIView):
-    # queryset = MyModel.objects.all()
-    # serializer_class = MyModelSerializer
-
-    # def post(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # class MyModelListCreateAPIView(generics.ListCreateAPIView):
-
-    # post
-    permission_classes = [permissions.IsAuthenticated, IsStaff]
-    queryset = CLRModel.objects.all()
-    serializer_class = ClrSerializer
-    http_method_names = ['post']
-
 class ClrInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ClrSerializer
-    http_method_names = ['get'] 
+    allowed_methods = ['get','post']
     
     def get(self, request):
-        clrs = CLRModel.objects.all()
-        clrs_list = list(clrs.values())  # Convert queryset to list of dictionaries
-        return JsonResponse({'clrs': clrs_list})
+        page_number = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        # Calculate the offset based on the page number and limit
+        offset = (page_number - 1) * limit
 
-class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsStaff]
-    queryset = CLRModel.objects.all()
-    serializer_class = ClrSerializer
-    http_method_names = ['post']
+        # Execute the raw SQL query to fetch the first N records with pagination
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM {CLRModel._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            rows = cursor.fetchall()
+        # print("rows: ",rows)
+        # Serialize the fetched records
+        # serializer = self.serializer_class(rows, many=True)
+        # print(serializer.data)
 
-    # def get(self, request):
-    #     return Response({'data': "ClrInfo"}, status=status.HTTP_200_OK)
+        # Return the paginated response
+        # return Response(serializer.data)
+        return JsonResponse({'clrs': rows})
     
-class CreateShipmentInfo(generics.CreateAPIView):
-    permission_classes = [IsStaff]
-    queryset = ShipmentStatus.objects.all()
-    serializer_class = ShipmentSerializer
-    http_method_names = ['post']
+class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ClrSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return CLRModel.objects.filter(pk=self.request.data["uid"])
 
 
+class CLRSearchView(generics.ListAPIView):
+    serializer_class = ClrSerializer
+
+    
+    def get_queryset(self):
+        queryset = CLRModel.objects.all()
+        conditions = []
+
+        # Retrieve query parameters
+        params = {
+            'shipper_reference': self.request.query_params.getlist('shipper_reference'),
+            'shipper': self.request.query_params.getlist('shipper'),
+            'consignee': self.request.query_params.getlist('consignee'),
+        }
+
+        # Construct filter conditions based on query parameters
+        for field, values in params.items():
+            if values:
+                conditions.append(Q(**{f'{field}__in': values}))
+
+        if conditions:
+            queryset = queryset.filter(*conditions)
+
+        return queryset
+    
 class ShipmentInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
+    # queryset = ShipmentStatus.objects.all()
     serializer_class = ShipmentSerializer
-    http_method_names = ['get']
+    http_method_names = ['get','post']
 
 
     def get(self, request):
-        shipments = ShipmentStatus.objects.all()
-        shipments = list(shipments.values())
-        return Response({'shipments': shipments}, status=status.HTTP_200_OK)
+        page_number = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        # Calculate the offset based on the page number and limit
+        offset = (page_number - 1) * limit
 
-class CreatePortInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsStaff]
-    queryset = PortStatus.objects.all()
-    serializer_class = PortSerializer
-    http_method_names = ['post']
+        # Execute the raw SQL query to fetch the first N records with pagination
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM {ShipmentStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            rows = cursor.fetchall()
+            return Response({'shipments': rows}, status=status.HTTP_200_OK)
 
-    
+class UpdateShipmentInfo(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+    serializer_class = ShipmentSerializer
+
+    def get_queryset(self):
+        return ShipmentStatus.objects.filter(pk=self.request.data["uid"])
+
+
 class PortInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PortSerializer
-    http_method_names = ['get']
-
+    queryset = PortStatus.objects.all()
+    http_method_names = ['get','post']
 
     def get(self, request):
-        ports = PortStatus.objects.all()
-        ports = list(ports.values())
-        return Response({'ports': ports}, status=status.HTTP_200_OK)
+        page_number = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        offset = (page_number - 1) * limit
 
-class CreateTrackerInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsStaff]
-    queryset = CityWiseTracker.objects.all()
-    serializer_class = CityWiseTrackerSerializer
-    http_method_names = ['post']
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM {PortStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            rows = cursor.fetchall()
+            return Response({'shipments': rows}, status=status.HTTP_200_OK)
 
-    
+
+class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+    serializer_class = PortSerializer
+
+    def get_queryset(self):
+        return PortStatus.objects.filter(pk=self.request.data["uid"])
+
 
 class TrackerInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CityWiseTrackerSerializer
-    http_method_names = ['get']
+    http_method_names = ['get','post']
     
     def get(self, request):
-        trackers = CityWiseTracker.objects.all()
-        trackers = list(trackers.values())
-        return Response({'trackers': trackers}, status=status.HTTP_200_OK) 
+        page_number = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        offset = (page_number - 1) * limit
+
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM {CityWiseTracker._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            rows = cursor.fetchall()
+            return Response({'trackers': rows}, status=status.HTTP_200_OK)
+
+class UpdateTrackerInfo(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+    serializer_class = CityWiseTrackerSerializer
+
+    def get_queryset(self):
+        return CityWiseTracker.objects.filter(pk=self.request.data["uid"])
 
 class CityInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     # serializer_class = CityWiseTrackerSerializer
     http_method_names = ['get']
+    
     
     def get(self, request):
         trackers = CityWiseTracker.objects.all()
@@ -171,63 +208,3 @@ class CityInfo(generics.CreateAPIView):
 
         cities = ["Karachi","Lasbella","Wadh","Khuzdar","Quetta","ChamanYard","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Mardab","Torkham","Ghulam khan","Salang","Hairtan","Torkham","Jalal abad","Kabul","Salang","Hairtan","Chaman","Spin Boldak","Kandahar","Ghazni","Salang","Hairtan"]
         return Response({'cities': cities}, status=status.HTTP_200_OK) 
-
-
-
-""""
-#===========================================================================
-class TeacherAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsAdmin]
-
-    def get(self, request):
-        # if hasattr(request.user, 'role') and request.user.role in ['teacher', 'administrator']:
-        #     # Your logic here
-        #     dat = 'd3+312'
-        return Response({'data': "dat"}, status=status.HTTP_200_OK)
-
-class DataAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
-
-    def post(self, request):
-        serializer = DataSerializer(data=request.data)
-        if serializer.is_valid():
-            # Save the validated data to the database
-            serializer.save()
-            return Response({'message': 'Data inserted successfully'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def get(self, request):
-        # # Query all data from DataModel
-        # data_objects = DataModel.objects.all()
-        # # Serialize the queryset
-        # serializer = DataSerializer(data_objects, many=True)
-        # return Response(serializer.data)
-
-
-        # # Retrieve data where n is equal to "uyt"
-        # data_objects = DataModel.objects.filter(n="uyt")
-        # # Serialize the queryset
-        # serializer = DataSerializer(data_objects, many=True)
-        # return Response(serializer.data)
-
-        sql_query = "SELECT * FROM apis_datamodel WHERE name = 'aziz'"
-        # Execute the SQL query
-        with connection.cursor() as cursor:
-            cursor.execute(sql_query)
-            # Fetch all rows from the result
-            rows = cursor.fetchall()
-
-        # Serialize the rows
-        data_objects = []
-        for row in rows:
-            data_objects.append({
-                'name': row[0],
-                'BL': row[1],
-                'CL': row[2],
-            })
-
-        # Serialize the queryset
-        serializer = DataSerializer(data_objects, many=True)
-        return Response(serializer.data)
-"""

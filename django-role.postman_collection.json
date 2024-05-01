@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"johndoedd\",\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"$tr0ngPa$$w0rd\",\n  \"role\": \"student\"\n}",
+					"raw": "{\n  \"username\": \"aziz\",\n  \"email\": \"aziz@example.com\",\n  \"password\": \"$tr0ngPa$$w0rd\",\n  \"role\": \"staff\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -43,7 +43,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"johndoedd\",\n  \"password\": \"$tr0ngPa$$w0rd\"\n}",
+					"raw": "{\n  \"username\": \"aziz\",\n  \"password\": \"$tr0ngPa$$w0rd\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -74,7 +74,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 8e5a41c98bd61b5b14602de6e80c04b926c061eb",
+						"value": "Token 78bc1e0cd8d83d82a198be8cf0ebcaae3566ff2a",
 						"type": "default"
 					}
 				],
@@ -102,7 +102,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
 						"type": "default"
 					},
 					{
@@ -113,7 +113,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8000/api/users",
+					"raw": "http://localhost:8000/api/users?limit=2&offset=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -122,22 +122,80 @@
 					"path": [
 						"api",
 						"users"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "2"
+						},
+						{
+							"key": "offset",
+							"value": "1"
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "get clrs (any)",
+			"name": "get list clrs (any)",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
 						"type": "default"
 					}
 				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/clr?page=1&limit=10",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"clr"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create create clr (staff)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \"uid\": \"b05ce184-70e9-459a-881b-f16458dee45a\",\n    \"shipper_reference\":\"aziz\",\n    \"shipper\": \"0LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-04-30\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://127.0.0.1:8000/api/clr",
 					"protocol": "http",
@@ -157,19 +215,19 @@
 			"response": []
 		},
 		{
-			"name": "post create clr (staff)",
+			"name": "update clr (staff)",
 			"request": {
-				"method": "POST",
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{   \"shipper_reference\":\"dsadddfsadf\",\n    \"shipper\": \"LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-03-30\"\n}",
+					"raw": "{   \"uid\": \"b05ce184-70e9-459a-881b-f16458dee45a\",\n    \"shipper_reference\":\"aziz2a\",\n    \"shipper\": \"0LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-04-30\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -177,7 +235,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/clr/create",
+					"raw": "http://127.0.0.1:8000/api/clr/update/b05ce184-70e9-459a-881b-f16458dee45a/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -189,7 +247,50 @@
 					"path": [
 						"api",
 						"clr",
-						"create"
+						"update",
+						"b05ce184-70e9-459a-881b-f16458dee45a",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete clr (staff)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \"uid\": \"b05ce184-70e9-459a-881b-f16458dee45a\",\n    \"shipper_reference\":\"aziz2a\",\n    \"shipper\": \"0LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-04-30\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/clr/update/b05ce184-70e9-459a-881b-f16458dee45a/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"clr",
+						"update",
+						"b05ce184-70e9-459a-881b-f16458dee45a",
+						""
 					]
 				}
 			},
@@ -199,9 +300,15 @@
 			"name": "get shipment (any)",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/clr/add",
+					"raw": "http://127.0.0.1:8000/api/shipment?page=1&limit=10",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -212,8 +319,17 @@
 					"port": "8000",
 					"path": [
 						"api",
-						"clr",
-						"add"
+						"shipment"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
 					]
 				}
 			},
@@ -226,13 +342,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"book_no\": \"OSL-2567/21\",\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"no_container\": \"6\",\n    \"eta_departure\": \"2024-03-07\",\n    \"eta_arrival\": \"2024-04-24\",\n    \"port\": \"KICT\",\n    \"docs\": \"2024-04-17\",\n    \"surrender\": \"2024-04-25\",\n    \"containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"status\": \"pending\",\n    \"attachment\": null\n}",
+					"raw": "{\n    \"book_no\": \"POSL-2567/21\",\n    \"bl\": \"PDF23324AFDDSA-ADFAS\",\n    \"no_container\": \"6\",\n    \"eta_departure\": \"2024-03-07\",\n    \"eta_arrival\": \"2024-04-24\",\n    \"port\": \"KICT\",\n    \"docs\": \"2024-04-17\",\n    \"surrender\": \"2024-04-25\",\n    \"containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"status\": \"pending\",\n    \"attachment\": null\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -240,7 +356,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/shipment/create",
+					"raw": "http://127.0.0.1:8000/api/shipment",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -251,8 +367,7 @@
 					"port": "8000",
 					"path": [
 						"api",
-						"shipment",
-						"create"
+						"shipment"
 					]
 				}
 			},
@@ -262,7 +377,66 @@
 			"name": "get port (any)",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port?page=1&limit=10",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "",
+							"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post create port (staff)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bl\": \"DF23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"DF23s423adf,213dfsfd21,32423afsd423\",\n    \"delivery_at\": \"AFG\",\n    \"gd_no\": \"123213-23213\",\n    \"clearing_agent\": \"Khan\",\n    \"transporter\": \"ACDF\",\n    \"truck_no\": \"123DDD\",\n    \"driver_name\": \"Mohsin\",\n    \"driver_mobile_no\": \"12312131,12312131\",\n    \"truck_placement_date\": \"2024-03-01\",\n    \"truck_out_date\": \"2024-03-01\",\n    \"attachment\": null,\n    \"status\": \"pending\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://127.0.0.1:8000/api/port",
 					"protocol": "http",
@@ -282,51 +456,18 @@
 			"response": []
 		},
 		{
-			"name": "post create port (staff)",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Token 5136f397317c9e8bee0329e8968c55c19854dcc6",
-						"type": "default"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"delivery_at\": \"AFG\",\n    \"gd_no\": \"123213-23213\",\n    \"clearing_agent\": \"Khan\",\n    \"transporter\": \"ACDF\",\n    \"truck_no\": \"123DDD\",\n    \"driver_name\": \"Mohsin\",\n    \"driver_mobile_no\": \"12312131,12312131\",\n    \"truck_placement_date\": \"2024-03-01\",\n    \"truck_out_date\": \"2024-03-01\",\n    \"attachment\": null,\n    \"status\": \"pending\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:8000/api/port/create",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"port",
-						"create"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "get tracker (any)",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/tracker",
+					"raw": "http://127.0.0.1:8000/api/tracker?page=1&limit=10",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -338,6 +479,16 @@
 					"path": [
 						"api",
 						"tracker"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
 					]
 				}
 			},
@@ -364,7 +515,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/tracker/create",
+					"raw": "http://127.0.0.1:8000/api/tracker",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -375,8 +526,36 @@
 					"port": "8000",
 					"path": [
 						"api",
-						"tracker",
-						"create"
+						"tracker"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get cities",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/cities",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"cities"
 					]
 				}
 			},
