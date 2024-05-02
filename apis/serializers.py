@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User, ShipmentStatus, CLRModel, PortStatus, CityWiseTracker
+from .models import User, ShipmentStatus, CLRModel, \
+    PortStatus, CityWiseTracker, Addcity
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,6 +65,16 @@ class CityWiseTrackerSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+class AddcitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Addcity
+        fields = ['uid', 'bl', 'truck', 'city', 'date']
+        read_only_fields = ['uid']
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+    
 
 # class DataSerializer(serializers.ModelSerializer):
 #     class Meta:

@@ -2,8 +2,8 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from .models import User, ShipmentStatus, CLRModel, PortStatus, CityWiseTracker, ExpiringToken
-from .serializers import UserSerializer, ClrSerializer, ShipmentSerializer, PortSerializer, CityWiseTrackerSerializer
+from .models import User, ShipmentStatus, CLRModel, PortStatus, CityWiseTracker, Addcity, ExpiringToken
+from .serializers import UserSerializer, ClrSerializer, ShipmentSerializer, PortSerializer, CityWiseTrackerSerializer, AddcitySerializer
 from rest_framework import status
 from .permissions import IsAdmin, IsStaff,IsCustomer, ExpiringTokenAuthentication
 from rest_framework.views import APIView
@@ -205,7 +205,28 @@ class TrackerInfo(generics.CreateAPIView):
             total_count = cursor.fetchone()[0]
             
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
-        
+
+class AddcityInfo(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = AddcitySerializer
+    http_method_names = ['get','post']
+    
+    def get(self, request):
+        page_number = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        offset = (page_number - 1) * limit
+
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM {Addcity._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            rows = cursor.fetchall()
+            serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+            # Execute query to fetch total count of records
+            cursor.execute(f"SELECT COUNT(*) FROM {Addcity._meta.db_table}")
+            total_count = cursor.fetchone()[0]
+            
+            return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
+       
 
 class UpdateTrackerInfo(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]

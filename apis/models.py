@@ -97,6 +97,16 @@ class CityWiseTracker(models.Model):
     def __str__(self):
         return self.uid
 
+class Addcity(models.Model):
+    uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
+    bl  = models.CharField(max_length=300)
+    truck = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    date = models.DateField()
+
+    def __str__(self):
+        return self.uid
+
 
 class EmptyContainerStatus(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
