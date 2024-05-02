@@ -80,14 +80,14 @@ class ClrInfo(generics.CreateAPIView):
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {CLRModel._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
-        # print("rows: ",rows)
-        # Serialize the fetched records
-        # serializer = self.serializer_class(rows, many=True)
-        # print(serializer.data)
 
-        # Return the paginated response
-        # return Response(serializer.data)
-        return JsonResponse({'clrs': rows})
+        # Execute query to fetch total count of records
+        cursor.execute(f"SELECT COUNT(*) FROM {CLRModel._meta.db_table}")
+        total_count = cursor.fetchone()[0]
+
+        serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+        
+        return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
     
 class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ClrSerializer
@@ -139,7 +139,13 @@ class ShipmentInfo(generics.CreateAPIView):
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {ShipmentStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
-            return Response({'shipments': rows}, status=status.HTTP_200_OK)
+            
+            # Execute query to fetch total count of records
+            cursor.execute(f"SELECT COUNT(*) FROM {ShipmentStatus._meta.db_table}")
+            total_count = cursor.fetchone()[0]
+            serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+            
+            return JsonResponse({'total_count': total_count,'shipments': serialized_data}, status=status.HTTP_200_OK)
 
 class UpdateShipmentInfo(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
@@ -163,7 +169,13 @@ class PortInfo(generics.CreateAPIView):
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {PortStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
-            return Response({'shipments': rows}, status=status.HTTP_200_OK)
+        
+            # Execute query to fetch total count of records
+            cursor.execute(f"SELECT COUNT(*) FROM {PortStatus._meta.db_table}")
+            total_count = cursor.fetchone()[0]
+            serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+            
+            return JsonResponse({'total_count': total_count,'ports': serialized_data}, status=status.HTTP_200_OK)
 
 
 class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
@@ -187,7 +199,14 @@ class TrackerInfo(generics.CreateAPIView):
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {CityWiseTracker._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
-            return Response({'trackers': rows}, status=status.HTTP_200_OK)
+
+            # Execute query to fetch total count of records
+            cursor.execute(f"SELECT COUNT(*) FROM {CityWiseTracker._meta.db_table}")
+            total_count = cursor.fetchone()[0]
+            serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+            
+            return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
+        
 
 class UpdateTrackerInfo(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
