@@ -22,6 +22,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     pageSize: number;
     currentPage: number;
+    totalRows: number;
 }
 
 export function DataTable<TData, TValue>({
@@ -29,6 +30,7 @@ export function DataTable<TData, TValue>({
     data,
     pageSize,
     currentPage,
+    totalRows,
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -93,7 +95,7 @@ export function DataTable<TData, TValue>({
                 </Table>
             </div>
             <Pagination
-                itemCount={data.length}
+                itemCount={totalRows}
                 pageSize={pageSize}
                 currentPage={currentPage}
             />

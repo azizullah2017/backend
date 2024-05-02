@@ -12,7 +12,7 @@ export type menuItemsType = {
     title: string;
     path: string;
     icon: React.ReactElement;
-    role: string;
+    role: string[];
 };
 
 const menuItems: menuItemsType[] = [
@@ -20,37 +20,37 @@ const menuItems: menuItemsType[] = [
         title: "Dashboard",
         path: "/dashboard",
         icon: <ImHome className="w-5 h-5" />,
-        role: "admin",
+        role: ["admin"],
     },
     {
         title: "CLR Information",
         path: "/dashboard/clr-information",
         icon: <HiInformationCircle className="w-5 h-5" />,
-        role: "staff",
+        role: ["staff", "admin"],
     },
     {
         title: "Shipment Status",
         path: "/dashboard/shipment-status",
         icon: <GiProgression className="w-5 h-5" />,
-        role: "staff",
+        role: ["staff", "admin"],
     },
     {
         title: "Container Port Status",
         path: "/dashboard/container-status",
         icon: <GiProgression className="w-5 h-5" />,
-        role: "staff",
+        role: ["staff", "admin"],
     },
     {
         title: "City Vise Tracker",
         path: "/dashboard/city-vise-tracker",
         icon: <GiDigitalTrace className="w-5 h-5" />,
-        role: "staff",
+        role: ["staff", "admin"],
     },
     {
         title: "Tracker",
         path: "/dashboard/tracker",
         icon: <GiDigitalTrace className="w-5 h-5" />,
-        role: "customer",
+        role: ["customer", "admin"],
     },
 ];
 
@@ -65,7 +65,9 @@ const SideBar = () => {
             <hr />
             <ul className="list-none mt-5">
                 {menuItems
-                    .filter((item) => item.role === userData.role)
+                    .filter((item) =>
+                        item.role.map((role) => role === userData?.role)
+                    )
                     .map((item) => (
                         <li key={item.title} className="mt-2">
                             {<MenuLink item={item} key={item.title} />}

@@ -28,7 +28,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStaffInformation } from "@/context/StaffInformationContext";
@@ -44,37 +44,21 @@ import {
 import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
 
-const locations = [
-    {
-        value: "khuzdar",
-        label: "Khuzdar",
-    },
-    {
-        value: "sibi",
-        label: "sibi",
-    },
-    {
-        value: "karachi",
-        label: "Karaachi",
-    },
-    {
-        value: "dubai",
-        label: "Dubai",
-    },
-];
-
 const CityViseTrackerForm = ({
     isShowing,
     setIsShowing,
+    setRevalidate,
 }: {
     isShowing: boolean;
     setIsShowing: () => void;
+    setRevalidate: (arg: boolean) => void;
 }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [currentLocation, setCurrentLocation] = useState<string>("");
     const [status, setStatus] = useState<string>("");
     const [date, setDate] = useState<string>("");
     const [bl, setBl] = useState<string>("");
+    const [locations, setLocations] = useState([]);
     const [containers, setContainers] = useState<string>("");
     const { staffInfo } = useStaffInformation();
     const { userData } = useAuth();
@@ -86,6 +70,20 @@ const CityViseTrackerForm = ({
         }
     }, [bl, containers]);
 
+    useEffect(() => {
+        const citiesFunc = async () => {
+            const res = await fetch(`${BASE_URL}/api/cities`, {
+                headers: {
+                    Authorization: `Token ${userData?.token}`,
+                },
+            });
+
+            const responseData = await res.json();
+            setLocations(responseData.cities);
+        };
+        citiesFunc();
+    }, []);
+
     const submitForm = async () => {
         const data = {
             //Todo: change this before deployment
@@ -96,10 +94,10 @@ const CityViseTrackerForm = ({
             status,
         };
 
-        const res = await fetch(`${BASE_URL}/api/tracker/create`, {
+        const res = await fetch(`${BASE_URL}/api/tracker`, {
             method: "POST",
             headers: {
-                Authorization: `Token ${userData.token}`,
+                Authorization: `Token ${userData?.token}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
@@ -113,6 +111,7 @@ const CityViseTrackerForm = ({
                 description: "Shipment Status Added Successfully!",
                 className: "bg-green-200",
             });
+            setRevalidate(true);
         }
     };
 
@@ -160,12 +159,12 @@ const CityViseTrackerForm = ({
                                                 aria-expanded={open}
                                                 className="w-[200px] justify-between"
                                             >
-                                                {locations
+                                                {currentLocation
                                                     ? locations.find(
                                                           (location) =>
-                                                              location.value ===
+                                                              location ===
                                                               currentLocation
-                                                      )?.label
+                                                      )
                                                     : "Select City..."}
                                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             </Button>
@@ -182,10 +181,10 @@ const CityViseTrackerForm = ({
                                                             (location) => (
                                                                 <CommandItem
                                                                     key={
-                                                                        location.value
+                                                                        location
                                                                     }
                                                                     value={
-                                                                        location.value
+                                                                        location
                                                                     }
                                                                     onSelect={(
                                                                         currentValue
@@ -205,14 +204,12 @@ const CityViseTrackerForm = ({
                                                                         className={cn(
                                                                             "mr-2 h-4 w-4",
                                                                             currentLocation ===
-                                                                                location.value
+                                                                                location
                                                                                 ? "opacity-100"
                                                                                 : "opacity-0"
                                                                         )}
                                                                     />
-                                                                    {
-                                                                        location.label
-                                                                    }
+                                                                    {location}
                                                                 </CommandItem>
                                                             )
                                                         )}

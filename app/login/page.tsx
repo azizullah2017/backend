@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,7 +32,13 @@ const Login = () => {
         resolver: zodResolver(loginSchema),
     });
     const [error, setError] = useState<string>("");
-    const { setUserData } = useAuth();
+    const { userData, setUserData } = useAuth();
+
+    const pushToRoute = {
+        staff: "/dashboard/clr-information",
+        admin: "/dashboard",
+        customer: "/dashboard/customer",
+    };
 
     const onSubmit = async (data: z.infer<typeof loginSchema>) => {
         const res = await fetch(`${BASE_URL}/api/auth/login/`, {
@@ -60,10 +66,7 @@ const Login = () => {
                     role: resp.role,
                 });
             }
-            if (resp.role === "staff")
-                router.push("/dashboard/clr-information");
-            if (resp.role === "admin") router.push("/dashboard");
-            if (resp.role === "customer") router.push("/dashboard/customer");
+            router.push(pushToRoute[resp?.role]);
         }
     };
 
@@ -74,6 +77,12 @@ const Login = () => {
             className: "bg-green-200",
         });
     }
+
+    useEffect(() => {
+        if (userData?.token !== "") {
+            router.push(pushToRoute[userData?.role]);
+        }
+    }, []);
 
     return (
         <>

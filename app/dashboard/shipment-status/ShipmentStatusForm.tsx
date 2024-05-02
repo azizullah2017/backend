@@ -86,7 +86,7 @@ const ShipmentStatusForm = ({
             attachment: file ? file : null,
         };
 
-        const res = await fetch(`${BASE_URL}/api/shipment/create`, {
+        const res = await fetch(`${BASE_URL}/api/shipment`, {
             method: "POST",
             headers: {
                 Authorization: `Token ${userData.token}`,

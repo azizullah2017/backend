@@ -78,7 +78,7 @@ const ContainerPortStatusForm = ({
             attachment: files.length ? files : null,
         };
 
-        const res = await fetch(`${BASE_URL}/api/port/create`, {
+        const res = await fetch(`${BASE_URL}/api/port`, {
             method: "POST",
             headers: {
                 Authorization: `Token ${userData.token}`,

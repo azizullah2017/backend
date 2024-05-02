@@ -13,7 +13,7 @@ const TableFilter = ({ setData }: { setData: () => void }) => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setDebouncedText(searchText);
-        }, 500);
+        }, 250);
 
         return () => {
             clearTimeout(timeout);

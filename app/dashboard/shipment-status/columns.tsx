@@ -23,7 +23,7 @@ export type CLRInformation = {
 
 export const columns: ColumnDef<CLRInformation>[] = [
     {
-        accessorKey: "bookingNo",
+        accessorKey: "book_no",
         header: "Booking No.",
     },
     {
@@ -31,15 +31,15 @@ export const columns: ColumnDef<CLRInformation>[] = [
         header: "BL",
     },
     {
-        accessorKey: "vol",
+        accessorKey: "no_container",
         header: "VOL",
     },
     {
-        accessorKey: "etaAr",
+        accessorKey: "eta_arrival",
         header: "ETA AR",
     },
     {
-        accessorKey: "etaDe",
+        accessorKey: "eta_departure",
         header: "ETA DE",
     },
     {
@@ -58,7 +58,7 @@ export const columns: ColumnDef<CLRInformation>[] = [
         accessorKey: "containers",
         header: "Containers",
         cell: ({ row }) => {
-            const containers = row.original.containers;
+            const containers = row.original.containers.split(",");
 
             return containers.map((container) => <p>{container}</p>);
         },

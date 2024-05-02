@@ -25,7 +25,7 @@ const Navbar = () => {
                 {formatString(currentPath)}
             </div>
             <div className="bg-[#11047A] rounded-full flex items-center p-4 cursor-pointer text-white">
-                {userData.username}
+                {userData?.username}
             </div>
         </div>
     );

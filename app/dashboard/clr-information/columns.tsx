@@ -51,7 +51,7 @@ const setNewParams = () => {
 
 export const columns: ColumnDef<CLRInformation>[] = [
     {
-        accessorKey: "bookingNo",
+        accessorKey: "book_no",
         header: () => {
             {
                 return (
@@ -71,7 +71,7 @@ export const columns: ColumnDef<CLRInformation>[] = [
         header: "Consignee",
     },
     {
-        accessorKey: "count",
+        accessorKey: "no_container",
         header: "Count",
     },
     {
@@ -79,15 +79,15 @@ export const columns: ColumnDef<CLRInformation>[] = [
         header: "Product",
     },
     {
-        accessorKey: "pol",
+        accessorKey: "port_of_loading",
         header: "POL",
     },
     {
-        accessorKey: "pod",
+        accessorKey: "port_of_departure",
         header: "POD",
     },
     {
-        accessorKey: "fpod",
+        accessorKey: "final_port_of_destination",
         header: "FPOD",
     },
     {
@@ -95,7 +95,7 @@ export const columns: ColumnDef<CLRInformation>[] = [
         header: "Vessel",
     },
     {
-        accessorKey: "etaKarachi",
+        accessorKey: "eta_karachi",
         header: "ETA Karachi",
     },
     {

@@ -23,42 +23,38 @@ export type ContainerPortStatusType = {
 
 export const columns: ColumnDef<ContainerPortStatusType>[] = [
     {
-        accessorKey: "bookingNo",
-        header: "Booking No.",
-    },
-    {
         accessorKey: "bl",
         header: "BL",
     },
     {
-        accessorKey: "delivery",
+        accessorKey: "delivery_at",
         header: "Delivery",
     },
     {
-        accessorKey: "gdNo",
+        accessorKey: "gd_no",
         header: "GD No.",
     },
     {
-        accessorKey: "clearingAgent",
+        accessorKey: "clearing_agent",
         header: "Clearing Agent",
     },
     {
-        accessorKey: "truckNo",
+        accessorKey: "truck_no",
         header: "Truck No.",
     },
     {
-        accessorKey: "driver",
+        accessorKey: "driver_name",
         header: "Driver",
     },
     {
-        accessorKey: "contactDetails",
+        accessorKey: "driver_mobile_no",
         header: "Contact Details",
     },
     {
-        accessorKey: "containers",
+        accessorKey: "bl_containers",
         header: "Containers",
         cell: ({ row }) => {
-            const containers = row.original.containers;
+            const containers = row.original.bl_containers.split(",");
 
             return containers.map((container) => <p>{container}</p>);
         },
@@ -68,11 +64,11 @@ export const columns: ColumnDef<ContainerPortStatusType>[] = [
         header: "Transporter",
     },
     {
-        accessorKey: "truckPlacement",
+        accessorKey: "truck_placement_date",
         header: "Truck Placement",
     },
     {
-        accessorKey: "truckOut",
+        accessorKey: "truck_out_date",
         header: "Truck Out",
     },
     {

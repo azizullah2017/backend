@@ -40,7 +40,7 @@ const CLRForm = ({
     const form = useForm();
 
     const onSubmit = async (data: { [key: string]: string }) => {
-        const res = await fetch(`${BASE_URL}/api/clr/create`, {
+        const res = await fetch(`${BASE_URL}/api/clr`, {
             method: "POST",
             headers: {
                 Authorization: `Token ${userData.token}`,

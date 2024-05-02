@@ -23,49 +23,25 @@ export type CityViseTrackerType = {
 
 export const columns: ColumnDef<CityViseTrackerType>[] = [
     {
-        accessorKey: "bookingNo",
-        header: "Booking No.",
-    },
-    {
         accessorKey: "bl",
         header: "BL",
     },
     {
-        accessorKey: "truckNo",
-        header: "Truck No.",
-    },
-    {
-        accessorKey: "driver",
-        header: "Driver",
-    },
-    {
-        accessorKey: "contactDetails",
-        header: "Contact Details",
-    },
-    {
-        accessorKey: "containers",
+        accessorKey: "bl_containers",
         header: "Containers",
         cell: ({ row }) => {
-            const containers = row.original.containers;
+            const containers = row.original.bl_containers.split(",");
 
             return containers.map((container) => <p>{container}</p>);
         },
     },
     {
-        accessorKey: "transporter",
-        header: "Transporter",
+        accessorKey: "curent_location",
+        header: "Current Location",
     },
     {
-        accessorKey: "delivery",
-        header: "Delivery",
-    },
-    {
-        accessorKey: "currentPosition",
-        header: "Current Position",
-    },
-    {
-        accessorKey: "eta",
-        header: "ETA",
+        accessorKey: "date",
+        header: "Date",
     },
     {
         accessorKey: "status",
