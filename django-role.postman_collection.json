@@ -336,6 +336,41 @@
 			"response": []
 		},
 		{
+			"name": "get list booking shipment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/shipment?query=booking_list",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"shipment"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "booking_list"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "post create shipment (staff)",
 			"request": {
 				"method": "POST",
@@ -411,6 +446,76 @@
 							"key": "",
 							"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
 							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list of bl port (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port?query=bl",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "bl"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list of containers port (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port?bl=23324AFDDSA-ADFASk",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port"
+					],
+					"query": [
+						{
+							"key": "bl",
+							"value": "23324AFDDSA-ADFASk"
 						}
 					]
 				}
@@ -507,7 +612,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"bl_containers\": \"gg23s423adf\",\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"curent_location\": \"SIBI\",\n    \"date\": \"2024-03-29\",\n    \"status\": \"pending\"\n}",
+					"raw": "{\n    \"bl_containers\": \"gg23s423adf\",\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"curent_location\": \"Chaman\",\n    \"date\": \"2024-05-29\",\n    \"truck_no\": \"123DDD\",\n    \"status\": \"pending\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -533,7 +638,77 @@
 			"response": []
 		},
 		{
-			"name": "get cities",
+			"name": "get list of trucks tracker (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/tracker?query=truck",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"tracker"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "truck"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get trucks info tracker (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/tracker?truck=123DDD",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"tracker"
+					],
+					"query": [
+						{
+							"key": "truck",
+							"value": "123DDD"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get list cities names",
 			"request": {
 				"method": "GET",
 				"header": [
