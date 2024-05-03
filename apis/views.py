@@ -134,6 +134,14 @@ class ShipmentInfo(generics.CreateAPIView):
         # Calculate the offset based on the page number and limit
         offset = (page_number - 1) * limit
 
+        if request.query_params.get('query') == "booking_list":
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT book_no FROM {CLRModel._meta.db_table} WHERE status = 'done'  AND book_no NOT IN (SELECT book_no FROM {ShipmentStatus._meta.db_table})")
+                rows = cursor.fetchall()
+                flat_list = [item for sublist in rows for item in sublist]
+                return JsonResponse({'booking_list': flat_list}, status=status.HTTP_200_OK)
+
+
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {ShipmentStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
@@ -165,6 +173,26 @@ class PortInfo(generics.CreateAPIView):
         limit = int(request.query_params.get('limit', 10))
         offset = (page_number - 1) * limit
 
+        if request.query_params.get('query') == "bl":
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT bl FROM {ShipmentStatus._meta.db_table} WHERE status = 'done'  AND bl NOT IN (SELECT bl FROM {PortStatus._meta.db_table} WHERE status='done');")
+                rows = cursor.fetchall()
+                flat_list = [item for sublist in rows for item in sublist]
+                return JsonResponse({'bl_list': flat_list}, status=status.HTTP_200_OK)
+        elif request.query_params.get('bl'):
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT containers FROM {ShipmentStatus._meta.db_table} WHERE bl='{request.query_params.get('bl')}';")
+                rows = cursor.fetchall()
+                container_shipment = [it for item in rows for it in item for it in it.split(",")]
+
+                cursor.execute(f"SELECT  bl_containers FROM {PortStatus._meta.db_table} WHERE bl='{request.query_params.get('bl')}';")
+                rows = cursor.fetchall()
+                port_shipment = [it for item in rows for it in item for it in it.split(",")]
+
+                containers = list(set(container_shipment) - set(port_shipment))
+
+                return JsonResponse({'containers': containers}, status=status.HTTP_200_OK)
+
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {PortStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
@@ -195,15 +223,30 @@ class TrackerInfo(generics.CreateAPIView):
         limit = int(request.query_params.get('limit', 10))
         offset = (page_number - 1) * limit
 
+        if request.query_params.get('query') == "truck":
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table}")
+                # cursor.execute(f"SELECT truck_no FROM {PortStatus._meta.db_table} WHERE status = 'done'  AND book_no NOT IN (SELECT book_no FROM {CityWiseTracker._meta.db_table})")
+                rows = cursor.fetchall()
+                flat_list = [item for sublist in rows for item in sublist]
+                return JsonResponse({'truck_list': flat_list}, status=status.HTTP_200_OK)
+        
+        elif request.query_params.get('truck_no'):
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT * FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{request.query_params.get('bl')}';")
+                rows = cursor.fetchall()
+                flat_list = [item for sublist in rows for item in sublist]
+                return JsonResponse({'truck_list': flat_list}, status=status.HTTP_200_OK)
+        
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM {CityWiseTracker._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            cursor.execute(f"SELECT uid,  bl, bl_containers, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY curent_location LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
             # Execute query to fetch total count of records
-            cursor.execute(f"SELECT COUNT(*) FROM {CityWiseTracker._meta.db_table}")
+            cursor.execute(f"SELECT COUNT(*) FROM (SELECT uid, curent_location,MAX(date), bl, bl_containers, status FROM {CityWiseTracker._meta.db_table} GROUP BY curent_location );")
             total_count = cursor.fetchone()[0]
-            
+
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
 
 class AddcityInfo(generics.CreateAPIView):

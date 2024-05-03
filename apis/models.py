@@ -57,7 +57,7 @@ class ShipmentStatus(models.Model):
     surrender  = models.DateField(blank=True, null=True)
     containers  = models.CharField(max_length=300)
     status  = models.CharField(blank=True, null=True,max_length=100)
-    attachment = models.FileField(upload_to='static/media/shipment/',blank=True, null=True)
+    attachment = models.TextField()
     filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
@@ -77,7 +77,7 @@ class PortStatus(models.Model):
     driver_mobile_no = models.CharField(max_length=100)
     truck_placement_date = models.DateField()
     truck_out_date = models.DateField()
-    attachment = models.FileField(upload_to='static/media/port/', blank=True, null=True)
+    attachment = models.TextField()
     filename = models.CharField(max_length=255, blank=True, null=True)
     status  = models.CharField(blank=True, null=True,max_length=100)
     
@@ -88,8 +88,9 @@ class PortStatus(models.Model):
 
 class CityWiseTracker(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
-    bl_containers  = models.CharField(max_length=300)
     bl = models.CharField(max_length=100)
+    bl_containers  = models.CharField(max_length=300)
+    truck_no = models.CharField(max_length=100,blank=True, null=True)
     curent_location = models.CharField(max_length=100)
     date = models.DateField()
     status  = models.CharField(blank=True, null=True,max_length=100)
@@ -120,7 +121,6 @@ class EmptyContainerStatus(models.Model):
 
 
 # class DataModel(models.Model):
-    
 #     name = models.CharField(max_length=100)
 #     BL = models.CharField(max_length=100)
 #     CL = models.CharField(max_length=100)
