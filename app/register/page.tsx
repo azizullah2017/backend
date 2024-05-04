@@ -20,11 +20,13 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 const registerSchema = z.object({
     username: z.string().min(1, "User is required"),
@@ -41,6 +43,11 @@ const Register = () => {
     const [error, setError] = useState<{ email?: string; username?: string }>(
         {}
     );
+    // const { userData } = useAuth();
+    // const pushToRoute = {
+    //     staff: "/dashboard/clr-information",
+    //     customer: "/dashboard/customer",
+    // };
 
     const onSubmit = async (data: z.infer<typeof registerSchema>) => {
         const res = await fetch(`${BASE_URL}/api/auth/register/`, {
@@ -71,16 +78,25 @@ const Register = () => {
         }
     };
 
+    // useEffect(() => {
+    //     if (userData?.token === "" && userData?.role !== "admin") {
+    //         router.push(pushToRoute[userData?.role]);
+    //     }
+    // }, []);
+
     return (
         <>
             <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <img
-                        className="mx-auto h-10 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                        alt="Your Company"
-                    />
-                    <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                    <div className="flex justify-center">
+                        <Image
+                            src="/logo.jpg"
+                            alt="logo"
+                            width={180}
+                            height={180}
+                        />
+                    </div>
+                    <h2 className="mt-3 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                         Register Account
                     </h2>
                 </div>

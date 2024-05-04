@@ -33,29 +33,31 @@ const CityViseTracker = ({
     }, []);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const res = await fetch(
-                `${BASE_URL}/api/tracker?page=${page}&limit=${pageSize}`,
-                {
-                    headers: {
-                        Authorization: `Token ${userData.token}`,
-                    },
+        if ((page && revalidate) || page) {
+            const fetchData = async () => {
+                const res = await fetch(
+                    `${BASE_URL}/api/tracker?page=${page}&limit=${pageSize}`,
+                    {
+                        headers: {
+                            Authorization: `Token ${userData.token}`,
+                        },
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error("Something went wrong");
+                } else {
+                    const tableData = await res.json();
+
+                    setData(tableData.trackers);
+                    setTotalRows(tableData.total_count);
+                    setRevalidate(false);
                 }
-            );
+            };
 
-            if (!res.ok) {
-                throw new Error("Something went wrong");
-            } else {
-                const tableData = await res.json();
-
-                setData(tableData.trackers);
-                setTotalRows(tableData.total_count);
-                revalidate && setRevalidate(false);
-            }
-        };
-
-        fetchData();
-    }, [revalidate]);
+            fetchData();
+        }
+    }, [page, revalidate]);
 
     return (
         <>

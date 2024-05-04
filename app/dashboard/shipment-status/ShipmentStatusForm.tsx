@@ -27,6 +27,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
+import { Label } from "@/components/ui/label";
+import Combobox from "@/components/Combobox";
 
 const ShipmentStatusForm = ({
     isShowing,
@@ -39,6 +41,8 @@ const ShipmentStatusForm = ({
     const [containerInput, setContainerInput] = useState([]);
     const { staffInfo, setStaffInfo } = useStaffInformation();
     const [file, setFile] = useState<string>();
+    const [bookingNumbers, setBookingNumbers] = useState([]);
+    const [currentBookingNumber, setCurrentBookingNumber] = useState("");
     const router = useRouter();
     const { userData } = useAuth();
 
@@ -74,7 +78,7 @@ const ShipmentStatusForm = ({
 
         const updatedData = {
             bl: data.bl,
-            book_no: data.book_no,
+            book_no: currentBookingNumber,
             containers,
             docs: data.docs,
             eta_arrival: data.eta_arrival,
@@ -83,7 +87,7 @@ const ShipmentStatusForm = ({
             port: data.port,
             status: data.status,
             surrender: data.surrender,
-            attachment: file ? file : null,
+            attachment: file,
         };
 
         const res = await fetch(`${BASE_URL}/api/shipment`, {
@@ -133,6 +137,29 @@ const ShipmentStatusForm = ({
         }
     }, [isShowing]);
 
+    useEffect(() => {
+        const fetchBookingNumbers = async () => {
+            const res = await fetch(
+                `${BASE_URL}/api/shipment?query=booking_list`,
+                {
+                    headers: {
+                        Authorization: `Token ${userData?.token}`,
+                    },
+                }
+            );
+
+            if (!res.ok) {
+                throw new Error("Something went wrong");
+            } else {
+                const { booking_list } = await res.json();
+
+                setBookingNumbers(booking_list);
+            }
+        };
+
+        fetchBookingNumbers();
+    }, []);
+
     return (
         <Transition
             show={isShowing}
@@ -154,26 +181,26 @@ const ShipmentStatusForm = ({
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="flex flex-col gap-4 p-7">
                             <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="book_no"
-                                    defaultValue={staffInfo.bookingNumber}
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                Booking Number
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                    disabled
-                                                />
-                                            </FormControl>
-                                            {/* <FormMessage /> */}
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="w-full lg:flex-1">
+                                    <Label
+                                        htmlFor="name"
+                                        className="text-right"
+                                    >
+                                        Booking Number
+                                    </Label>
+                                    <div className="mt-2">
+                                        <Combobox
+                                            currentItem={currentBookingNumber}
+                                            itemsArray={bookingNumbers}
+                                            itemNotSelectedMessage="Select Booking #..."
+                                            commandEmptyMessage="No booking # found!"
+                                            setCurrentItem={
+                                                setCurrentBookingNumber
+                                            }
+                                            btnWidth="w-full"
+                                        />
+                                    </div>
+                                </div>
                                 <FormField
                                     control={form.control}
                                     name="bl"

@@ -28,7 +28,6 @@ const Pagination = ({
     if (pageCount <= 1) return null;
 
     const changePage = (page: number) => {
-        // send and api call here
         params.set("page", page.toString());
         router.push("?" + params.toString());
     };

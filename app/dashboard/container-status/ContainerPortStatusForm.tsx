@@ -21,11 +21,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
+import { Label } from "@/components/ui/label";
+import Combobox from "@/components/Combobox";
 
 const ContainerPortStatusForm = ({
     isShowing,
@@ -36,6 +38,10 @@ const ContainerPortStatusForm = ({
 }) => {
     const { staffInfo } = useStaffInformation();
     const [files, setFiles] = useState<string[]>([]);
+    const [currentBlNumber, setCurrentBlNumber] = useState("");
+    const [currentContainer, setCurrentContainer] = useState("");
+    const [containers, setContainers] = useState([]);
+    const [blNumbers, setBlNumbers] = useState([]);
     const router = useRouter();
     const { userData } = useAuth();
 
@@ -63,7 +69,7 @@ const ContainerPortStatusForm = ({
     const onSubmit = async (data) => {
         const updatedData = {
             book_no: data.book_no,
-            bl: data.bl,
+            bl: currentBlNumber,
             delivery_at: data.delivery_at,
             gd_no: data.gd_no,
             clearing_agent: data.clearing_agent,
@@ -73,9 +79,9 @@ const ContainerPortStatusForm = ({
             driver_mobile_no: data.driver_mobile_no,
             truck_placement_date: data.truck_placement_date,
             truck_out_date: data.truck_out_date,
-            bl_containers: data.bl_containers,
+            bl_containers: currentContainer,
             status: data.status,
-            attachment: files.length ? files : null,
+            attachment: files.length && files.join(","),
         };
 
         const res = await fetch(`${BASE_URL}/api/port`, {
@@ -100,6 +106,51 @@ const ContainerPortStatusForm = ({
         }
     };
 
+    useEffect(() => {
+        const fetchBlNumbers = async () => {
+            const res = await fetch(`${BASE_URL}/api/port?query=bl`, {
+                headers: {
+                    Authorization: `Token ${userData?.token}`,
+                },
+            });
+
+            if (!res.ok) {
+                throw new Error("Something went wrong");
+            } else {
+                const { bl_list } = await res.json();
+
+                setBlNumbers(bl_list);
+            }
+        };
+
+        fetchBlNumbers();
+    }, []);
+
+    useEffect(() => {
+        if (currentBlNumber) {
+            const fetchContainers = async () => {
+                const res = await fetch(
+                    `${BASE_URL}/api/port?bl=${currentBlNumber}`,
+                    {
+                        headers: {
+                            Authorization: `Token ${userData?.token}`,
+                        },
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error("Something went wrong");
+                } else {
+                    const { containers } = await res.json();
+
+                    setContainers(containers);
+                }
+            };
+
+            fetchContainers();
+        }
+    }, [currentBlNumber]);
+
     return (
         <Transition
             show={isShowing}
@@ -121,42 +172,42 @@ const ContainerPortStatusForm = ({
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="flex flex-col gap-4 p-7">
                             <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="bl"
-                                    defaultValue={staffInfo.blNumber}
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>BL Number</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                    disabled
-                                                />
-                                            </FormControl>
-                                            {/* <FormMessage /> */}
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="bl_containers"
-                                    defaultValue={staffInfo.containers}
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Containers</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                    disabled
-                                                />
-                                            </FormControl>
-                                            {/* <FormMessage /> */}
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="w-full lg:flex-1">
+                                    <Label
+                                        htmlFor="name"
+                                        className="text-right"
+                                    >
+                                        BL Numbers
+                                    </Label>
+                                    <div className="mt-2">
+                                        <Combobox
+                                            currentItem={currentBlNumber}
+                                            itemsArray={blNumbers}
+                                            itemNotSelectedMessage="Select BL..."
+                                            commandEmptyMessage="No BL # found!"
+                                            setCurrentItem={setCurrentBlNumber}
+                                            btnWidth="w-full"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full lg:flex-1">
+                                    <Label
+                                        htmlFor="name"
+                                        className="text-right"
+                                    >
+                                        Containers
+                                    </Label>
+                                    <div className="mt-2">
+                                        <Combobox
+                                            currentItem={currentContainer}
+                                            itemsArray={containers}
+                                            itemNotSelectedMessage="Select Container..."
+                                            commandEmptyMessage="No containers found!"
+                                            setCurrentItem={setCurrentContainer}
+                                            btnWidth="w-full"
+                                        />
+                                    </div>
+                                </div>
                                 <FormField
                                     control={form.control}
                                     name="delivery_at"

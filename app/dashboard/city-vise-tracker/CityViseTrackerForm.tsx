@@ -12,25 +12,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useMemo, useState } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+
 import { useStaffInformation } from "@/context/StaffInformationContext";
 import { toast } from "@/components/ui/use-toast";
 import {
@@ -43,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
+import Combobox from "@/components/Combobox";
 
 const CityViseTrackerForm = ({
     isShowing,
@@ -53,7 +40,6 @@ const CityViseTrackerForm = ({
     setIsShowing: () => void;
     setRevalidate: (arg: boolean) => void;
 }) => {
-    const [open, setOpen] = useState<boolean>(false);
     const [currentLocation, setCurrentLocation] = useState<string>("");
     const [status, setStatus] = useState<string>("");
     const [date, setDate] = useState<string>("");
@@ -151,73 +137,14 @@ const CityViseTrackerForm = ({
                                     >
                                         City
                                     </Label>
-                                    <Popover open={open} onOpenChange={setOpen}>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="outline"
-                                                role="combobox"
-                                                aria-expanded={open}
-                                                className="w-[200px] justify-between"
-                                            >
-                                                {currentLocation
-                                                    ? locations.find(
-                                                          (location) =>
-                                                              location ===
-                                                              currentLocation
-                                                      )
-                                                    : "Select City..."}
-                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-[200px] p-0">
-                                            <Command>
-                                                <CommandInput placeholder="Search City..." />
-                                                <CommandList>
-                                                    <CommandEmpty>
-                                                        No framework found.
-                                                    </CommandEmpty>
-                                                    <CommandGroup>
-                                                        {locations.map(
-                                                            (location) => (
-                                                                <CommandItem
-                                                                    key={
-                                                                        location
-                                                                    }
-                                                                    value={
-                                                                        location
-                                                                    }
-                                                                    onSelect={(
-                                                                        currentValue
-                                                                    ) => {
-                                                                        setCurrentLocation(
-                                                                            currentValue ===
-                                                                                currentLocation
-                                                                                ? ""
-                                                                                : currentValue
-                                                                        );
-                                                                        setOpen(
-                                                                            false
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    <Check
-                                                                        className={cn(
-                                                                            "mr-2 h-4 w-4",
-                                                                            currentLocation ===
-                                                                                location
-                                                                                ? "opacity-100"
-                                                                                : "opacity-0"
-                                                                        )}
-                                                                    />
-                                                                    {location}
-                                                                </CommandItem>
-                                                            )
-                                                        )}
-                                                    </CommandGroup>
-                                                </CommandList>
-                                            </Command>
-                                        </PopoverContent>
-                                    </Popover>
+                                    <Combobox
+                                        currentItem={currentLocation}
+                                        itemsArray={locations}
+                                        itemNotSelectedMessage="Select City..."
+                                        commandEmptyMessage="No city found"
+                                        setCurrentItem={setCurrentLocation}
+                                        btnWidth="w-[200px]"
+                                    />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label

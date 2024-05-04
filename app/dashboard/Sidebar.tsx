@@ -58,9 +58,9 @@ const SideBar = () => {
     const { userData } = useAuth();
 
     return (
-        <div className="sticky top-10">
-            <div className="flex justify-center py-7">
-                <Image src="/next.svg" alt="" width={150} height={150} />
+        <div className="sticky">
+            <div className="flex justify-center py-1">
+                <Image src="/logo.jpg" alt="" width={130} height={130} />
             </div>
             <hr />
             <ul className="list-none mt-5">
