@@ -60,7 +60,7 @@ const SideBar = () => {
     return (
         <div className="sticky">
             <div className="flex justify-center py-1">
-                <Image src="/logo.jpg" alt="" width={130} height={130} />
+                <Image src="/logo.jpg" alt="" width={250} height={250} />
             </div>
             <hr />
             <ul className="list-none mt-5">

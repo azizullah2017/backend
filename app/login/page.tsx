@@ -93,8 +93,8 @@ const Login = () => {
                         <Image
                             src="/logo.jpg"
                             alt="logo"
-                            width={180}
-                            height={180}
+                            width={250}
+                            height={250}
                         />
                     </div>
                     <h2 className="mt-3 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

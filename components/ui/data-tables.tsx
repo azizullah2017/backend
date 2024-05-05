@@ -20,9 +20,10 @@ import Pagination from "../Pagination";
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    pageSize: number;
-    currentPage: number;
-    totalRows: number;
+    pageSize?: number;
+    currentPage?: number;
+    totalRows?: number;
+    pagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -31,6 +32,7 @@ export function DataTable<TData, TValue>({
     pageSize,
     currentPage,
     totalRows,
+    pagination = true,
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -96,11 +98,13 @@ export function DataTable<TData, TValue>({
                     </Table>
                 </div>
             </div>
-            <Pagination
-                itemCount={totalRows}
-                pageSize={pageSize}
-                currentPage={currentPage}
-            />
+            {pagination && (
+                <Pagination
+                    itemCount={totalRows}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                />
+            )}
         </>
     );
 }

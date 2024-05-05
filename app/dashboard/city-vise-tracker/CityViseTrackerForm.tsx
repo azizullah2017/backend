@@ -30,6 +30,8 @@ import {
 import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
 import Combobox from "@/components/Combobox";
+import { DataTable } from "@/components/ui/data-tables";
+import { truckDetailColumns } from "./truckDetailColumns";
 
 const CityViseTrackerForm = ({
     isShowing,
@@ -46,6 +48,9 @@ const CityViseTrackerForm = ({
     const [bl, setBl] = useState<string>("");
     const [locations, setLocations] = useState([]);
     const [containers, setContainers] = useState<string>("");
+    const [currentTruck, setCurrentTruck] = useState<string>("");
+    const [trucks, setTrucks] = useState([]);
+    const [truckDetails, setTruckDetails] = useState([]);
     const { staffInfo } = useStaffInformation();
     const { userData } = useAuth();
 
@@ -64,11 +69,60 @@ const CityViseTrackerForm = ({
                 },
             });
 
-            const responseData = await res.json();
-            setLocations(responseData.cities);
+            if (!res.ok) {
+                throw new Error("Something went wrong");
+            } else {
+                const { cities } = await res.json();
+                setLocations(cities);
+            }
         };
         citiesFunc();
     }, []);
+
+    useEffect(() => {
+        const fetchTrucks = async () => {
+            const res = await fetch(`${BASE_URL}/api/tracker?query=truck`, {
+                headers: {
+                    Authorization: `Token ${userData?.token}`,
+                },
+            });
+
+            if (!res.ok) {
+                throw new Error("Something went wrong");
+            } else {
+                const { truck_list } = await res.json();
+
+                setTrucks(truck_list);
+            }
+        };
+
+        fetchTrucks();
+    }, []);
+
+    useEffect(() => {
+        if (currentTruck) {
+            const fetchTruckDetails = async () => {
+                const res = await fetch(
+                    `${BASE_URL}/api/tracker?truck=${currentTruck}`,
+                    {
+                        headers: {
+                            Authorization: `Token ${userData?.token}`,
+                        },
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error("Something went wrong");
+                } else {
+                    const { trackers } = await res.json();
+
+                    setTruckDetails(trackers);
+                }
+            };
+
+            fetchTruckDetails();
+        }
+    }, [currentTruck]);
 
     const submitForm = async () => {
         const data = {
@@ -201,11 +255,21 @@ const CityViseTrackerForm = ({
                         </DialogContent>
                     </Dialog>
                 </div>
-                <div className="mx-5 mt-5">
+                <div className="mx-5 mt-5 space-y-3">
                     <Label htmlFor="bl">BL Number</Label>
-                    <Input type="text" value={bl} className="mb-4" disabled />
-                    <Label htmlFor="bl_containers">Containers</Label>
-                    <Input type="text" value={containers} disabled />
+                    <Combobox
+                        currentItem={currentTruck}
+                        itemsArray={trucks}
+                        itemNotSelectedMessage="Select Truck..."
+                        commandEmptyMessage="No truck found"
+                        setCurrentItem={setCurrentTruck}
+                        btnWidth="w-full"
+                    />
+                    <DataTable
+                        columns={truckDetailColumns}
+                        data={truckDetails}
+                        pagination={false}
+                    />
                 </div>
             </div>
         </Transition>

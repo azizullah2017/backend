@@ -69,7 +69,7 @@ const ContainerStatus = ({
                     />
                 </div>
             </div>
-            <div className="mt-5">
+            <div className="mt-5 w-[80vw]">
                 <DataTable
                     columns={columns}
                     data={data}
