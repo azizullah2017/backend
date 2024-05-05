@@ -231,15 +231,15 @@ class TrackerInfo(generics.CreateAPIView):
                 flat_list = [item for sublist in rows for item in sublist]
                 return JsonResponse({'truck_list': flat_list}, status=status.HTTP_200_OK)
         
-        elif request.query_params.get('truck_no'):
+        elif request.query_params.get('truck'):
             with connection.cursor() as cursor:
-                cursor.execute(f"SELECT * FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{request.query_params.get('bl')}';")
+                cursor.execute(f"SELECT * FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{request.query_params.get('truck')}';")
                 rows = cursor.fetchall()
-                flat_list = [item for sublist in rows for item in sublist]
-                return JsonResponse({'truck_list': flat_list}, status=status.HTTP_200_OK)
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+                return JsonResponse({'truck_list': serialized_data}, status=status.HTTP_200_OK)
         
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT uid,  bl, bl_containers, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY curent_location LIMIT %s OFFSET %s", [limit, offset])
+            cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY curent_location LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
