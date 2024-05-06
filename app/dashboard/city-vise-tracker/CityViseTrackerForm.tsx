@@ -115,12 +115,12 @@ const CityViseTrackerForm = ({
                 if (!res.ok) {
                     throw new Error("Something went wrong");
                 } else {
-                    const { trackers } = await res.json();
+                    const { truck_list } = await res.json();
 
-                    setTruckDetails(trackers);
+                    setTruckDetails(truck_list);
                     setTruckData({
-                        bl: trackers[0].bl,
-                        blContainers: trackers[0].bl_containers
+                        bl: truck_list[0].bl,
+                        blContainers: truck_list[0].bl_containers
                             .split(",")
                             .join(", "),
                         truckNo: currentTruck,
