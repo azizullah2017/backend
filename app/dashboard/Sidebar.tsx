@@ -18,7 +18,7 @@ export type menuItemsType = {
 const menuItems: menuItemsType[] = [
     {
         title: "Dashboard",
-        path: "/dashboard",
+        path: "/",
         icon: <ImHome className="w-5 h-5" />,
         role: ["admin"],
     },

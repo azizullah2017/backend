@@ -51,6 +51,7 @@ const CityViseTrackerForm = ({
     const [currentTruck, setCurrentTruck] = useState<string>("");
     const [trucks, setTrucks] = useState([]);
     const [truckDetails, setTruckDetails] = useState([]);
+    const [truckData, setTruckData] = useState({});
     const { staffInfo } = useStaffInformation();
     const { userData } = useAuth();
 
@@ -117,6 +118,13 @@ const CityViseTrackerForm = ({
                     const { trackers } = await res.json();
 
                     setTruckDetails(trackers);
+                    setTruckData({
+                        bl: trackers[0].bl,
+                        blContainers: trackers[0].bl_containers
+                            .split(",")
+                            .join(", "),
+                        truckNo: currentTruck,
+                    });
                 }
             };
 
@@ -256,7 +264,7 @@ const CityViseTrackerForm = ({
                     </Dialog>
                 </div>
                 <div className="mx-5 mt-5 space-y-3">
-                    <Label htmlFor="bl">BL Number</Label>
+                    <Label htmlFor="bl">Truck Number</Label>
                     <Combobox
                         currentItem={currentTruck}
                         itemsArray={trucks}
@@ -265,6 +273,18 @@ const CityViseTrackerForm = ({
                         setCurrentItem={setCurrentTruck}
                         btnWidth="w-full"
                     />
+                    <p>
+                        <span className="font-semibold">BL Number: </span>
+                        {truckData.bl}
+                    </p>
+                    <p>
+                        <span className="font-semibold">Containers: </span>
+                        {truckData.blContainers}
+                    </p>
+                    <p>
+                        <span className="font-semibold">Truck Number: </span>
+                        {truckData.truckNo}
+                    </p>
                     <DataTable
                         columns={truckDetailColumns}
                         data={truckDetails}

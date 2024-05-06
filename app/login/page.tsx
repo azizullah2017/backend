@@ -37,7 +37,7 @@ const Login = () => {
 
     const pushToRoute = {
         staff: "/dashboard/clr-information",
-        admin: "/dashboard",
+        admin: "/",
         customer: "/dashboard/customer",
     };
 

@@ -36,6 +36,10 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
         },
     },
     {
+        accessorKey: "truck_no",
+        header: "Truck Number",
+    },
+    {
         accessorKey: "curent_location",
         header: "Current Location",
     },

@@ -28,6 +28,7 @@ import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
 import { Label } from "@/components/ui/label";
 import Combobox from "@/components/Combobox";
+import { MultiSelect } from "@/components/MultiSelect";
 
 const ContainerPortStatusForm = ({
     isShowing,
@@ -39,7 +40,7 @@ const ContainerPortStatusForm = ({
     const { staffInfo } = useStaffInformation();
     const [files, setFiles] = useState<string[]>([]);
     const [currentBlNumber, setCurrentBlNumber] = useState("");
-    const [currentContainer, setCurrentContainer] = useState("");
+    const [currentContainers, setCurrentContainers] = useState<string[]>([]);
     const [containers, setContainers] = useState([]);
     const [blNumbers, setBlNumbers] = useState([]);
     const router = useRouter();
@@ -79,7 +80,7 @@ const ContainerPortStatusForm = ({
             driver_mobile_no: data.driver_mobile_no,
             truck_placement_date: data.truck_placement_date,
             truck_out_date: data.truck_out_date,
-            bl_containers: currentContainer,
+            bl_containers: currentContainers.join(","),
             status: data.status,
             attachment: files.length && files.join(","),
         };
@@ -190,24 +191,6 @@ const ContainerPortStatusForm = ({
                                         />
                                     </div>
                                 </div>
-                                <div className="w-full lg:flex-1">
-                                    <Label
-                                        htmlFor="name"
-                                        className="text-right"
-                                    >
-                                        Containers
-                                    </Label>
-                                    <div className="mt-2">
-                                        <Combobox
-                                            currentItem={currentContainer}
-                                            itemsArray={containers}
-                                            itemNotSelectedMessage="Select Container..."
-                                            commandEmptyMessage="No containers found!"
-                                            setCurrentItem={setCurrentContainer}
-                                            btnWidth="w-full"
-                                        />
-                                    </div>
-                                </div>
                                 <FormField
                                     control={form.control}
                                     name="delivery_at"
@@ -224,6 +207,19 @@ const ContainerPortStatusForm = ({
                                         </FormItem>
                                     )}
                                 />
+                            </div>
+                            <div className="w-full lg:flex-1">
+                                <Label htmlFor="name" className="text-right">
+                                    Containers
+                                </Label>
+                                <div className="mt-2">
+                                    <MultiSelect
+                                        options={containers}
+                                        selected={currentContainers}
+                                        onChange={setCurrentContainers}
+                                        className="w-full"
+                                    />
+                                </div>
                             </div>
                             <div className="flex flex-wrap gap-4">
                                 <FormField
