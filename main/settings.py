@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "apis",
     "corsheaders",
     "rest_framework",
-    'rest_framework.authtoken',
+    "rest_framework.authtoken",
+    "sslserver"
 ]
 
 AUTH_USER_MODEL = 'apis.User'
