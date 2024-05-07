@@ -71,6 +71,7 @@ const CityViseTracker = ({
                         isShowing={isShowing}
                         setIsShowing={setIsShowing}
                         setRevalidate={setRevalidate}
+                        revalidate={revalidate}
                     />
                 </div>
             </div>

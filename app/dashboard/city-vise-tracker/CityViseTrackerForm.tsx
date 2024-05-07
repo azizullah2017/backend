@@ -33,15 +33,19 @@ import Combobox from "@/components/Combobox";
 import { DataTable } from "@/components/ui/data-tables";
 import { truckDetailColumns } from "./truckDetailColumns";
 
+type CityViseTrackerFormType = {
+    isShowing: boolean;
+    setIsShowing: () => void;
+    setRevalidate: (arg: boolean) => void;
+    revalidate: boolean;
+};
+
 const CityViseTrackerForm = ({
     isShowing,
     setIsShowing,
     setRevalidate,
-}: {
-    isShowing: boolean;
-    setIsShowing: () => void;
-    setRevalidate: (arg: boolean) => void;
-}) => {
+    revalidate,
+}: CityViseTrackerFormType) => {
     const [currentLocation, setCurrentLocation] = useState<string>("");
     const [status, setStatus] = useState<string>("");
     const [date, setDate] = useState<string>("");
@@ -101,7 +105,7 @@ const CityViseTrackerForm = ({
     }, []);
 
     useEffect(() => {
-        if (currentTruck) {
+        if (currentTruck || revalidate) {
             const fetchTruckDetails = async () => {
                 const res = await fetch(
                     `${BASE_URL}/api/tracker?truck=${currentTruck}`,
@@ -130,7 +134,7 @@ const CityViseTrackerForm = ({
 
             fetchTruckDetails();
         }
-    }, [currentTruck]);
+    }, [currentTruck, revalidate]);
 
     const submitForm = async () => {
         const data = {
@@ -140,6 +144,7 @@ const CityViseTrackerForm = ({
             curent_location: currentLocation,
             date,
             status,
+            truck_no: currentTruck,
         };
 
         const res = await fetch(`${BASE_URL}/api/tracker`, {
@@ -156,7 +161,7 @@ const CityViseTrackerForm = ({
         } else {
             toast({
                 title: "Success",
-                description: "Shipment Status Added Successfully!",
+                description: "City Vise Tracker Added Successfully!",
                 className: "bg-green-200",
             });
             setRevalidate(true);
@@ -256,7 +261,11 @@ const CityViseTrackerForm = ({
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="button" onClick={submitForm}>
+                                <Button
+                                    type="button"
+                                    onClick={submitForm}
+                                    disabled={!currentTruck}
+                                >
                                     Save changes
                                 </Button>
                             </DialogFooter>
