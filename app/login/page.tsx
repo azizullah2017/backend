@@ -83,7 +83,7 @@ const Login = () => {
         if (userData?.token !== "") {
             router.push(pushToRoute[userData?.role]);
         }
-    }, []);
+    }, [userData?.token]);
 
     return (
         <>

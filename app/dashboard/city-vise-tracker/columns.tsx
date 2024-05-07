@@ -32,7 +32,9 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
         cell: ({ row }) => {
             const containers = row.original.bl_containers.split(",");
 
-            return containers.map((container) => <p>{container}</p>);
+            return containers.map((container, index) => (
+                <p key={index}>{container}</p>
+            ));
         },
     },
     {

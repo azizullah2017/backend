@@ -384,10 +384,11 @@ const ShipmentStatusForm = ({
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-4">
-                                {containerInput.map((container) => (
+                                {containerInput.map((container, index) => (
                                     <FormField
                                         control={form.control}
                                         name={container.name}
+                                        key={index}
                                         render={({ field }) => (
                                             <FormItem className="w-full lg:flex-1">
                                                 <FormLabel>

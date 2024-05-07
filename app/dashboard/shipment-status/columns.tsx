@@ -60,7 +60,9 @@ export const columns: ColumnDef<CLRInformation>[] = [
         cell: ({ row }) => {
             const containers = row.original.containers.split(",");
 
-            return containers.map((container) => <p>{container}</p>);
+            return containers.map((container, index) => (
+                <p key={index}>{container}</p>
+            ));
         },
     },
     {
