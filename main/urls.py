@@ -4,7 +4,7 @@ from django.urls import path, include
 from apis.views import UserRegistrationView, UserLoginView, \
     UserLogoutView, ClrInfo, UpdatePortInfo,UpdateTrackerInfo, \
     GetUser, ShipmentInfo, PortInfo, TrackerInfo,UpdateCLRAPIView,\
-     UpdateShipmentInfo, CityInfo, AddcityInfo
+     UpdateShipmentInfo, CityInfo, AddcityInfo, ClientView
 
 urlpatterns = [
     path('api/auth/register/', UserRegistrationView.as_view(), name='user-registration'),
@@ -21,6 +21,8 @@ urlpatterns = [
     path('api/cities', CityInfo.as_view(), name='get-city'),
     path('api/cities', CityInfo.as_view(), name='get-city'),
     path('api/city', AddcityInfo.as_view(), name='add-city'),
+    path('api/client', AddcityInfo.as_view(), name='add-city'),
+
     path("admin/", admin.site.urls),
     
     

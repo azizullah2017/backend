@@ -175,7 +175,7 @@ class PortInfo(generics.CreateAPIView):
 
         if request.query_params.get('query') == "bl":
             with connection.cursor() as cursor:
-                cursor.execute(f"SELECT bl FROM {ShipmentStatus._meta.db_table} WHERE status = 'done'  AND bl NOT IN (SELECT bl FROM {PortStatus._meta.db_table} WHERE status='done');")
+                cursor.execute(f"SELECT bl FROM {ShipmentStatus._meta.db_table} as ship WHERE status = 'done'  AND bl NOT IN (SELECT bl FROM {PortStatus._meta.db_table} WHERE status='done' AND ship.containers = bl_containers);")
                 rows = cursor.fetchall()
                 flat_list = [item for sublist in rows for item in sublist]
                 return JsonResponse({'bl_list': flat_list}, status=status.HTTP_200_OK)
@@ -235,16 +235,20 @@ class TrackerInfo(generics.CreateAPIView):
             with connection.cursor() as cursor:
                 cursor.execute(f"SELECT * FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{request.query_params.get('truck')}';")
                 rows = cursor.fetchall()
+
+                if not rows:
+                    cursor.execute(f"SELECT bl, bl_containers, truck_no FROM {PortStatus._meta.db_table} WHERE truck_no='{request.query_params.get('truck')}';")
+                    rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
                 return JsonResponse({'truck_list': serialized_data}, status=status.HTTP_200_OK)
         
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY curent_location LIMIT %s OFFSET %s", [limit, offset])
+            cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
             # Execute query to fetch total count of records
-            cursor.execute(f"SELECT COUNT(*) FROM (SELECT uid, curent_location,MAX(date), bl, bl_containers, status FROM {CityWiseTracker._meta.db_table} GROUP BY curent_location );")
+            cursor.execute(f"SELECT COUNT(*) FROM (SELECT uid, curent_location,MAX(date), bl, bl_containers, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no );")
             total_count = cursor.fetchone()[0]
 
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
@@ -289,4 +293,26 @@ class CityInfo(generics.CreateAPIView):
         trackers = list(trackers.values())
 
         cities = ["Karachi","Lasbella","Wadh","Khuzdar","Quetta","ChamanYard","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Mardab","Torkham","Ghulam khan","Salang","Hairtan","Torkham","Jalal abad","Kabul","Salang","Hairtan","Chaman","Spin Boldak","Kandahar","Ghazni","Salang","Hairtan"]
-        return Response({'cities': cities}, status=status.HTTP_200_OK) 
+        return Response({'cities': list(set(cities))}, status=status.HTTP_200_OK) 
+
+
+
+class ClientView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    # serializer_class = CityWiseTrackerSerializer
+    http_method_names = ['get']
+    
+    
+    def get(self, request):
+        with connection.cursor() as cursor:
+            query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.bl=city.bl WHERE city.date in ( SELECT MAX(date) as date FROM apis_citywisetracker GROUP BY curent_location)"
+            cursor.execute("SELECT * "+query)
+            rows = cursor.fetchall()
+            serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+            cursor.execute(f"SELECT COUNT(*) "+query)
+            total_count = cursor.fetchone()[0]
+            
+            return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
+    
+# SELECT * FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.bl=city.bl WHERE city.date in ( SELECT MAX(date) as date FROM apis_citywisetracker GROUP BY curent_location);
