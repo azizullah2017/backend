@@ -21,7 +21,7 @@ urlpatterns = [
     path('api/cities', CityInfo.as_view(), name='get-city'),
     path('api/cities', CityInfo.as_view(), name='get-city'),
     path('api/city', AddcityInfo.as_view(), name='add-city'),
-    path('api/client', AddcityInfo.as_view(), name='add-city'),
+    path('api/client', ClientView.as_view(), name='add-city'),
 
     path("admin/", admin.site.urls),
     

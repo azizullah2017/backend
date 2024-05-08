@@ -304,8 +304,10 @@ class ClientView(generics.CreateAPIView):
     
     
     def get(self, request):
+        print("================================rows=>>>>")
         with connection.cursor() as cursor:
-            query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.bl=city.bl WHERE city.date in ( SELECT MAX(date) as date FROM apis_citywisetracker GROUP BY curent_location)"
+            query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no);"
+            # query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.bl=city.bl WHERE city.date in ( SELECT MAX(date) as date FROM apis_citywisetracker GROUP BY truck_no)"
             cursor.execute("SELECT * "+query)
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
