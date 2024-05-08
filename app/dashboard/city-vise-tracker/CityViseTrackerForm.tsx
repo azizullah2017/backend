@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 
-import { useStaffInformation } from "@/context/StaffInformationContext";
 import { toast } from "@/components/ui/use-toast";
 import {
     Select,
@@ -49,22 +48,12 @@ const CityViseTrackerForm = ({
     const [currentLocation, setCurrentLocation] = useState<string>("");
     const [status, setStatus] = useState<string>("");
     const [date, setDate] = useState<string>("");
-    const [bl, setBl] = useState<string>("");
     const [locations, setLocations] = useState([]);
-    const [containers, setContainers] = useState<string>("");
     const [currentTruck, setCurrentTruck] = useState<string>("");
     const [trucks, setTrucks] = useState([]);
     const [truckDetails, setTruckDetails] = useState([]);
     const [truckData, setTruckData] = useState({});
-    const { staffInfo } = useStaffInformation();
     const { userData } = useAuth();
-
-    useEffect(() => {
-        if (staffInfo.blNumber && staffInfo.containers) {
-            setContainers(staffInfo.containers);
-            setBl(staffInfo.blNumber);
-        }
-    }, [bl, containers]);
 
     useEffect(() => {
         const citiesFunc = async () => {
@@ -124,7 +113,7 @@ const CityViseTrackerForm = ({
                     setTruckDetails(truck_list);
                     setTruckData({
                         bl: truck_list[0].bl,
-                        blContainers: truck_list[0].bl_containers
+                        blContainers: truck_list[5].bl_containers
                             .split(",")
                             .join(", "),
                         truckNo: currentTruck,
@@ -137,10 +126,14 @@ const CityViseTrackerForm = ({
     }, [currentTruck, revalidate]);
 
     const submitForm = async () => {
+        const containers = truckData.blContainers.split(",");
+        const updatedCont = containers
+            .map((container) => container.trim())
+            .join(",");
+
         const data = {
-            //Todo: change this before deployment
-            bl_containers: containers ? containers : "123,123",
-            bl: bl ? bl : "test",
+            bl_containers: updatedCont,
+            bl: truckData.bl,
             curent_location: currentLocation,
             date,
             status,
