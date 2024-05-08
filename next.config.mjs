@@ -4,6 +4,7 @@ const nextConfig = {
         ignoreBuildErrors: true,
     },
     experimental: { missingSuspenseWithCSRBailout: false },
+    distDir: "build",
 };
 
 export default nextConfig;
