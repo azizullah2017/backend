@@ -47,8 +47,8 @@ const menuItems: menuItemsType[] = [
         role: ["staff", "admin"],
     },
     {
-        title: "Tracker",
-        path: "/dashboard/tracker",
+        title: "Client View",
+        path: "/dashboard/client-view",
         icon: <GiDigitalTrace className="w-5 h-5" />,
         role: ["customer", "admin"],
     },

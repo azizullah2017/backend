@@ -56,22 +56,27 @@ const CityViseTrackerForm = ({
     const { userData } = useAuth();
 
     useEffect(() => {
-        const citiesFunc = async () => {
-            const res = await fetch(`${BASE_URL}/api/cities`, {
-                headers: {
-                    Authorization: `Token ${userData?.token}`,
-                },
-            });
+        if (currentTruck) {
+            const citiesFunc = async () => {
+                const res = await fetch(
+                    `${BASE_URL}/api/cities?truck=${currentTruck}`,
+                    {
+                        headers: {
+                            Authorization: `Token ${userData?.token}`,
+                        },
+                    }
+                );
 
-            if (!res.ok) {
-                throw new Error("Something went wrong");
-            } else {
-                const { cities } = await res.json();
-                setLocations(cities);
-            }
-        };
-        citiesFunc();
-    }, []);
+                if (!res.ok) {
+                    throw new Error("Something went wrong");
+                } else {
+                    const { cities } = await res.json();
+                    setLocations(cities);
+                }
+            };
+            citiesFunc();
+        }
+    }, [currentTruck]);
 
     useEffect(() => {
         const fetchTrucks = async () => {
