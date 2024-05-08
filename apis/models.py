@@ -38,8 +38,8 @@ class CLRModel(models.Model):
     vessel  = models.CharField(max_length=100)
     status  = models.CharField(blank=True, null=True,max_length=100)
     eta_karachi  = models.DateField()
-    attachment = models.FileField(upload_to='static/media/clr/',blank=True, null=True)
-    filename = models.CharField(max_length=255, blank=True, null=True)
+    attachment = models.TextField(blank=True,null=True)
+    # filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.uid
@@ -57,8 +57,8 @@ class ShipmentStatus(models.Model):
     surrender  = models.DateField(blank=True, null=True)
     containers  = models.CharField(max_length=300)
     status  = models.CharField(blank=True, null=True,max_length=100)
-    attachment = models.TextField()
-    filename = models.CharField(max_length=255, blank=True, null=True)
+    attachment = models.TextField(blank=True,null=True)
+    # filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.uid
@@ -77,8 +77,8 @@ class PortStatus(models.Model):
     driver_mobile_no = models.CharField(max_length=100)
     truck_placement_date = models.DateField()
     truck_out_date = models.DateField()
-    attachment = models.TextField()
-    filename = models.CharField(max_length=255, blank=True, null=True)
+    attachment = models.TextField(blank=True,null=True)
+    # filename = models.CharField(max_length=255, blank=True, null=True)
     status  = models.CharField(blank=True, null=True,max_length=100)
     
 

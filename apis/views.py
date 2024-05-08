@@ -76,6 +76,27 @@ class ClrInfo(generics.CreateAPIView):
         # Calculate the offset based on the page number and limit
         offset = (page_number - 1) * limit
 
+        if request.query_params.get('search'):
+            with connection.cursor() as cursor:
+                query =f" FROM {CLRModel._meta.db_table} \
+                WHERE shipper LIKE '%{request.query_params.get('search')}%' \
+                OR shipper_reference LIKE '%{request.query_params.get('search')}%' \
+                OR consignee LIKE '%{request.query_params.get('search')}%' \
+                OR book_no LIKE '%{request.query_params.get('search')}%'"
+                print(query)
+                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                rows = cursor.fetchall()
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+                # Execute query to fetch total count of records
+                cursor.execute(f"SELECT COUNT(*) "+query)
+                total_count = cursor.fetchone()[0]
+
+                return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
+        
+            
+            
+
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {CLRModel._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
@@ -299,12 +320,10 @@ class CityInfo(generics.CreateAPIView):
 
 class ClientView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    # serializer_class = CityWiseTrackerSerializer
     http_method_names = ['get']
     
     
     def get(self, request):
-        print("================================rows=>>>>")
         with connection.cursor() as cursor:
             query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no);"
             # query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.bl=city.bl WHERE city.date in ( SELECT MAX(date) as date FROM apis_citywisetracker GROUP BY truck_no)"
@@ -316,5 +335,3 @@ class ClientView(generics.CreateAPIView):
             total_count = cursor.fetchone()[0]
             
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
-    
-# SELECT * FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.bl=city.bl WHERE city.date in ( SELECT MAX(date) as date FROM apis_citywisetracker GROUP BY curent_location);
