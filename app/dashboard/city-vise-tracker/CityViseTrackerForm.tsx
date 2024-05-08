@@ -113,7 +113,7 @@ const CityViseTrackerForm = ({
                     setTruckDetails(truck_list);
                     setTruckData({
                         bl: truck_list[0].bl,
-                        blContainers: truck_list[5].bl_containers
+                        blContainers: truck_list[0].bl_containers
                             .split(",")
                             .join(", "),
                         truckNo: currentTruck,
