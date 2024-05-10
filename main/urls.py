@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/auth/register/', UserRegistrationView.as_view(), name='user-registration'),
     path('api/auth/login/', UserLoginView.as_view(), name='user-login'),
     path('api/auth/logout/', UserLogoutView.as_view(), name='user-logout'),
+    path("api/users", GetUser.as_view(), name='users-list'),
     path('api/clr', ClrInfo.as_view(), name='add-clr'),
     path('api/clr/update/<str:pk>/', UpdateCLRAPIView.as_view(), name='clr-update'),
     path('api/shipment', ShipmentInfo.as_view(), name='shipment'),
@@ -22,8 +23,8 @@ urlpatterns = [
     path('api/cities', CityInfo.as_view(), name='get-city'),
     path('api/city', AddcityInfo.as_view(), name='add-city'),
     path('api/client', ClientView.as_view(), name='add-city'),
-
     path("admin/", admin.site.urls),
+    
     
     
 ]

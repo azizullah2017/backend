@@ -26,6 +26,8 @@ class ClrSerializer(serializers.ModelSerializer):
         # if 'status' in validated_data:
         #     instance.datd = validated_data['datd']
         return super().update(instance, validated_data)
+        
+    
 
     def create(self, validated_data):
         # print("validated_data: ",validated_data['attachment'].name)

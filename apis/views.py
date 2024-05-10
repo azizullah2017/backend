@@ -114,7 +114,8 @@ class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return CLRModel.objects.filter(pk=self.request.data["uid"])
+        # print(self.kwargs.get('pk'))
+        return CLRModel.objects.filter(pk=self.kwargs.get('pk'))
 
 
 class CLRSearchView(generics.ListAPIView):
