@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"aziz\",\n  \"email\": \"aziz@example.com\",\n  \"password\": \"$tr0ngPa$$w0rd\",\n  \"role\": \"staff\"\n}",
+					"raw": "{\n  \"username\": \"Maisam\",\n  \"email\": \"maisam@lachinshipping.com\",\n  \"password\": \"$tr0ngPa$$w0rd\",\n  \"role\": \"staff\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,12 +20,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/auth/register/",
-					"protocol": "http",
+					"raw": "https://tracker.lachinshipping.com/api/auth/register/",
+					"protocol": "https",
 					"host": [
-						"localhost"
+						"tracker",
+						"lachinshipping",
+						"com"
 					],
-					"port": "8000",
 					"path": [
 						"api",
 						"auth",
@@ -43,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"aziz\",\n  \"password\": \"$tr0ngPa$$w0rd\"\n}",
+					"raw": "{\n  \"username\": \"Maisam\",\n  \"password\": \"$tr0ngPa$$w0rd\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -51,10 +52,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/auth/login/",
-					"protocol": "http",
+					"raw": "https://tracker.lachinshipping.com:8000/api/auth/login/",
+					"protocol": "https",
 					"host": [
-						"localhost"
+						"tracker",
+						"lachinshipping",
+						"com"
 					],
 					"port": "8000",
 					"path": [
@@ -149,6 +152,45 @@
 					}
 				],
 				"url": {
+					"raw": "http://127.0.0.1:8000/api/clr?page=1&limit=10",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"clr"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search list clrs (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"url": {
 					"raw": "http://127.0.0.1:8000/api/clr?search=NOI&page=1&limit=10",
 					"protocol": "http",
 					"host": [
@@ -193,7 +235,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{   \"uid\": \"b05ce184-70e9-459a-881b-f16458dee45a\",\n    \"shipper_reference\":\"aziz\",\n    \"shipper\": \"0LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-04-30\"\n}",
+					"raw": "{\n    \"shipper_reference\": \"aziz\",\n    \"shipper\": \"0LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-04-30\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -231,7 +273,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"uid\": \"ce6c8c8232d84e7c86d453d770e6f48b\",\n    \"shipper\": \"NOI\",\n    \"shipper_reference\": \"FDSF-2342AD\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"OSL-2567/21\",\n    \"no_container\": \"4\",\n    \"size\": \"20 feet\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-05-07\",\n    \"vessel\": \"INDFADAFS\",\n    \"status\": \"done\",\n    \"eta_karachi\": \"2024-05-08\"\n}",
+					"raw": "{\n    \"uid\": \"d02640b1ca7c493c99d035a17d7c2492\",\n    \"shipper\": \"P-OI\",\n    \"shipper_reference\": \"FDSF-2342AD\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"OSL-2567/21\",\n    \"no_container\": \"4\",\n    \"size\": \"20 feet\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-05-07\",\n    \"vessel\": \"INDFADAFS\",\n    \"status\": \"done\",\n    \"eta_karachi\": \"2024-05-08\",\n    \"attachment\": null\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -239,7 +281,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/clr/update/ce6c8c8232d84e7c86d453d770e6f48b/",
+					"raw": "http://127.0.0.1:8000/api/clr/update/d02640b1ca7c493c99d035a17d7c2492/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -252,7 +294,7 @@
 						"api",
 						"clr",
 						"update",
-						"ce6c8c8232d84e7c86d453d770e6f48b",
+						"d02640b1ca7c493c99d035a17d7c2492",
 						""
 					]
 				}
@@ -270,17 +312,8 @@
 						"type": "default"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"uid\": \"ce6c8c8232d84e7c86d453d770e6f48b\",\n    \"shipper\": \"NOI\",\n    \"shipper_reference\": \"FDSF-2342AD\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"OSL-2567/21\",\n    \"no_container\": \"4\",\n    \"size\": \"20 feet\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-05-07\",\n    \"vessel\": \"INDFADAFS\",\n    \"status\": \"done\",\n    \"eta_karachi\": \"2024-05-08\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/clr/update/ce6c8c8232d84e7c86d453d770e6f48b/",
+					"raw": "http://127.0.0.1:8000/api/clr/update/1bcc929d935444acb790ed444ce22a37/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -293,7 +326,7 @@
 						"api",
 						"clr",
 						"update",
-						"ce6c8c8232d84e7c86d453d770e6f48b",
+						"1bcc929d935444acb790ed444ce22a37",
 						""
 					]
 				}
@@ -340,7 +373,50 @@
 			"response": []
 		},
 		{
-			"name": "get list booking shipment",
+			"name": "get shipment search",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/shipment?search=23324AFDDSA&page=1&limit=10",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"shipment"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "23324AFDDSA"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get booking list shipment",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -413,6 +489,79 @@
 			"response": []
 		},
 		{
+			"name": "update shipment (staff)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"uid\": \"7d61a9caf57946c584544488cdb924c2\",\n    \"book_no\": \"1bcc929d935444acb790ed444ce22a37\",\n    \"bl\": \"DDF23324AFDDSA-ADFAS\",\n    \"no_container\": \"6\",\n    \"eta_departure\": \"2024-03-07\",\n    \"eta_arrival\": \"2024-04-24\",\n    \"port\": \"KICT\",\n    \"docs\": \"2024-04-17\",\n    \"surrender\": \"2024-04-25\",\n    \"containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"status\": \"pending\",\n    \"attachment\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/shipment/update/7d61a9caf57946c584544488cdb924c2/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"shipment",
+						"update",
+						"7d61a9caf57946c584544488cdb924c2",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete shipment (staff)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/shipment/update/1c797c3c460943d29121bd6040b6a73e/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"shipment",
+						"update",
+						"1c797c3c460943d29121bd6040b6a73e",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "get port (any)",
 			"request": {
 				"method": "GET",
@@ -451,6 +600,92 @@
 							"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
 							"disabled": true
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get port search (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port?page=1&limit=10&search=Nadir",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "",
+							"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Nadir"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post create port (staff)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bl\": \"DF23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"DF23s423adf,213dfsfd21,32423afsd423\",\n    \"delivery_at\": \"AFG\",\n    \"gd_no\": \"123213-23213\",\n    \"clearing_agent\": \"Khan\",\n    \"transporter\": \"ACDF\",\n    \"truck_no\": \"123DDD\",\n    \"driver_name\": \"Mohsin\",\n    \"driver_mobile_no\": \"12312131,12312131\",\n    \"truck_placement_date\": \"2024-03-01\",\n    \"truck_out_date\": \"2024-03-01\",\n    \"attachment\": null,\n    \"status\": \"pending\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port"
 					]
 				}
 			},
@@ -527,19 +762,19 @@
 			"response": []
 		},
 		{
-			"name": "post create port (staff)",
+			"name": "update port (staff)",
 			"request": {
-				"method": "POST",
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"bl\": \"DF23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"DF23s423adf,213dfsfd21,32423afsd423\",\n    \"delivery_at\": \"AFG\",\n    \"gd_no\": \"123213-23213\",\n    \"clearing_agent\": \"Khan\",\n    \"transporter\": \"ACDF\",\n    \"truck_no\": \"123DDD\",\n    \"driver_name\": \"Mohsin\",\n    \"driver_mobile_no\": \"12312131,12312131\",\n    \"truck_placement_date\": \"2024-03-01\",\n    \"truck_out_date\": \"2024-03-01\",\n    \"attachment\": null,\n    \"status\": \"pending\"\n}",
+					"raw": "{\n    \"uid\": \"58ed36d87f9b4029938d694c5f4a5421\",\n    \"bl\": \"Azz\",\n    \"bl_containers\": \"C322012,B322012\",\n    \"delivery_at\": \"Chaman\",\n    \"gd_no\": \"123213-23213\",\n    \"clearing_agent\": \"Khan\",\n    \"transporter\": \"ACDF\",\n    \"truck_no\": \"123DDD\",\n    \"driver_name\": \"Mohsin\",\n    \"driver_mobile_no\": \"12312131,12312131\",\n    \"truck_placement_date\": \"2024-05-08\",\n    \"truck_out_date\": \"2024-05-07\",\n    \"status\": \"done\",\n    \"attachment\": \"0\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -547,7 +782,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/port",
+					"raw": "http://127.0.0.1:8000/api/port/update/58ed36d87f9b4029938d694c5f4a5421/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -558,7 +793,51 @@
 					"port": "8000",
 					"path": [
 						"api",
-						"port"
+						"port",
+						"update",
+						"58ed36d87f9b4029938d694c5f4a5421",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete port (staff)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/port/update/58ed36d87f9b4029938d694c5f4a5421/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"port",
+						"update",
+						"58ed36d87f9b4029938d694c5f4a5421",
+						""
 					]
 				}
 			},
@@ -590,6 +869,49 @@
 						"tracker"
 					],
 					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get search tracker (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/tracker?search=AZI3DPK&page=1&limit=10",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"tracker"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "AZI3DPK"
+						},
 						{
 							"key": "page",
 							"value": "1"
