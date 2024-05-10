@@ -14,17 +14,14 @@ urlpatterns = [
     path('api/clr', ClrInfo.as_view(), name='add-clr'),
     path('api/clr/update/<str:pk>/', UpdateCLRAPIView.as_view(), name='clr-update'),
     path('api/shipment', ShipmentInfo.as_view(), name='shipment'),
-    path('api/shipment/update', UpdateShipmentInfo.as_view(), name='shipment-update'),
+    path('api/shipment/update/<str:pk>/', UpdateShipmentInfo.as_view(), name='shipment-update'),
     path('api/port', PortInfo.as_view(), name='container'),
-    path('api/port/update', UpdatePortInfo.as_view(), name='container'),
+    path('api/port/update/<str:pk>/', UpdatePortInfo.as_view(), name='port-update'),
     path('api/tracker', TrackerInfo.as_view(), name='tracker'),
-    path('api/tracker/update', UpdateTrackerInfo.as_view(), name='tracker-update'),
-    path('api/cities', CityInfo.as_view(), name='get-city'),
+    path('api/tracker/update/<str:pk>/', UpdateTrackerInfo.as_view(), name='tracker-update'),
     path('api/cities', CityInfo.as_view(), name='get-city'),
     path('api/city', AddcityInfo.as_view(), name='add-city'),
-    path('api/client', ClientView.as_view(), name='add-city'),
+    path('api/client', ClientView.as_view(), name='client-view'),
     path("admin/", admin.site.urls),
-    
-    
     
 ]

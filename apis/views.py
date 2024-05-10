@@ -83,7 +83,7 @@ class ClrInfo(generics.CreateAPIView):
                 OR shipper_reference LIKE '%{request.query_params.get('search')}%' \
                 OR consignee LIKE '%{request.query_params.get('search')}%' \
                 OR book_no LIKE '%{request.query_params.get('search')}%'"
-                print(query)
+                
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -94,8 +94,6 @@ class ClrInfo(generics.CreateAPIView):
 
                 return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
         
-            
-            
 
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
@@ -117,31 +115,6 @@ class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
         # print(self.kwargs.get('pk'))
         return CLRModel.objects.filter(pk=self.kwargs.get('pk'))
 
-
-class CLRSearchView(generics.ListAPIView):
-    serializer_class = ClrSerializer
-
-    
-    def get_queryset(self):
-        queryset = CLRModel.objects.all()
-        conditions = []
-
-        # Retrieve query parameters
-        params = {
-            'shipper_reference': self.request.query_params.getlist('shipper_reference'),
-            'shipper': self.request.query_params.getlist('shipper'),
-            'consignee': self.request.query_params.getlist('consignee'),
-        }
-
-        # Construct filter conditions based on query parameters
-        for field, values in params.items():
-            if values:
-                conditions.append(Q(**{f'{field}__in': values}))
-
-        if conditions:
-            queryset = queryset.filter(*conditions)
-
-        return queryset
     
 class ShipmentInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -163,6 +136,20 @@ class ShipmentInfo(generics.CreateAPIView):
                 flat_list = [item for sublist in rows for item in sublist]
                 return JsonResponse({'booking_list': flat_list}, status=status.HTTP_200_OK)
 
+        elif request.query_params.get('search'):
+            with connection.cursor() as cursor:
+                query =f" FROM {ShipmentStatus._meta.db_table} \
+                WHERE bl LIKE '%{request.query_params.get('search')}%' \
+                OR book_no LIKE '%{request.query_params.get('search')}%'"
+                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                rows = cursor.fetchall()
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+                # Execute query to fetch total count of records
+                cursor.execute(f"SELECT COUNT(*) "+query)
+                total_count = cursor.fetchone()[0]
+
+                return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
 
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
@@ -177,11 +164,11 @@ class ShipmentInfo(generics.CreateAPIView):
             return JsonResponse({'total_count': total_count,'shipments': serialized_data}, status=status.HTTP_200_OK)
 
 class UpdateShipmentInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = ShipmentSerializer
 
     def get_queryset(self):
-        return ShipmentStatus.objects.filter(pk=self.request.data["uid"])
+        return ShipmentStatus.objects.filter(pk=self.kwargs.get('pk'))
 
 
 class PortInfo(generics.CreateAPIView):
@@ -215,6 +202,28 @@ class PortInfo(generics.CreateAPIView):
 
                 return JsonResponse({'containers': containers}, status=status.HTTP_200_OK)
 
+        elif request.query_params.get('search'):
+            with connection.cursor() as cursor:
+                query =f" FROM {PortStatus._meta.db_table} \
+                WHERE bl_containers LIKE '%{request.query_params.get('search')}%' \
+                OR clearing_agent LIKE '%{request.query_params.get('search')}%' \
+                OR delivery_at LIKE '%{request.query_params.get('search')}%' \
+                OR gd_no LIKE '%{request.query_params.get('search')}%' \
+                OR transporter LIKE '%{request.query_params.get('search')}%' \
+                OR truck_no LIKE '%{request.query_params.get('search')}%' \
+                OR driver_name LIKE '%{request.query_params.get('search')}%' \
+                OR bl LIKE '%{request.query_params.get('search')}%'"
+
+                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                rows = cursor.fetchall()
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+                # Execute query to fetch total count of records
+                cursor.execute(f"SELECT COUNT(*) "+query)
+                total_count = cursor.fetchone()[0]
+
+                return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
+            
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {PortStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
@@ -228,11 +237,11 @@ class PortInfo(generics.CreateAPIView):
 
 
 class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = PortSerializer
 
     def get_queryset(self):
-        return PortStatus.objects.filter(pk=self.request.data["uid"])
+        return PortStatus.objects.filter(pk=self.kwargs.get('pk'))
 
 
 class TrackerInfo(generics.CreateAPIView):
@@ -264,6 +273,25 @@ class TrackerInfo(generics.CreateAPIView):
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
                 return JsonResponse({'truck_list': serialized_data}, status=status.HTTP_200_OK)
         
+        elif request.query_params.get('search'):
+            with connection.cursor() as cursor:
+                query =f" FROM {CityWiseTracker._meta.db_table} \
+                WHERE bl_containers LIKE '%{request.query_params.get('search')}%' \
+                OR bl LIKE '%{request.query_params.get('search')}%' \
+                OR truck_no LIKE '%{request.query_params.get('search')}%' \
+                OR curent_location LIKE '%{request.query_params.get('search')}%' \
+                OR status LIKE '%{request.query_params.get('search')}%'"
+
+                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                rows = cursor.fetchall()
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+                # Execute query to fetch total count of records
+                cursor.execute(f"SELECT COUNT(*) "+query)
+                total_count = cursor.fetchone()[0]
+
+                return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
+
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
@@ -302,7 +330,7 @@ class UpdateTrackerInfo(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CityWiseTrackerSerializer
 
     def get_queryset(self):
-        return CityWiseTracker.objects.filter(pk=self.request.data["uid"])
+        return CityWiseTracker.objects.filter(pk=self.kwargs.get('pk'))
 
 class CityInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
