@@ -15,7 +15,17 @@ from django.db.models import Q
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [permissions.IsAuthenticated]
+    allowed_methods = ['get','post']
+
+
+class UpdateUser(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    allowed_methods = ['post']
+
+    def get_queryset(self):
+        return User.objects.filter(pk=self.kwargs.get('pk'))
 
 class UserLoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):

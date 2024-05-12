@@ -14,6 +14,9 @@ class User(AbstractUser):
     username = models.CharField(max_length=40, unique=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
+    mobile_no = models.CharField(max_length=50, blank=True, null=True)
+    company_name = models.CharField(max_length=50, unique=True, blank=True, null=True)
+
 
 class ExpiringToken(Token):
     expiration = models.DateTimeField()

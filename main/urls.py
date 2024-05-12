@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from apis.views import UserRegistrationView, UserLoginView, \
-    UserLogoutView, ClrInfo, UpdatePortInfo,UpdateTrackerInfo, \
+    UserLogoutView, ClrInfo, UpdatePortInfo,UpdateTrackerInfo, UpdateUser, \
     GetUser, ShipmentInfo, PortInfo, TrackerInfo,UpdateCLRAPIView,\
      UpdateShipmentInfo, CityInfo, AddcityInfo, ClientView, ChartView
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/auth/register/', UserRegistrationView.as_view(), name='user-registration'),
     path('api/auth/login/', UserLoginView.as_view(), name='user-login'),
     path('api/auth/logout/', UserLogoutView.as_view(), name='user-logout'),
+    path('api/auth/update/', UpdateUser.as_view(), name='user-update'),
     path("api/users", GetUser.as_view(), name='users-list'),
     path('api/clr', ClrInfo.as_view(), name='add-clr'),
     path('api/clr/update/<str:pk>/', UpdateCLRAPIView.as_view(), name='clr-update'),
