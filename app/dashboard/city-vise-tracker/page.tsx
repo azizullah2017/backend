@@ -12,7 +12,7 @@ import { BASE_URL } from "@/lib/constants";
 const CityViseTracker = ({
     searchParams,
 }: {
-    searchParams: { page: string };
+    searchParams: { page: string; search: string };
 }) => {
     const [isShowing, setIsShowing] = useState(false);
     const [data, setData] = useState([]);
@@ -25,6 +25,8 @@ const CityViseTracker = ({
         userData?.role !== "" &&
         (userData?.role === "staff" || userData?.role === "admin");
     const page = parseInt(searchParams.page) || 1;
+    const searchQuery =
+        searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = 10;
 
     useEffect(() => {
@@ -33,10 +35,16 @@ const CityViseTracker = ({
     }, []);
 
     useEffect(() => {
-        if ((page && revalidate) || page) {
+        if (page || revalidate || searchQuery) {
+            let queryString = "";
+            if (searchQuery !== "") {
+                queryString = `search=${searchQuery}&page=${page}&limit=${pageSize}`;
+            } else {
+                queryString = `page=${page}&limit=${pageSize}`;
+            }
             const fetchData = async () => {
                 const res = await fetch(
-                    `${BASE_URL}/api/tracker?page=${page}&limit=${pageSize}`,
+                    `${BASE_URL}/api/tracker?${queryString}`,
                     {
                         headers: {
                             Authorization: `Token ${userData.token}`,
@@ -57,7 +65,7 @@ const CityViseTracker = ({
 
             fetchData();
         }
-    }, [page, revalidate]);
+    }, [page, revalidate, searchQuery]);
 
     return (
         <>

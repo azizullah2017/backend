@@ -25,6 +25,7 @@ type ComboboxType = {
     commandEmptyMessage: string;
     setCurrentItem: (arg: string) => void;
     btnWidth: string;
+    editing: boolean;
 };
 
 const Combobox = ({
@@ -34,6 +35,7 @@ const Combobox = ({
     commandEmptyMessage,
     setCurrentItem,
     btnWidth,
+    editing,
 }: ComboboxType) => {
     const [open, setOpen] = useState<boolean>(false);
 
@@ -47,7 +49,9 @@ const Combobox = ({
                         aria-expanded={open}
                         className={`${btnWidth} justify-between`}
                     >
-                        {currentItem
+                        {currentItem && editing
+                            ? currentItem
+                            : currentItem
                             ? itemsArray.find((item) => item === currentItem)
                             : itemNotSelectedMessage}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

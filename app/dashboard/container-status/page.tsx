@@ -1,22 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ContainerPortStatusForm from "./ContainerPortStatusForm";
 import { DataTable } from "@/components/ui/data-tables";
-import { columns } from "./columns";
+import { columns, containerPortColumns } from "./columns";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import StaffTableActions from "@/components/StaffTableActions";
 import { BASE_URL } from "@/lib/constants";
+import { toast } from "@/components/ui/use-toast";
+import DeleteAlert from "../_components/DeleteAlert";
 
 const ContainerStatus = ({
     searchParams,
 }: {
-    searchParams: { page: string };
+    searchParams: { page: string; search: string };
 }) => {
     const [isShowing, setIsShowing] = useState(false);
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState(0);
+    const [port, setPort] = useState({});
+    const [dialogIsOpen, setDialogIsOpen] = useState(false);
+    const [revalidate, setRevalidate] = useState(false);
     const router = useRouter();
     const { userData } = useAuth();
     const isAuthenticated = userData?.role !== "";
@@ -24,7 +29,45 @@ const ContainerStatus = ({
         userData?.role !== "" &&
         (userData?.role === "staff" || userData?.role === "admin");
     const page = parseInt(searchParams.page) || 1;
+    const searchQuery =
+        searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = 10;
+
+    const onEdit = useCallback((data) => {
+        setPort(data);
+        setIsShowing(true);
+    }, []);
+
+    const onDelete = useCallback((data) => {
+        setPort(data);
+        setDialogIsOpen(true);
+    }, []);
+
+    const columns = useMemo(
+        () => containerPortColumns({ onEdit, onDelete }),
+        []
+    );
+
+    const deleteRow = async () => {
+        const res = await fetch(`${BASE_URL}/api/port/update/${port?.uid}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Token ${userData.token}`,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!res.ok) {
+            throw new Error("Something went wrong");
+        } else {
+            toast({
+                title: "Success",
+                description: "Deleted Successfully!",
+                className: "bg-red-200",
+            });
+            setRevalidate(true);
+        }
+    };
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
@@ -32,28 +75,34 @@ const ContainerStatus = ({
     }, []);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const res = await fetch(
-                `${BASE_URL}/api/port?page=${page}&limit=${pageSize}`,
-                {
+        if (page || revalidate || searchQuery) {
+            const fetchData = async () => {
+                let queryString = "";
+                if (searchQuery !== "") {
+                    queryString = `search=${searchQuery}&page=${page}&limit=${pageSize}`;
+                } else {
+                    queryString = `page=${page}&limit=${pageSize}`;
+                }
+                const res = await fetch(`${BASE_URL}/api/port?${queryString}`, {
                     headers: {
                         Authorization: `Token ${userData.token}`,
                     },
+                });
+
+                if (!res.ok) {
+                    throw new Error("Something went wrong");
+                } else {
+                    const tableData = await res.json();
+
+                    setData(tableData.ports);
+                    setTotalRows(tableData.total_count);
+                    setRevalidate(false);
                 }
-            );
+            };
 
-            if (!res.ok) {
-                throw new Error("Something went wrong");
-            } else {
-                const tableData = await res.json();
-
-                setData(tableData.ports);
-                setTotalRows(tableData.total_count);
-            }
-        };
-
-        fetchData();
-    }, []);
+            fetchData();
+        }
+    }, [page, revalidate, searchParams]);
 
     return (
         <>
@@ -66,6 +115,9 @@ const ContainerStatus = ({
                     <ContainerPortStatusForm
                         isShowing={isShowing}
                         setIsShowing={setIsShowing}
+                        port={port}
+                        setPort={setPort}
+                        setRevalidate={setRevalidate}
                     />
                 </div>
             </div>
@@ -78,6 +130,11 @@ const ContainerStatus = ({
                     totalRows={totalRows}
                 />
             </div>
+            <DeleteAlert
+                dialogIsOpen={dialogIsOpen}
+                setDialogIsOpen={setDialogIsOpen}
+                deleteRow={deleteRow}
+            />
         </>
     );
 };

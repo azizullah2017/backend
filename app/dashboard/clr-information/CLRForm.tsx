@@ -1,7 +1,7 @@
 "use client";
 
 import { Transition } from "@headlessui/react";
-import { useForm } from "react-hook-form";
+import { DefaultValues, useForm } from "react-hook-form";
 import { CgClose } from "react-icons/cg";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,46 +25,128 @@ import { useStaffInformation } from "@/context/StaffInformationContext";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
+
+const defaultValues = {
+    shipper_reference: "",
+    shipper: "",
+    consignee: "",
+    book_no: "",
+    no_container: "",
+    size: "",
+    product: "",
+    port_of_loading: "",
+    port_of_departure: "",
+    final_port_of_destination: "",
+    eta: "",
+    vessel: "",
+    status: "",
+    eta_karachi: "",
+};
+
+type CLRFormPropsType = {
+    isShowing: boolean;
+    setIsShowing: () => void;
+    clr: { [key: string]: string };
+    setClr: (arg: {}) => void;
+    setRevalidate: (arg: boolean) => void;
+};
 
 const CLRForm = ({
     isShowing,
     setIsShowing,
-}: {
-    isShowing: boolean;
-    setIsShowing: () => void;
-}) => {
-    const { setStaffInfo } = useStaffInformation();
+    clr,
+    setClr,
+    setRevalidate,
+}: CLRFormPropsType) => {
     const router = useRouter();
     const { userData } = useAuth();
+    const [formReset, setFormReset] = useState(false);
+    const editing = Object.keys(clr).length !== 0;
 
-    const form = useForm();
+    const form = useForm({
+        defaultValues,
+    });
 
     const onSubmit = async (data: { [key: string]: string }) => {
-        const res = await fetch(`${BASE_URL}/api/clr`, {
-            method: "POST",
-            headers: {
-                Authorization: `Token ${userData.token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
+        let res;
+
+        if (!editing) {
+            res = await fetch(`${BASE_URL}/api/clr`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Token ${userData.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+        } else {
+            const dataWithUID = {
+                ...data,
+                uid: clr.uid,
+            };
+            res = await fetch(`${BASE_URL}/api/clr/update/${clr.uid}/`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Token ${userData.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataWithUID),
+            });
+        }
 
         if (!res.ok) {
             throw new Error("Something went wrong");
         } else {
+            let description = "";
+            if (editing) {
+                description = "CLR Updated Successfully!";
+            } else {
+                description = "CLR Added Successfully!";
+            }
             toast({
                 title: "Success",
-                description: "CLR Added Successfully!",
+                description,
                 className: "bg-green-200",
             });
 
-            const responseData = await res.json();
-
-            setStaffInfo({});
-            setStaffInfo({ bookingNumber: responseData.book_no });
-            router.push("/dashboard/shipment-status");
+            if (!editing) {
+                router.push("/dashboard/shipment-status");
+            } else {
+                setIsShowing((prevState) => !prevState);
+            }
         }
     };
+
+    useEffect(() => {
+        if (editing) {
+            Object.entries(clr).map((clr) => {
+                form.setValue(clr[0], clr[1]);
+            });
+        }
+    }, [editing]);
+
+    useEffect(() => {
+        if (formReset) {
+            setTimeout(() => {
+                form.reset(defaultValues, {
+                    keepValues: false,
+                });
+                setFormReset(false);
+            }, 100);
+        }
+    }, [formReset]);
+
+    useEffect(() => {
+        if (!isShowing) {
+            if (editing) {
+                setClr({});
+                setRevalidate(true);
+            }
+
+            setFormReset(true);
+        }
+    }, [isShowing]);
 
     return (
         <Transition
@@ -80,7 +162,9 @@ const CLRForm = ({
                 <div className="flex justify-end mt-4 mr-4">
                     <CgClose
                         className="w-7 h-7 cursor-pointer"
-                        onClick={() => setIsShowing((prevState) => !prevState)}
+                        onClick={() => {
+                            setIsShowing((prevState) => !prevState);
+                        }}
                     />
                 </div>
                 <Form {...form}>

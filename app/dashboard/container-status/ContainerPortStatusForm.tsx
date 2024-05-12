@@ -13,7 +13,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useStaffInformation } from "@/context/StaffInformationContext";
 import {
     Select,
     SelectContent,
@@ -30,25 +29,52 @@ import { Label } from "@/components/ui/label";
 import Combobox from "@/components/Combobox";
 import { MultiSelect } from "@/components/MultiSelect";
 
+const defaultValues = {
+    delivery_at: "",
+    gd_no: "",
+    clearing_agent: "",
+    transporter: "",
+    truck_no: "",
+    driver_name: "",
+    driver_mobile_no: "",
+    truck_placement_date: "",
+    truck_out_date: "",
+    status: "",
+};
+
+type ContainerPortStatusFormPropsType = {
+    isShowing: boolean;
+    setIsShowing: () => void;
+    port: { [key: string]: string };
+    setPort: (arg: {}) => void;
+    setRevalidate: (arg: boolean) => void;
+};
+
 const ContainerPortStatusForm = ({
     isShowing,
     setIsShowing,
-}: {
-    isShowing: boolean;
-    setIsShowing: () => void;
-}) => {
-    const { staffInfo } = useStaffInformation();
+    port,
+    setPort,
+    setRevalidate,
+}: ContainerPortStatusFormPropsType) => {
     const [files, setFiles] = useState<string[]>([]);
     const [currentBlNumber, setCurrentBlNumber] = useState("");
     const [currentContainers, setCurrentContainers] = useState<string[]>([]);
     const [containers, setContainers] = useState([]);
     const [blNumbers, setBlNumbers] = useState([]);
+    const [formReset, setFormReset] = useState(false);
     const router = useRouter();
     const { userData } = useAuth();
 
-    const form = useForm();
+    const editing = Object.keys(port).length !== 0;
 
-    const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const form = useForm({
+        defaultValues,
+    });
+
+    const fileChangeHandler = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
         const fileInputs = e.target.files;
         const myFiles = Array.from(fileInputs);
 
@@ -57,7 +83,6 @@ const ContainerPortStatusForm = ({
             reader.readAsDataURL(file as File);
             reader.onload = () => {
                 if (reader.readyState === 2) {
-                    // console.log(reader.result);
                     setFiles((prevValue) => [
                         ...prevValue,
                         reader.result as string,
@@ -68,6 +93,8 @@ const ContainerPortStatusForm = ({
     };
 
     const onSubmit = async (data) => {
+        let res;
+
         const updatedData = {
             book_no: data.book_no,
             bl: currentBlNumber,
@@ -82,28 +109,53 @@ const ContainerPortStatusForm = ({
             truck_out_date: data.truck_out_date,
             bl_containers: currentContainers.join(","),
             status: data.status,
-            attachment: files.length && files.join(","),
+            attachment: files && files.join(","),
         };
 
-        const res = await fetch(`${BASE_URL}/api/port`, {
-            method: "POST",
-            headers: {
-                Authorization: `Token ${userData.token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedData),
-        });
+        if (!editing) {
+            res = await fetch(`${BASE_URL}/api/port`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Token ${userData.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedData),
+            });
+        } else {
+            const dataWithUID = {
+                ...updatedData,
+                uid: port.uid,
+            };
+
+            res = await fetch(`${BASE_URL}/api/port/update/${port.uid}/`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Token ${userData.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataWithUID),
+            });
+        }
 
         if (!res.ok) {
             throw new Error("Something went wrong");
         } else {
+            let description = "";
+            if (editing) {
+                description = "Port Updated Successfully!";
+            } else {
+                description = "Port Added Successfully!";
+            }
             toast({
                 title: "Success",
-                description: "Container Port Status Added Successfully!",
+                description,
                 className: "bg-green-200",
             });
-
-            router.push("/dashboard/city-vise-tracker");
+            if (!editing) {
+                router.push("/dashboard/city-vise-tracker");
+            } else {
+                setIsShowing((prevState) => !prevState);
+            }
         }
     };
 
@@ -152,6 +204,58 @@ const ContainerPortStatusForm = ({
         }
     }, [currentBlNumber]);
 
+    useEffect(() => {
+        if (editing) {
+            Object.entries(port).map((prt) => {
+                if (prt[0] === "attachment") {
+                    const items = prt[1].split(",");
+                    for (let i = 1; i <= items.length; i++) {
+                        if (i % 2 === 0) {
+                            setFiles((prevValue) => [
+                                ...prevValue,
+                                items[i - 2] + "," + items[i - 1] + ",",
+                            ]);
+                        }
+                    }
+                    return;
+                }
+                if (prt[0] === "bl_containers") {
+                    const cont = port.bl_containers.split(",");
+                    setCurrentContainers(cont);
+                    return;
+                }
+                form.setValue(prt[0], prt[1]);
+            });
+
+            setCurrentBlNumber(port.bl);
+        }
+    }, [editing]);
+
+    useEffect(() => {
+        if (formReset) {
+            setTimeout(() => {
+                form.reset(defaultValues, {
+                    keepValues: false,
+                });
+                setFormReset(false);
+            }, 100);
+        }
+    }, [formReset]);
+
+    useEffect(() => {
+        if (!isShowing) {
+            if (editing) {
+                setPort({});
+                setRevalidate(true);
+            }
+
+            setFormReset(true);
+            setCurrentBlNumber("");
+            setFiles([]);
+            setCurrentContainers([]);
+        }
+    }, [isShowing]);
+
     return (
         <Transition
             show={isShowing}
@@ -188,6 +292,7 @@ const ContainerPortStatusForm = ({
                                             commandEmptyMessage="No BL # found!"
                                             setCurrentItem={setCurrentBlNumber}
                                             btnWidth="w-full"
+                                            editing={editing}
                                         />
                                     </div>
                                 </div>

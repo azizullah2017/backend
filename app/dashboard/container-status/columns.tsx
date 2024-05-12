@@ -1,18 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { TbEdit, TbTrash } from "react-icons/tb";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import DataTableRowStatus from "../_components/DataTableRowStatus";
+import DataTableRowActions from "../_components/DataTableRowActions";
 
 export type ContainerPortStatusType = {
     id: string;
@@ -21,7 +11,15 @@ export type ContainerPortStatusType = {
     email: string;
 };
 
-export const columns: ColumnDef<ContainerPortStatusType>[] = [
+type containerPortColumnsPropsType = {
+    onEdit: (data) => void;
+    onDelete: (data) => void;
+};
+
+export const containerPortColumns = ({
+    onEdit,
+    onDelete,
+}: containerPortColumnsPropsType): ColumnDef<ContainerPortStatusType>[] => [
     {
         accessorKey: "bl",
         header: "BL",
@@ -76,46 +74,17 @@ export const columns: ColumnDef<ContainerPortStatusType>[] = [
     {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => {
-            const status = row.original.status;
-            const badgeColor: Record<string, string> = {
-                pending: "bg-red-600",
-                "In Progress": "bg-blue-600",
-                Closed: "bg-green-600",
-            };
-
-            return <Badge className={badgeColor[status]}>{status}</Badge>;
-        },
+        cell: ({ row }) => <DataTableRowStatus status={row.original.status} />,
     },
     {
         id: "actions",
         header: "Actions",
-        cell: ({ row }) => {
-            const shipmentStatus = row.original;
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => alert("hello world!")}>
-                            <TbEdit className="w-[20px] h-[20px] mr-2" />
-                            Update
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            onClick={() => alert("Deleted! Not actually ;)")}
-                        >
-                            <TbTrash className="w-[20px] h-[20px] mr-2" />
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
+        cell: ({ row }) => (
+            <DataTableRowActions
+                row={row}
+                onEdit={onEdit}
+                onDelete={onDelete}
+            />
+        ),
     },
 ];

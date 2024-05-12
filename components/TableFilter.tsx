@@ -23,14 +23,12 @@ const TableFilter = ({ setData }: { setData: () => void }) => {
     useEffect(() => {
         const params = new URLSearchParams(searchParams);
         params.set("page", "1");
-        if (searchText) {
+        if (debouncedText) {
             params.set("search", searchText);
         } else {
             params.delete("search");
         }
         replace(`${pathname}?${params.toString()}`);
-        console.log("API Call here!");
-        // setData();
     }, [debouncedText]);
 
     return (

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { useStaffInformation } from "@/context/StaffInformationContext";
 import {
     Select,
     SelectContent,
@@ -30,23 +29,47 @@ import { useAuth } from "@/context/AuthContext";
 import { Label } from "@/components/ui/label";
 import Combobox from "@/components/Combobox";
 
+const defaultValues = {
+    bl: "",
+    no_container: "",
+    eta_departure: "",
+    eta_arrival: "",
+    port: "",
+    docs: "",
+    surrender: "",
+    status: "",
+    container_id_1: "",
+};
+
+type ShipmentStatusFormPropsType = {
+    isShowing: boolean;
+    setIsShowing: () => void;
+    shipment: { [key: string]: string };
+    setShipment: (arg: {}) => void;
+    setRevalidate: (arg: boolean) => void;
+};
+
 const ShipmentStatusForm = ({
     isShowing,
     setIsShowing,
-}: {
-    isShowing: boolean;
-    setIsShowing: () => void;
-}) => {
+    shipment,
+    setShipment,
+    setRevalidate,
+}: ShipmentStatusFormPropsType) => {
     const [containerCount, setContainerCount] = useState(1);
     const [containerInput, setContainerInput] = useState([]);
-    const { staffInfo, setStaffInfo } = useStaffInformation();
-    const [file, setFile] = useState<string>();
+    const [formReset, setFormReset] = useState(false);
     const [bookingNumbers, setBookingNumbers] = useState([]);
     const [currentBookingNumber, setCurrentBookingNumber] = useState("");
+    const [file, setFile] = useState<string>();
     const router = useRouter();
     const { userData } = useAuth();
 
-    const form = useForm();
+    const editing = Object.keys(shipment).length !== 0;
+
+    const form = useForm({
+        defaultValues,
+    });
 
     const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const myFile = e.target.files?.[0];
@@ -63,6 +86,7 @@ const ShipmentStatusForm = ({
     const onSubmit = async (data) => {
         let containersList = [];
         let containers = "";
+        let res;
 
         if (containerCount > 1) {
             containersList.push(data.container_id_1);
@@ -90,50 +114,87 @@ const ShipmentStatusForm = ({
             attachment: file,
         };
 
-        const res = await fetch(`${BASE_URL}/api/shipment`, {
-            method: "POST",
-            headers: {
-                Authorization: `Token ${userData.token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedData),
-        });
+        if (!editing) {
+            res = await fetch(`${BASE_URL}/api/shipment`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Token ${userData.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedData),
+            });
+        } else {
+            const dataWithUID = {
+                ...updatedData,
+                uid: shipment.uid,
+            };
+
+            res = await fetch(
+                `${BASE_URL}/api/shipment/update/${shipment.uid}/`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Token ${userData.token}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(dataWithUID),
+                }
+            );
+        }
 
         if (!res.ok) {
             throw new Error("Something went wrong");
         } else {
+            let description = "";
+            if (editing) {
+                description = "Shipment Updated Successfully!";
+            } else {
+                description = "Shipment Added Successfully!";
+            }
             toast({
                 title: "Success",
-                description: "Shipment Status Added Successfully!",
+                description,
                 className: "bg-green-200",
             });
 
-            const responseData = await res.json();
-
-            setStaffInfo((prevValue: Object) => ({
-                ...prevValue,
-                blNumber: responseData.bl,
-                containers: responseData.containers,
-            }));
-            router.push("/dashboard/container-status");
+            if (!editing) {
+                router.push("/dashboard/container-status");
+            } else {
+                setIsShowing((prevState) => !prevState);
+            }
         }
     };
 
     useEffect(() => {
-        if (containerCount > 1) {
+        if (containerCount > 1 && !editing) {
             const inputObject = {
                 name: `container_id_${containerCount}`,
                 label: `Container ID ${containerCount}`,
             };
 
             setContainerInput((prevValue) => [...prevValue, inputObject]);
+        } else if (containerCount > 1 && editing) {
+            const cont = shipment.containers.split(",");
+            for (let i = 2; i <= containerCount; i++) {
+                const inputObject = {
+                    name: `container_id_${i}`,
+                    label: `Container ID ${i}`,
+                };
+                setContainerInput((prevValue) => [...prevValue, inputObject]);
+                form.setValue(inputObject.name, cont[i - 1]);
+            }
         }
     }, [containerCount]);
 
     useEffect(() => {
         if (!isShowing) {
+            if (editing) {
+                setShipment({});
+                setRevalidate(true);
+            }
             setContainerCount(1);
             setContainerInput([]);
+            setCurrentBookingNumber("");
         }
     }, [isShowing]);
 
@@ -160,6 +221,35 @@ const ShipmentStatusForm = ({
         fetchBookingNumbers();
     }, []);
 
+    useEffect(() => {
+        if (editing) {
+            Object.entries(shipment).map((ship) => {
+                if (ship[0] === "attachment") {
+                    setFile(ship[1]);
+                    return;
+                }
+                form.setValue(ship[0], ship[1]);
+            });
+
+            const cont = shipment.containers.split(",");
+
+            setCurrentBookingNumber(shipment.book_no);
+            form.setValue("container_id_1", cont[0]);
+            setContainerCount(cont.length);
+        }
+    }, [editing]);
+
+    useEffect(() => {
+        if (formReset) {
+            setTimeout(() => {
+                form.reset(defaultValues, {
+                    keepValues: false,
+                });
+                setFormReset(false);
+            }, 100);
+        }
+    }, [formReset]);
+
     return (
         <Transition
             show={isShowing}
@@ -174,7 +264,9 @@ const ShipmentStatusForm = ({
                 <div className="flex justify-end mt-4 mr-4">
                     <CgClose
                         className="w-7 h-7 cursor-pointer"
-                        onClick={() => setIsShowing((prevState) => !prevState)}
+                        onClick={() => {
+                            setIsShowing((prevState) => !prevState);
+                        }}
                     />
                 </div>
                 <Form {...form}>
@@ -198,6 +290,7 @@ const ShipmentStatusForm = ({
                                                 setCurrentBookingNumber
                                             }
                                             btnWidth="w-full"
+                                            editing={editing}
                                         />
                                     </div>
                                 </div>
