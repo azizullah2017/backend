@@ -191,7 +191,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/clr?search=NOI&page=1&limit=10",
+					"raw": "http://127.0.0.1:8000/api/clr?search=MOI&page=1&limit=10",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -207,7 +207,7 @@
 					"query": [
 						{
 							"key": "search",
-							"value": "NOI"
+							"value": "MOI"
 						},
 						{
 							"key": "page",
@@ -541,7 +541,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/shipment/update/1c797c3c460943d29121bd6040b6a73e/",
+					"raw": "http://127.0.0.1:8000/api/shipment/update/58ed36d87f9b4029938d694c5f4a5421/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -554,7 +554,7 @@
 						"api",
 						"shipment",
 						"update",
-						"1c797c3c460943d29121bd6040b6a73e",
+						"58ed36d87f9b4029938d694c5f4a5421",
 						""
 					]
 				}
@@ -1092,6 +1092,88 @@
 					"path": [
 						"api",
 						"client"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "chart each",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/chart?get=eachstatus&&filter=month",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chart"
+					],
+					"query": [
+						{
+							"key": "get",
+							"value": "eachstatus"
+						},
+						{
+							"key": null,
+							"value": null
+						},
+						{
+							"key": "filter",
+							"value": "month"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "chart month",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/chart?get=eachstatus&filter=month",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chart"
+					],
+					"query": [
+						{
+							"key": "get",
+							"value": "eachstatus"
+						},
+						{
+							"key": "filter",
+							"value": "month"
+						}
 					]
 				}
 			},

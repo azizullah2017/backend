@@ -149,7 +149,7 @@ class ShipmentInfo(generics.CreateAPIView):
                 cursor.execute(f"SELECT COUNT(*) "+query)
                 total_count = cursor.fetchone()[0]
 
-                return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
+                return JsonResponse({'total_count': total_count,'shipments': serialized_data}, status=status.HTTP_200_OK)
 
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
@@ -222,7 +222,7 @@ class PortInfo(generics.CreateAPIView):
                 cursor.execute(f"SELECT COUNT(*) "+query)
                 total_count = cursor.fetchone()[0]
 
-                return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
+                return JsonResponse({'total_count': total_count,'ports': serialized_data}, status=status.HTTP_200_OK)
             
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM {PortStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
@@ -290,7 +290,7 @@ class TrackerInfo(generics.CreateAPIView):
                 cursor.execute(f"SELECT COUNT(*) "+query)
                 total_count = cursor.fetchone()[0]
 
-                return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
+                return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
 
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no LIMIT %s OFFSET %s", [limit, offset])
@@ -364,3 +364,42 @@ class ClientView(generics.CreateAPIView):
             total_count = cursor.fetchone()[0]
             
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
+
+class ChartView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get']
+
+    def get(self, request):
+
+        if request.query_params.get('get') == "month": 
+            with connection.cursor() as cursor:
+                query = "SELECT strftime('%Y-%m', eta) AS month, COUNT(apis_clrmodel.eta) AS count FROM apis_clrmodel;"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                print("rows",rows)
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+                return JsonResponse({'monthly': serialized_data}, status=status.HTTP_200_OK)
+        
+        elif request.query_params.get('get') == "eachstatus":
+            with connection.cursor() as cursor:
+
+                li = [CLRModel._meta.db_table, ShipmentStatus._meta.db_table, PortStatus._meta.db_table, CityWiseTracker._meta.db_table]
+                reponse = {}
+                for tb in li:
+                    query = f"SELECT COUNT(*) AS done_count FROM {tb} WHERE status = 'pending';"
+                    cursor.execute(query)
+                    pending = cursor.fetchall()
+
+                    query = f"SELECT COUNT(*) AS done_count FROM {tb} WHERE status = 'inprogress';"
+                    cursor.execute(query)
+                    inprogress = cursor.fetchall()
+
+                    query = f"SELECT COUNT(*) AS done_count FROM {tb} WHERE status = 'done';"
+                    cursor.execute(query)
+                    done = cursor.fetchall()
+                    reponse[tb.split("_")[1]] = [pending[0][0],inprogress[0][0], done[0][0]]
+
+                return JsonResponse(reponse, status=status.HTTP_200_OK)
+
+
