@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ContainerPortStatusForm from "./ContainerPortStatusForm";
 import { DataTable } from "@/components/ui/data-tables";
-import { columns, containerPortColumns } from "./columns";
+import { containerPortColumns } from "./columns";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import StaffTableActions from "@/components/StaffTableActions";
@@ -32,6 +32,7 @@ const ContainerStatus = ({
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = 10;
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     const onEdit = useCallback((data) => {
         setPort(data);
@@ -104,6 +105,18 @@ const ContainerStatus = ({
         }
     }, [page, revalidate, searchParams]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
     return (
         <>
             <div className="flex">
@@ -121,7 +134,11 @@ const ContainerStatus = ({
                     />
                 </div>
             </div>
-            <div className="mt-5 w-[80vw]">
+            <div
+                className={`mt-5 w-full ${
+                    windowWidth >= 1024 && windowWidth <= 1536 && "w-[1156px]"
+                }`}
+            >
                 <DataTable
                     columns={columns}
                     data={data}

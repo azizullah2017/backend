@@ -43,7 +43,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <>
-            <div className="rounded-md border">
+            <div className="rounded-md border shadow-md">
                 <div className="h-[70vh] relative overflow-auto">
                     <Table>
                         <TableHeader className="sticky top-0 bg-secondary">

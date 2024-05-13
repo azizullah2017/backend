@@ -38,7 +38,7 @@ const Login = () => {
     const pushToRoute = {
         staff: "/dashboard/clr-information",
         admin: "/",
-        customer: "/dashboard/customer",
+        customer: "/dashboard/client-view",
     };
 
     const onSubmit = async (data: z.infer<typeof loginSchema>) => {

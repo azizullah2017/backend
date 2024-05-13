@@ -19,11 +19,17 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
     const isAuthenticated = userData?.role !== "";
     const isAuthorized =
         userData?.role !== "" &&
-        (userData?.role === "staff" || userData?.role === "admin");
+        (userData?.role === "customer" || userData?.role === "admin");
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
-        if (!isAuthorized) return router.push(`/dashboard/${userData?.role}`);
+        if (!isAuthorized) {
+            let route;
+            if (userData?.role === "staff") {
+                route = "client-view";
+            }
+            return router.push(`/dashboard/clr-information`);
+        }
     }, []);
 
     useEffect(() => {

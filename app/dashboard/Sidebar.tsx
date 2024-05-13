@@ -7,6 +7,10 @@ import { ImHome } from "react-icons/im";
 import MenuLink from "./MenuLink";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { IoLogOut } from "react-icons/io5";
+import { BASE_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 
 export type menuItemsType = {
     title: string;
@@ -15,7 +19,7 @@ export type menuItemsType = {
     role: string[];
 };
 
-const menuItems: menuItemsType[] = [
+export const menuItems: menuItemsType[] = [
     {
         title: "Dashboard",
         path: "/",
@@ -55,7 +59,24 @@ const menuItems: menuItemsType[] = [
 ];
 
 const SideBar = () => {
-    const { userData } = useAuth();
+    const { userData, setUserData } = useAuth();
+    const router = useRouter();
+
+    const logout = async () => {
+        const res = await fetch(`${BASE_URL}/api/auth/logout/`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Token ${userData?.token}`,
+            },
+        });
+
+        if (!res.ok) {
+            throw new Error("Something went wrong");
+        } else {
+            setUserData({ token: "", username: "", role: "" });
+            router.push("/login");
+        }
+    };
 
     return (
         <div className="sticky">
@@ -73,6 +94,14 @@ const SideBar = () => {
                             {<MenuLink item={item} key={item.title} />}
                         </li>
                     ))}
+
+                <div
+                    className="flex items-center w-full p-5 gap-1 cursor-pointer hover:text-gray-700"
+                    onClick={logout}
+                >
+                    <IoLogOut className="w-7 h-7" />
+                    Logout
+                </div>
             </ul>
         </div>
     );

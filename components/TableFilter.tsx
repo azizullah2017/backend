@@ -38,6 +38,7 @@ const TableFilter = ({ setData }: { setData: () => void }) => {
                 placeholder="Search..."
                 onChange={(e) => setSearchText(e.target.value)}
                 value={searchText}
+                className="shadow-sm"
             />
         </div>
     );

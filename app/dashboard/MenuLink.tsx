@@ -4,7 +4,13 @@ import Link from "next/link";
 import { menuItemsType } from "./Sidebar";
 import { usePathname } from "next/navigation";
 
-const MenuLink = ({ item }: { item: menuItemsType }) => {
+const MenuLink = ({
+    item,
+    setShowSidebar,
+}: {
+    item: menuItemsType;
+    setShowSidebar?: (arg: boolean) => void;
+}) => {
     const pathname = usePathname();
 
     return (
@@ -13,6 +19,9 @@ const MenuLink = ({ item }: { item: menuItemsType }) => {
             className={`p-5 flex items-center gap-2 hover:bg-[#f4f7fe] rounded-md ${
                 pathname === item.path && "bg-[#f4f7fe]"
             } `}
+            onClick={() =>
+                setShowSidebar && setShowSidebar((prevValue) => !prevValue)
+            }
         >
             <div className={`${pathname === item.path && "text-[#422AFB]"}`}>
                 {item.icon}

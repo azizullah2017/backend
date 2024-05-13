@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { IoReorderFourOutline } from "react-icons/io5";
 
 function formatString(input: string) {
     const parts = input.split("-");
@@ -15,7 +16,11 @@ function formatString(input: string) {
     return formattedString;
 }
 
-const Navbar = () => {
+const Navbar = ({
+    setShowSidebar,
+}: {
+    setShowSidebar: (arg: boolean) => void;
+}) => {
     const pathname = usePathname();
     const currentPath = pathname.split("/").pop() as string;
     const [isClient, setIsClient] = useState(false);
@@ -26,8 +31,16 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div className="flex justify-between items-center py-3 mb-8">
+        <div className="flex justify-between items-end lg:items-center py-3 mb-8">
             <div className="text-4xl font-bold mt-4">
+                <div className="lg:hidden mb-3">
+                    <IoReorderFourOutline
+                        className="w-7 h-7"
+                        onClick={() =>
+                            setShowSidebar((prevValue) => !prevValue)
+                        }
+                    />
+                </div>
                 {pathname === "/" ? "Dashboard" : formatString(currentPath)}
             </div>
             <div className="bg-[#11047A] rounded-full flex items-center p-4 cursor-pointer text-white">

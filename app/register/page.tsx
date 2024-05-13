@@ -17,7 +17,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,6 +30,8 @@ import { useAuth } from "@/context/AuthContext";
 const registerSchema = z.object({
     username: z.string().min(1, "User is required"),
     email: z.string().min(1, "Email is required").email("Invalid Email"),
+    mobile_no: z.string().min(1, "Mobile number is required"),
+    company_name: z.string().optional(),
     password: z.string().min(1, "Password is required"),
     role: z.string().min(1, "Role is required"),
 });
@@ -43,6 +44,8 @@ const Register = () => {
     const [error, setError] = useState<{ email?: string; username?: string }>(
         {}
     );
+    const [isCustomer, setIsCustomer] = useState(false);
+    const watchRole = form.watch("role");
     // const { userData } = useAuth();
     // const pushToRoute = {
     //     staff: "/dashboard/clr-information",
@@ -83,6 +86,14 @@ const Register = () => {
     //         router.push(pushToRoute[userData?.role]);
     //     }
     // }, []);
+
+    useEffect(() => {
+        if (watchRole === "customer") {
+            setIsCustomer(true);
+        } else {
+            setIsCustomer(false);
+        }
+    }, [watchRole]);
 
     return (
         <>
@@ -145,6 +156,34 @@ const Register = () => {
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="mobile_no"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Mobile Number</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            {isCustomer && (
+                                <FormField
+                                    control={form.control}
+                                    name="company_name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Company Name</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                             <FormField
                                 control={form.control}
                                 name="password"
