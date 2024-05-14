@@ -408,6 +408,53 @@ class ClientView(generics.CreateAPIView):
             
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
 
+class Track(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get']
+    
+    
+    def get(self, request):
+        print(request.query_params.get('get'))
+        # bl
+        # shipper_reference
+        # book_no
+        # vessel
+        print(request.query_params.get('search'))
+        with connection.cursor() as cursor:
+            query =f" SELECT book_no, vessel, shipper, consignee, no_container, product, port_of_loading,\
+            port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
+            WHERE shipper_reference = '{request.query_params.get('search')}' \
+            OR book_no = '{request.query_params.get('search')}'\
+            OR vessel = '{request.query_params.get('search')}'"
+
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
+            
+            print("data",data)
+            query =f"SELECT bl, docs, surrender, containers FROM {ShipmentStatus._meta.db_table} \
+            WHERE book_no = '{data.get('book_no')}'"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            data.update([dict(zip([col[0] for col in cursor.description], row)) for row in rows][0])
+
+            cursor.execute(f"SELECT bl_containers, truck_no FROM {PortStatus._meta.db_table} WHERE bl='{data.get('bl')}';")
+            rows = cursor.fetchall()
+            data["containers"] = list()
+            for bl_containers, truck_no in rows:
+                tmp = {}
+                tmp['bl_containers'] = bl_containers
+                tmp["truck_no"] = truck_no
+                
+                cursor.execute(f"SELECT curent_location as location, date, truck_no FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{truck_no}';")
+                rows = cursor.fetchall()
+                tmp["location"] = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+                data["containers"].append(tmp)
+
+            
+            return JsonResponse({'track': data}, status=status.HTTP_200_OK)
+
+
 class ChartView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get']

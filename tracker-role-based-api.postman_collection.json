@@ -9,10 +9,17 @@
 			"name": "register",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default",
+						"disabled": true
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"Maisam\",\n  \"email\": \"maisam@lachinshipping.com\",\n  \"password\": \"$tr0ngPa$$w0rd\",\n  \"role\": \"staff\"\n}",
+					"raw": "{\n  \"username\": \"alli\",\n  \"email\": \"ali@lachinshipping.com\",\n  \"password\": \"$tr0ngPa$$w0rd\",\n  \"role\": \"admin\",\n  \"mobile_no\": \"021231231231\",\n   \"company_name\": \"lachin\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,17 +27,53 @@
 					}
 				},
 				"url": {
-					"raw": "https://tracker.lachinshipping.com/api/auth/register/",
-					"protocol": "https",
+					"raw": "http://localhost:8000/api/auth/register/",
+					"protocol": "http",
 					"host": [
-						"tracker",
-						"lachinshipping",
-						"com"
+						"localhost"
 					],
+					"port": "8000",
 					"path": [
 						"api",
 						"auth",
 						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user update",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 8db80fda8f5e4fb77f5f32efdd34fd9925ead094",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"ali\",\n  \"password\": \"Str0ngPa$$w0rd\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/auth/update/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"update",
 						""
 					]
 				}
@@ -44,7 +87,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"Maisam\",\n  \"password\": \"$tr0ngPa$$w0rd\"\n}",
+					"raw": "{\n  \"username\": \"ali\",\n  \"password\": \"Str0ngPa$$w0rd\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -52,12 +95,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://tracker.lachinshipping.com:8000/api/auth/login/",
-					"protocol": "https",
+					"raw": "http://localhost:8000/api/auth/login/",
+					"protocol": "http",
 					"host": [
-						"tracker",
-						"lachinshipping",
-						"com"
+						"localhost"
 					],
 					"port": "8000",
 					"path": [
@@ -1152,7 +1193,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/chart?get=eachstatus&filter=month",
+					"raw": "http://127.0.0.1:8000/api/chart?get=month&filter=month",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -1168,11 +1209,46 @@
 					"query": [
 						{
 							"key": "get",
-							"value": "eachstatus"
+							"value": "month"
 						},
 						{
 							"key": "filter",
 							"value": "month"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "chart month Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/track?search=RWL6677",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"track"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "RWL6677"
 						}
 					]
 				}

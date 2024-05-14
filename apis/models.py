@@ -37,7 +37,7 @@ class CLRModel(models.Model):
     port_of_loading = models.CharField(max_length=100)
     port_of_departure = models.CharField(max_length=100)
     final_port_of_destination = models.CharField(max_length=100)
-    eta  =  models.DateField(blank=True, null=True)
+    etd  =  models.DateField(blank=True, null=True)
     vessel  = models.CharField(max_length=100)
     status  = models.CharField(blank=True, null=True,max_length=100)
     eta_karachi  = models.DateField()
