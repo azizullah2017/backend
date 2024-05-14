@@ -23,13 +23,7 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
-        if (!isAuthorized) {
-            let route;
-            if (userData?.role === "staff") {
-                route = "client-view";
-            }
-            return router.push(`/dashboard/clr-information`);
-        }
+        if (!isAuthorized) return router.push(`/dashboard/clr-information`);
     }, []);
 
     useEffect(() => {
@@ -58,18 +52,20 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
 
     return (
         <>
-            <div className="flex flex-col">
-                <StaffTableActions setData={setData} />
-                <div className="mt-5">
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        pageSize={pageSize}
-                        currentPage={page}
-                        totalRows={totalRows}
-                    />
+            {isAuthorized && (
+                <div className="flex flex-col">
+                    <StaffTableActions setData={setData} />
+                    <div className="mt-5">
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };

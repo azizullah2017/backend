@@ -86,23 +86,20 @@ const SideBar = () => {
             <hr />
             <ul className="list-none mt-5">
                 {menuItems
-                    .filter((item) =>
-                        item.role.map((role) => role === userData?.role)
-                    )
+                    .filter((item) => item.role.includes(userData?.role))
                     .map((item) => (
                         <li key={item.title} className="mt-2">
                             {<MenuLink item={item} key={item.title} />}
                         </li>
                     ))}
-
-                <div
-                    className="flex items-center w-full p-5 gap-1 cursor-pointer hover:text-gray-700"
-                    onClick={logout}
-                >
-                    <IoLogOut className="w-7 h-7" />
-                    Logout
-                </div>
             </ul>
+            <div
+                className="flex items-center w-full p-5 gap-1 cursor-pointer hover:text-gray-700"
+                onClick={logout}
+            >
+                <IoLogOut className="w-7 h-7" />
+                Logout
+            </div>
         </div>
     );
 };

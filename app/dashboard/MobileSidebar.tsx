@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuth } from "@/context/AuthContext";
@@ -39,11 +41,11 @@ const MobileSidebar = ({
                 open={showSidebar}
                 onOpenChange={() => setShowSidebar((prevValue) => !prevValue)}
             >
-                <DialogContent className="sm:max-w-[500px] absolute left-[0%] top-[0%] translate-x-[0%] translate-y-0 h-[calc(100vh)]">
+                <DialogContent className="sm:max-w-[500px] absolute left-[0%] top-[0%] translate-x-[0%] translate-y-0 h-[calc(100vh)] flex flex-col justify-start data-[state=open]:slide-in-from-top-[0%] data-[state=closed]:slide-out-to-top-[0%]">
                     <ul className="list-none mt-3">
                         {menuItems
                             .filter((item) =>
-                                item.role.map((role) => role === userData?.role)
+                                item.role.includes(userData?.role)
                             )
                             .map((item) => (
                                 <li key={item.title} className="mt-2">
@@ -56,14 +58,14 @@ const MobileSidebar = ({
                                     }
                                 </li>
                             ))}
-                        <div
-                            className="flex items-center w-full p-5 gap-1 cursor-pointer hover:text-gray-700"
-                            onClick={logout}
-                        >
-                            <IoLogOut className="w-7 h-7" />
-                            Logout
-                        </div>
                     </ul>
+                    <div
+                        className="flex justify-start items-center w-full p-5 gap-1 cursor-pointer hover:text-gray-700"
+                        onClick={logout}
+                    >
+                        <IoLogOut className="w-7 h-7" />
+                        Logout
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

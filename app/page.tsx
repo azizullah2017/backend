@@ -9,6 +9,8 @@ import Filter from "./Filter";
 import { useAuth } from "@/context/AuthContext";
 import LineChart from "./LineChart";
 import MobileSidebar from "./dashboard/MobileSidebar";
+import useGetWindowWidth from "@/hooks/GetWindowSize";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
     const [barData, setBarData] = useState([]);
@@ -16,6 +18,11 @@ export default function Home() {
     const [filter, setFilter] = useState("monthly");
     const [showSidebar, setShowSidebar] = useState(false);
     const { userData } = useAuth();
+    const windowWidth = useGetWindowWidth();
+    const router = useRouter();
+
+    const isAuthenticated = userData?.role !== "";
+    const isAuthorized = userData?.role !== "" && userData?.role === "admin";
 
     useEffect(() => {
         const fetchBarChartData = async () => {
@@ -103,32 +110,53 @@ export default function Home() {
         fetchLineData();
     }, [filter]);
 
+    useEffect(() => {
+        if (!isAuthenticated) return router.push("/login");
+        if (!isAuthorized) {
+            let route = "";
+            if (userData?.role === "staff") {
+                route = "clr-information";
+            } else if (userData?.role === "customer") {
+                route = "client-view";
+            }
+
+            return router.push(`/dashboard/${route}`);
+        }
+    }, []);
+
     return (
-        <div className="flex">
-            <div className="hidden lg:flex w-[400px] max-w-[400px] bg-white p-5">
-                <SideBar />
-            </div>
-            <div className="lg:hidden">
-                <MobileSidebar
-                    showSidebar={showSidebar}
-                    setShowSidebar={setShowSidebar}
-                />
-            </div>
-            <div className="w-full p-5">
-                <Navbar setShowSidebar={setShowSidebar} />
-                <Filter setFilter={setFilter} />
-                <div className="grid lg:grid-cols-2 gap-2 mt-2">
-                    <BarChart
-                        title="Status"
-                        legendBottom=""
-                        legendLeft=""
-                        indexBy="module"
-                        labelTextColor="#fff"
-                        data={barData}
-                    />
-                    <LineChart data={lineData} />
+        <>
+            <div className="flex">
+                <div className="hidden lg:flex w-[400px] max-w-[400px] bg-white p-5">
+                    <SideBar />
                 </div>
+                {windowWidth < 1024 && (
+                    <div className="lg:hidden">
+                        <MobileSidebar
+                            showSidebar={showSidebar}
+                            setShowSidebar={setShowSidebar}
+                        />
+                    </div>
+                )}
+                {isAuthorized && (
+                    <div className="w-full p-5">
+                        <Navbar setShowSidebar={setShowSidebar} />
+                        <Filter setFilter={setFilter} />
+                        <div className="grid lg:grid-cols-2 gap-2 mt-2">
+                            <BarChart
+                                title="Status"
+                                legendBottom=""
+                                legendLeft=""
+                                indexBy="module"
+                                labelTextColor="#fff"
+                                data={barData}
+                            />
+                            <LineChart data={lineData} />
+                        </div>
+                    </div>
+                )}
             </div>
-        </div>
+            ;
+        </>
     );
 }

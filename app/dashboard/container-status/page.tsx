@@ -10,6 +10,7 @@ import StaffTableActions from "@/components/StaffTableActions";
 import { BASE_URL } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
+import useGetWindowWidth from "@/hooks/GetWindowSize";
 
 const ContainerStatus = ({
     searchParams,
@@ -32,7 +33,7 @@ const ContainerStatus = ({
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = 10;
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const windowWidth = useGetWindowWidth();
 
     const onEdit = useCallback((data) => {
         setPort(data);
@@ -72,7 +73,7 @@ const ContainerStatus = ({
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
-        if (!isAuthorized) return router.push(`/dashboard/${userData?.role}`);
+        if (!isAuthorized) return router.push(`/dashboard/client-view`);
     }, []);
 
     useEffect(() => {
@@ -104,18 +105,6 @@ const ContainerStatus = ({
             fetchData();
         }
     }, [page, revalidate, searchParams]);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowWidth(window.innerWidth);
-        };
-
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, []);
 
     return (
         <>

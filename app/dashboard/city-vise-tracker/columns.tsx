@@ -68,14 +68,12 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => alert("hello world!")}>
+                        <DropdownMenuItem onClick={() => console.log("Update")}>
                             <TbEdit className="w-[20px] h-[20px] mr-2" />
                             Update
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            onClick={() => alert("Deleted! Not actually ;)")}
-                        >
+                        <DropdownMenuItem onClick={() => console.log("Delete")}>
                             <TbTrash className="w-[20px] h-[20px] mr-2" />
                             Delete
                         </DropdownMenuItem>

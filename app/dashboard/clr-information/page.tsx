@@ -68,7 +68,7 @@ const CLRInformation = ({
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
-        if (!isAuthorized) return router.push(`/dashboard/${userData?.role}`);
+        if (!isAuthorized) return router.push(`/dashboard/client-view`);
     }, []);
 
     useEffect(() => {
