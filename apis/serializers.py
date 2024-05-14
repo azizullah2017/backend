@@ -13,11 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
     
-    def validate(self, data):
-        username = data.get('username')
-        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
-            raise serializers.ValidationError("Username already exists.")
-        return data
+    # def validate(self, data):
+    #     username = data.get('username')
+    #     if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+    #         raise serializers.ValidationError("Username already exists.")
+    #     return data
 
 class ClrSerializer(serializers.ModelSerializer):
     class Meta:
