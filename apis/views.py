@@ -419,24 +419,40 @@ class Track(generics.CreateAPIView):
         # shipper_reference
         # book_no
         # vessel
-        print(request.query_params.get('search'))
+        # print(request.query_params.get('search'))
         with connection.cursor() as cursor:
             query =f" SELECT book_no, vessel, shipper, consignee, no_container, product, port_of_loading,\
             port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
             WHERE shipper_reference = '{request.query_params.get('search')}' \
             OR book_no = '{request.query_params.get('search')}'\
             OR vessel = '{request.query_params.get('search')}'"
+            cursor.execute(query)
+            rows = cursor.fetchall()
 
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
-            
-            print("data",data)
-            query =f"SELECT bl, docs, surrender, containers FROM {ShipmentStatus._meta.db_table} \
-            WHERE book_no = '{data.get('book_no')}'"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            data.update([dict(zip([col[0] for col in cursor.description], row)) for row in rows][0])
+            if not rows:
+                query =f"SELECT book_no, bl, docs, surrender, containers FROM {ShipmentStatus._meta.db_table} \
+                WHERE bl = '{request.query_params.get('search')}'"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                if rows:
+                    new = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
+                else:
+                    return JsonResponse({'track': {}}, status=status.HTTP_404_NOT_FOUND)
+                query =f" SELECT vessel, shipper, consignee, no_container, product, port_of_loading,\
+                port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
+                WHERE book_no = '{new.get('book_no')}'"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
+                data.update(new)
+            else:
+                data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
+                
+                query =f"SELECT bl, docs, surrender, containers FROM {ShipmentStatus._meta.db_table} \
+                WHERE book_no = '{data.get('book_no')}'"
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                data.update([dict(zip([col[0] for col in cursor.description], row)) for row in rows][0])
 
             cursor.execute(f"SELECT bl_containers, truck_no FROM {PortStatus._meta.db_table} WHERE bl='{data.get('bl')}';")
             rows = cursor.fetchall()
