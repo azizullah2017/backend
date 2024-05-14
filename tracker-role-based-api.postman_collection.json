@@ -50,13 +50,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 8db80fda8f5e4fb77f5f32efdd34fd9925ead094",
+						"value": "Token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"ali\",\n  \"password\": \"Str0ngPa$$w0rd\"\n\n}",
+					"raw": "{\n  \"username\": \"alli\",\n  \"password\": \"Str0ngPa$$w0rd\"\n\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -87,7 +87,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"ali\",\n  \"password\": \"Str0ngPa$$w0rd\"\n}",
+					"raw": "{\n  \"username\": \"alli\",\n  \"password\": \"Str0ngPa$$w0rd\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -979,7 +979,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"bl_containers\": \"gg23s423adf\",\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"curent_location\": \"Chaman\",\n    \"date\": \"2024-05-29\",\n    \"truck_no\": \"123DDD\",\n    \"status\": \"pending\"\n}",
+					"raw": "{\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"C322012,B322012\",\n    \"truck_no\": \"123DDD\",\n    \"date\": \"2024-05-10\",\n    \"curent_location\": \"Hairtan\",\n    \"status\": \"inprogress\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -999,6 +999,79 @@
 					"path": [
 						"api",
 						"tracker"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update tracker (staff)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"uid\": \"e0a868368c3045e0820a317324371161\",\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"C322012,B322012\",\n    \"truck_no\": \"123DDD\",\n    \"date\": \"2024-05-10\",\n    \"curent_location\": \"Hairtan\",\n    \"status\": \"inprogress\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/tracker/update/e0a868368c3045e0820a317324371161/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"tracker",
+						"update",
+						"e0a868368c3045e0820a317324371161",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete tracker (staff)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/tracker/update/e8929f1f01a94b948fcf1971d97817a8/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"tracker",
+						"update",
+						"e8929f1f01a94b948fcf1971d97817a8",
+						""
 					]
 				}
 			},
@@ -1232,7 +1305,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/track?search=RWL6677",
+					"raw": "http://127.0.0.1:8000/api/track?search=RWLPKGKHI000667",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -1248,7 +1321,7 @@
 					"query": [
 						{
 							"key": "search",
-							"value": "RWL6677"
+							"value": "RWLPKGKHI000667"
 						}
 					]
 				}

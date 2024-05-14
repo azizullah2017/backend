@@ -369,7 +369,7 @@ class AddcityInfo(generics.CreateAPIView):
        
 
 class UpdateTrackerInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = CityWiseTrackerSerializer
 
     def get_queryset(self):
