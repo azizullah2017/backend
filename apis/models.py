@@ -14,8 +14,8 @@ class User(AbstractUser):
     username = models.CharField(max_length=40, unique=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
-    mobile_no = models.CharField(max_length=50, blank=True, null=True)
-    company_name = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    mobile_no = models.CharField(max_length=50, unique=False)
+    company_name = models.CharField(max_length=50,default='Lachine',null=True,unique=False)
 
 
 class ExpiringToken(Token):
@@ -28,9 +28,9 @@ class ExpiringToken(Token):
 class CLRModel(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
     shipper = models.CharField(max_length=100)
-    shipper_reference = models.CharField(max_length=100)
+    shipper_reference = models.CharField(max_length=100,unique=True)
     consignee = models.CharField(max_length=100)
-    book_no = models.CharField(max_length=100)
+    book_no = models.CharField(max_length=100,unique=True)
     no_container = models.CharField(max_length=100)
     size = models.CharField(max_length=100)
     product = models.CharField(max_length=100)
@@ -51,7 +51,7 @@ class CLRModel(models.Model):
 class ShipmentStatus(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
     book_no = models.CharField(max_length=100)
-    bl = models.CharField(max_length=100)
+    bl = models.CharField(max_length=100,unique=True)
     no_container = models.CharField(max_length=100)
     eta_departure = models.DateField()
     eta_arrival = models.DateField()

@@ -10,22 +10,55 @@ from rest_framework.views import APIView
 from django.db import connection  # Import connection
 from django.http import JsonResponse
 from django.utils import timezone
-from django.db.models import Q
+from django.contrib.auth.hashers import make_password
+
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     allowed_methods = ['get','post']
 
 
 class UpdateUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    allowed_methods = ['post']
+    queryset = User.objects.all()
 
-    def get_queryset(self):
-        return User.objects.filter(pk=self.kwargs.get('pk'))
+    def perform_update(self, serializer):
+        if 'password' in serializer.validated_data:
+            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
+        serializer.save()
+
+    def get_object(self):
+        return self.request.user
+
+    # def update(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     print("serializer: ",serializer)
+    #     serializer.is_valid(raise_exception=True)
+
+    #     user = request.user
+    #     if serializer.validated_data.get('old_password'):
+    #         old_password = serializer.validated_data.get('old_password')
+    #         new_password = serializer.validated_data.get('new_password')
+    #         user.set_password(new_password)
+
+    #     if not user.check_password(old_password):
+    #         return Response({'detail': 'Incorrect old password'}, status=status.HTTP_400_BAD_REQUEST)
+
+    #     if 'username' in serializer.validated_data:
+    #         user.username = serializer.validated_data['username']
+    #     if 'email' in serializer.validated_data:
+    #         user.email = serializer.validated_data['email']
+    #     if 'contact' in serializer.validated_data:
+    #         user.contact = serializer.validated_data['contact']
+
+        
+    #     user.save()
+
+    #     return Response({'detail': 'User information updated successfully'}, status=status.HTTP_200_OK)
+
 
 class UserLoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
