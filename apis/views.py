@@ -419,7 +419,6 @@ class Track(generics.CreateAPIView):
         # shipper_reference
         # book_no
         # vessel
-        # print(request.query_params.get('search'))
         with connection.cursor() as cursor:
             query =f" SELECT book_no, vessel, shipper, consignee, no_container, product, port_of_loading,\
             port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
@@ -479,7 +478,7 @@ class ChartView(generics.CreateAPIView):
 
         if request.query_params.get('get') == "month": 
             with connection.cursor() as cursor:
-                query = "SELECT strftime('%Y-%m', eta) AS month, COUNT(apis_clrmodel.eta) AS count FROM apis_clrmodel;"
+                query = "SELECT strftime('%Y-%m', etd) AS month, COUNT(apis_clrmodel.etd) AS count FROM apis_clrmodel;"
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 print("rows",rows)
