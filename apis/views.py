@@ -478,10 +478,9 @@ class ChartView(generics.CreateAPIView):
 
         if request.query_params.get('get') == "month": 
             with connection.cursor() as cursor:
-                query = "SELECT strftime('%Y-%m', etd) AS month, COUNT(apis_clrmodel.etd) AS count FROM apis_clrmodel;"
+                query = f"SELECT strftime('%Y-%m', etd) AS month, COUNT(apis_clrmodel.etd) AS count FROM {CLRModel._meta.db_table} GROUP BY strftime('%m', etd);"
                 cursor.execute(query)
                 rows = cursor.fetchall()
-                print("rows",rows)
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
                 return JsonResponse({'monthly': serialized_data}, status=status.HTTP_200_OK)
