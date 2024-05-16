@@ -1,9 +1,9 @@
 "use client";
 
 import Navbar from "./Navbar";
-import SideBar from "./Sidebar";
 import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
+import SideBar from "./Sidebar";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -12,18 +12,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div className="flex">
-            <div className="hidden lg:flex w-[400px] max-w-[400px] bg-white p-5">
-                <SideBar />
-            </div>
-            {windowWidth < 1024 && (
-                <div className="lg:hidden">
-                    <MobileSidebar
-                        showSidebar={showSidebar}
-                        setShowSidebar={setShowSidebar}
-                    />
+            {windowWidth >= 1024 ? (
+                <div className="flex w-[400px] max-w-[400px] bg-white p-5">
+                    <SideBar />
                 </div>
+            ) : (
+                <MobileSidebar
+                    showSidebar={showSidebar}
+                    setShowSidebar={setShowSidebar}
+                />
             )}
-            <div className="w-full p-5">
+            <div className="w-full p-5 static bg-[#f6f8fb] h-screen overflow-auto">
                 <Navbar setShowSidebar={setShowSidebar} />
                 {children}
             </div>

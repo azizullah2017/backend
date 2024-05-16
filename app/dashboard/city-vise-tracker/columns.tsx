@@ -53,33 +53,4 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
         header: "Status",
         cell: ({ row }) => <DataTableRowStatus status={row.original.status} />,
     },
-    {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => {
-            const shipmentStatus = row.original;
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => console.log("Update")}>
-                            <TbEdit className="w-[20px] h-[20px] mr-2" />
-                            Update
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => console.log("Delete")}>
-                            <TbTrash className="w-[20px] h-[20px] mr-2" />
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
-    },
 ];

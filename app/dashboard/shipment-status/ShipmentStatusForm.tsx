@@ -28,6 +28,7 @@ import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
 import { Label } from "@/components/ui/label";
 import Combobox from "@/components/Combobox";
+import FormTransition from "../_components/FormTransition";
 
 const defaultValues = {
     bl: "",
@@ -251,285 +252,242 @@ const ShipmentStatusForm = ({
     }, [formReset]);
 
     return (
-        <Transition
-            show={isShowing}
-            enter="transition-opacity duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-350"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-        >
-            <div className="h-screen w-full md:w-1/3 bg-[#F4F7FE] absolute top-0 right-0 overflow-y-auto">
-                <div className="flex justify-end mt-4 mr-4">
-                    <CgClose
-                        className="w-7 h-7 cursor-pointer"
-                        onClick={() => {
-                            setIsShowing((prevState) => !prevState);
-                        }}
-                    />
-                </div>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-4 p-7">
-                            <div className="flex flex-wrap gap-4">
-                                <div className="w-full lg:flex-1">
-                                    <Label
-                                        htmlFor="name"
-                                        className="text-right"
-                                    >
-                                        Booking Number
-                                    </Label>
-                                    <div className="mt-2">
-                                        <Combobox
-                                            currentItem={currentBookingNumber}
-                                            itemsArray={bookingNumbers}
-                                            itemNotSelectedMessage="Select Booking #..."
-                                            commandEmptyMessage="No booking # found!"
-                                            setCurrentItem={
-                                                setCurrentBookingNumber
-                                            }
-                                            btnWidth="w-full"
-                                            editing={editing}
-                                        />
-                                    </div>
-                                </div>
-                                <FormField
-                                    control={form.control}
-                                    name="bl"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>{`BL (Bill of Lading No.)`}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            {/* <FormMessage /> */}
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="no_container"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>{`Volumne (No. of Containers)`}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="eta_departure"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                ETD / Departure
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="date"
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="eta_arrival"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>ETA / Arrival</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="date"
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="port"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Port</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="docs"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Docs</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="date"
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="surrender"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Surrender</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="date"
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="status"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                Current Status
-                                            </FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select a status" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="pending">
-                                                        Pending
-                                                    </SelectItem>
-                                                    <SelectItem value="inprogress">
-                                                        In Progress
-                                                    </SelectItem>
-                                                    <SelectItem value="done">
-                                                        Done
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="flex flex-wrap items-center gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="container_id_1"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                Container ID 1
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="lg:mt-5">
-                                    <Button
-                                        onClick={() =>
-                                            setContainerCount(
-                                                (prevValue) => prevValue + 1
-                                            )
-                                        }
-                                        type="button"
-                                    >
-                                        Add Container
-                                    </Button>
-                                </div>
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                {containerInput.map((container, index) => (
-                                    <FormField
-                                        control={form.control}
-                                        name={container.name}
-                                        key={index}
-                                        render={({ field }) => (
-                                            <FormItem className="w-full lg:flex-1">
-                                                <FormLabel>
-                                                    {container.label}
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder=""
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
+        <FormTransition isShowing={isShowing} setIsShowing={setIsShowing}>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <div className="flex flex-col gap-4 p-7">
+                        <div className="flex flex-wrap gap-4">
+                            <div className="w-full lg:flex-1">
+                                <Label htmlFor="name" className="text-right">
+                                    Booking Number
+                                </Label>
+                                <div className="mt-2">
+                                    <Combobox
+                                        currentItem={currentBookingNumber}
+                                        itemsArray={bookingNumbers}
+                                        itemNotSelectedMessage="Select Booking #..."
+                                        commandEmptyMessage="No booking # found!"
+                                        setCurrentItem={setCurrentBookingNumber}
+                                        btnWidth="w-full"
+                                        editing={editing}
                                     />
-                                ))}
+                                </div>
                             </div>
                             <FormField
                                 control={form.control}
-                                name="attachment"
+                                name="bl"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Attachment of booking
-                                        </FormLabel>
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>{`BL (Bill of Lading No.)`}</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="file"
-                                                placeholder=""
-                                                {...field}
-                                                onChange={(e) => {
-                                                    fileChangeHandler(e);
-                                                }}
-                                            />
+                                            <Input placeholder="" {...field} />
                                         </FormControl>
-                                        <FormDescription>
-                                            Attach .pdf document
-                                        </FormDescription>
+                                        {/* <FormMessage /> */}
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <Button type="submit" className="ml-7 mb-5">
-                            Submit
-                        </Button>
-                    </form>
-                </Form>
-            </div>
-        </Transition>
+                        <div className="flex flex-wrap gap-4">
+                            <FormField
+                                control={form.control}
+                                name="no_container"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>{`Volumne (No. of Containers)`}</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="eta_departure"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>ETD / Departure</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            <FormField
+                                control={form.control}
+                                name="eta_arrival"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>ETA / Arrival</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="port"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Port</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="docs"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Docs</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            <FormField
+                                control={form.control}
+                                name="surrender"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Surrender</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Current Status</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a status" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="pending">
+                                                    Pending
+                                                </SelectItem>
+                                                <SelectItem value="inprogress">
+                                                    In Progress
+                                                </SelectItem>
+                                                <SelectItem value="done">
+                                                    Done
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-4">
+                            <FormField
+                                control={form.control}
+                                name="container_id_1"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Container ID 1</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <div className="lg:mt-5">
+                                <Button
+                                    onClick={() =>
+                                        setContainerCount(
+                                            (prevValue) => prevValue + 1
+                                        )
+                                    }
+                                    type="button"
+                                >
+                                    Add Container
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            {containerInput.map((container, index) => (
+                                <FormField
+                                    control={form.control}
+                                    name={container.name}
+                                    key={index}
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>
+                                                {container.label}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            ))}
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="attachment"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Attachment of booking</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="file"
+                                            placeholder=""
+                                            {...field}
+                                            onChange={(e) => {
+                                                fileChangeHandler(e);
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormDescription>
+                                        Attach .pdf document
+                                    </FormDescription>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <Button type="submit" className="ml-7 mb-5">
+                        Submit
+                    </Button>
+                </form>
+            </Form>
+        </FormTransition>
     );
 };
 

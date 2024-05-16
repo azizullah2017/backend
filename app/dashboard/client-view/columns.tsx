@@ -1,18 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { TbEdit, TbTrash } from "react-icons/tb";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+
+import DataTableRowStatus from "../_components/DataTableRowStatus";
 
 export type CityViseTrackerType = {
     id: string;
@@ -72,16 +64,7 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
     {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => {
-            const status = row.original.status;
-            const badgeColor: Record<string, string> = {
-                pending: "bg-red-600",
-                "In Progress": "bg-blue-600",
-                Closed: "bg-green-600",
-            };
-
-            return <Badge className={badgeColor[status]}>{status}</Badge>;
-        },
+        cell: ({ row }) => <DataTableRowStatus status={row.original.status} />,
     },
     {
         id: "actions",
@@ -94,7 +77,9 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
                     variant="outline"
                     onClick={() => console.log("hello world")}
                 >
-                    Details
+                    <Link href={`/dashboard/tracker?bl=${clientView.bl}`}>
+                        Details
+                    </Link>
                 </Button>
             );
         },

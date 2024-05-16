@@ -24,6 +24,7 @@ interface DataTableProps<TData, TValue> {
     currentPage?: number;
     totalRows?: number;
     pagination?: boolean;
+    tableHeight?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
     currentPage,
     totalRows,
     pagination = true,
+    tableHeight = "h-[70vh]",
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -43,15 +45,20 @@ export function DataTable<TData, TValue>({
 
     return (
         <>
-            <div className="rounded-md border shadow-md">
-                <div className="h-[70vh] relative overflow-auto">
+            <div className="rounded-xl border border-[#ebeaea] shadow-lg">
+                <div
+                    className={`${tableHeight} relative overflow-auto rounded-xl`}
+                >
                     <Table>
-                        <TableHeader className="sticky top-0 bg-secondary">
+                        <TableHeader className="sticky top-0 bg-[#58A7C6] ">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => {
                                         return (
-                                            <TableHead key={header.id}>
+                                            <TableHead
+                                                key={header.id}
+                                                className="text-white"
+                                            >
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
@@ -73,6 +80,7 @@ export function DataTable<TData, TValue>({
                                         data-state={
                                             row.getIsSelected() && "selected"
                                         }
+                                        className="bg-white"
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id}>

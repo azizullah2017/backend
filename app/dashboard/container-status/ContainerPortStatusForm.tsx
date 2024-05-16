@@ -28,6 +28,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Label } from "@/components/ui/label";
 import Combobox from "@/components/Combobox";
 import { MultiSelect } from "@/components/MultiSelect";
+import FormTransition from "../_components/FormTransition";
 
 const defaultValues = {
     delivery_at: "",
@@ -257,273 +258,225 @@ const ContainerPortStatusForm = ({
     }, [isShowing]);
 
     return (
-        <Transition
-            show={isShowing}
-            enter="transition-opacity duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-350"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-        >
-            <div className="h-screen w-full md:w-1/3 bg-[#F4F7FE] absolute top-0 right-0 overflow-y-auto">
-                <div className="flex justify-end mt-4 mr-4">
-                    <CgClose
-                        className="w-7 h-7 cursor-pointer"
-                        onClick={() => setIsShowing((prevState) => !prevState)}
-                    />
-                </div>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-4 p-7">
-                            <div className="flex flex-wrap gap-4">
-                                <div className="w-full lg:flex-1">
-                                    <Label
-                                        htmlFor="name"
-                                        className="text-right"
-                                    >
-                                        BL Numbers
-                                    </Label>
-                                    <div className="mt-2">
-                                        <Combobox
-                                            currentItem={currentBlNumber}
-                                            itemsArray={blNumbers}
-                                            itemNotSelectedMessage="Select BL..."
-                                            commandEmptyMessage="No BL # found!"
-                                            setCurrentItem={setCurrentBlNumber}
-                                            btnWidth="w-full"
-                                            editing={editing}
-                                        />
-                                    </div>
-                                </div>
-                                <FormField
-                                    control={form.control}
-                                    name="delivery_at"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Deliver At</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            {/* <FormMessage /> */}
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+        <FormTransition isShowing={isShowing} setIsShowing={setIsShowing}>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <div className="flex flex-col gap-4 p-7">
+                        <div className="flex flex-wrap gap-4">
                             <div className="w-full lg:flex-1">
                                 <Label htmlFor="name" className="text-right">
-                                    Containers
+                                    BL Numbers
                                 </Label>
                                 <div className="mt-2">
-                                    <MultiSelect
-                                        options={containers}
-                                        selected={currentContainers}
-                                        onChange={setCurrentContainers}
-                                        className="w-full"
+                                    <Combobox
+                                        currentItem={currentBlNumber}
+                                        itemsArray={blNumbers}
+                                        itemNotSelectedMessage="Select BL..."
+                                        commandEmptyMessage="No BL # found!"
+                                        setCurrentItem={setCurrentBlNumber}
+                                        btnWidth="w-full"
+                                        editing={editing}
                                     />
                                 </div>
                             </div>
-                            <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="gd_no"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>GD No.</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="clearing_agent"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                Clearing Agent
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="transporter"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Transporter</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="truck_no"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Truck No.</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="driver_name"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Driver Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="driver_mobile_no"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>Mobile No.</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="truck_placement_date"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                Truck Placement Date
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="date"
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="truck_out_date"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                Truck Out Date
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="date"
-                                                    placeholder=""
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="status"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full lg:flex-1">
-                                            <FormLabel>
-                                                Current Status
-                                            </FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select a status" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="pending">
-                                                        Pending
-                                                    </SelectItem>
-                                                    <SelectItem value="inprogress">
-                                                        In Progress
-                                                    </SelectItem>
-                                                    <SelectItem value="done">
-                                                        Done
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
                             <FormField
                                 control={form.control}
-                                name="attachment"
+                                name="delivery_at"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Attachment of deal
-                                        </FormLabel>
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Deliver At</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="file"
-                                                placeholder=""
-                                                {...field}
-                                                multiple
-                                                onChange={(e) => {
-                                                    fileChangeHandler(e);
-                                                }}
-                                            />
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                        {/* <FormMessage /> */}
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="w-full lg:flex-1">
+                            <Label htmlFor="name" className="text-right">
+                                Containers
+                            </Label>
+                            <div className="mt-2">
+                                <MultiSelect
+                                    options={containers}
+                                    selected={currentContainers}
+                                    onChange={setCurrentContainers}
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            <FormField
+                                control={form.control}
+                                name="gd_no"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>GD No.</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="clearing_agent"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Clearing Agent</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
                                         </FormControl>
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <Button type="submit" className="ml-7 mb-5">
-                            Submit
-                        </Button>
-                    </form>
-                </Form>
-            </div>
-        </Transition>
+                        <div className="flex flex-wrap gap-4">
+                            <FormField
+                                control={form.control}
+                                name="transporter"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Transporter</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="truck_no"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Truck No.</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            <FormField
+                                control={form.control}
+                                name="driver_name"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Driver Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="driver_mobile_no"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Mobile No.</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            <FormField
+                                control={form.control}
+                                name="truck_placement_date"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>
+                                            Truck Placement Date
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="truck_out_date"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Truck Out Date</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Current Status</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a status" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="pending">
+                                                    Pending
+                                                </SelectItem>
+                                                <SelectItem value="inprogress">
+                                                    In Progress
+                                                </SelectItem>
+                                                <SelectItem value="done">
+                                                    Done
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="attachment"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Attachment of deal</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="file"
+                                            placeholder=""
+                                            {...field}
+                                            multiple
+                                            onChange={(e) => {
+                                                fileChangeHandler(e);
+                                            }}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <Button type="submit" className="ml-7 mb-5">
+                        Submit
+                    </Button>
+                </form>
+            </Form>
+        </FormTransition>
     );
 };
 

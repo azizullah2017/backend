@@ -17,13 +17,9 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
     const router = useRouter();
     const { userData } = useAuth();
     const isAuthenticated = userData?.role !== "";
-    const isAuthorized =
-        userData?.role !== "" &&
-        (userData?.role === "customer" || userData?.role === "admin");
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
-        if (!isAuthorized) return router.push(`/dashboard/clr-information`);
     }, []);
 
     useEffect(() => {
@@ -52,7 +48,7 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
 
     return (
         <>
-            {isAuthorized && (
+            {isAuthenticated && (
                 <div className="flex flex-col">
                     <StaffTableActions setData={setData} />
                     <div className="mt-5">

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { IoLogOut } from "react-icons/io5";
 import { BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
+import { CgTrack } from "react-icons/cg";
 
 export type menuItemsType = {
     title: string;
@@ -24,7 +25,7 @@ export const menuItems: menuItemsType[] = [
         title: "Dashboard",
         path: "/",
         icon: <ImHome className="w-5 h-5" />,
-        role: ["admin"],
+        role: ["admin", "staff", "customer"],
     },
     {
         title: "CLR Information",
@@ -54,7 +55,13 @@ export const menuItems: menuItemsType[] = [
         title: "Client View",
         path: "/dashboard/client-view",
         icon: <GiDigitalTrace className="w-5 h-5" />,
-        role: ["customer", "admin"],
+        role: ["customer", "admin", "customer"],
+    },
+    {
+        title: "Tracker",
+        path: "/dashboard/tracker",
+        icon: <CgTrack className="w-5 h-5" />,
+        role: ["customer", "admin", "staff"],
     },
 ];
 
@@ -79,7 +86,7 @@ const SideBar = () => {
     };
 
     return (
-        <div className="sticky">
+        <div className="fixed">
             <div className="flex justify-center py-1">
                 <Image src="/logo.jpg" alt="" width={250} height={250} />
             </div>

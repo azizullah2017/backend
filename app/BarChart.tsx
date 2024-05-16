@@ -9,23 +9,27 @@ const Chart = ({
     legendLeft,
     indexBy,
     labelTextColor,
+    keys,
+    colors,
 }: {
     data: any;
     legendBottom: string;
     legendLeft: string;
     indexBy: string;
     labelTextColor: string;
+    keys: string[];
+    colors: string[];
 }) => {
     return (
         <ResponsiveBar
             data={data}
-            keys={["pending", "inprogress", "done"]}
+            keys={keys}
             indexBy={indexBy}
             margin={{ top: 10, right: 100, bottom: 50, left: 60 }}
             padding={0.3}
             valueScale={{ type: "linear" }}
             indexScale={{ type: "band", round: true }}
-            colors={["#DC2626", "#2563EB", "#16A34A"]}
+            colors={colors}
             borderColor={{
                 from: "color",
                 modifiers: [["darker", 1.6]],
@@ -93,6 +97,8 @@ const BarChart = ({
     indexBy,
     labelTextColor,
     data,
+    keys,
+    colors,
 }: {
     title: string;
     legendBottom: string;
@@ -105,6 +111,8 @@ const BarChart = ({
         inprogess: string;
         done: string;
     }[];
+    keys: string[];
+    colors: string[];
 }) => {
     return (
         <Card className="w-full">
@@ -118,6 +126,8 @@ const BarChart = ({
                     legendLeft={legendLeft}
                     indexBy={indexBy}
                     labelTextColor={labelTextColor}
+                    keys={keys}
+                    colors={colors}
                 />
             </CardContent>
         </Card>

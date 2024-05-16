@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import DataTableRowActions from "../_components/DataTableRowActions";
 
 export type CityViseTrackerType = {
     id: string;
@@ -10,7 +11,15 @@ export type CityViseTrackerType = {
     email: string;
 };
 
-export const truckDetailColumns: ColumnDef<CityViseTrackerType>[] = [
+type TruckDetailsColumnsPropsType = {
+    onEdit: (data) => void;
+    onDelete: (data) => void;
+};
+
+export const truckDetailColumns = ({
+    onEdit,
+    onDelete,
+}: TruckDetailsColumnsPropsType): ColumnDef<CityViseTrackerType>[] => [
     {
         accessorKey: "curent_location",
         header: "Location",
@@ -18,5 +27,16 @@ export const truckDetailColumns: ColumnDef<CityViseTrackerType>[] = [
     {
         accessorKey: "date",
         header: "Date",
+    },
+    {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+            <DataTableRowActions
+                row={row}
+                onEdit={onEdit}
+                onDelete={onDelete}
+            />
+        ),
     },
 ];

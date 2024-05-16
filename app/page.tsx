@@ -1,16 +1,16 @@
 "use client";
 
 import Navbar from "./dashboard/Navbar";
-import SideBar from "./dashboard/Sidebar";
+import MobileSidebar from "./dashboard/MobileSidebar";
 import BarChart from "./BarChart";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "@/lib/constants";
 import Filter from "./Filter";
 import { useAuth } from "@/context/AuthContext";
 import LineChart from "./LineChart";
-import MobileSidebar from "./dashboard/MobileSidebar";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
 import { useRouter } from "next/navigation";
+import SideBar from "./dashboard/Sidebar";
 
 export default function Home() {
     const [barData, setBarData] = useState([]);
@@ -22,7 +22,6 @@ export default function Home() {
     const router = useRouter();
 
     const isAuthenticated = userData?.role !== "";
-    const isAuthorized = userData?.role !== "" && userData?.role === "admin";
 
     useEffect(() => {
         const fetchBarChartData = async () => {
@@ -112,33 +111,22 @@ export default function Home() {
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
-        if (!isAuthorized) {
-            let route = "";
-            if (userData?.role === "staff") {
-                route = "clr-information";
-            } else if (userData?.role === "customer") {
-                route = "client-view";
-            }
-
-            return router.push(`/dashboard/${route}`);
-        }
     }, []);
 
     return (
         <>
             <div className="flex">
-                <div className="hidden lg:flex w-[400px] max-w-[400px] bg-white p-5">
-                    <SideBar />
-                </div>
-                {windowWidth < 1024 && (
-                    <div className="lg:hidden">
-                        <MobileSidebar
-                            showSidebar={showSidebar}
-                            setShowSidebar={setShowSidebar}
-                        />
+                {windowWidth >= 1024 ? (
+                    <div className="lg:flex w-[400px] max-w-[400px] bg-white p-5">
+                        <SideBar />
                     </div>
+                ) : (
+                    <MobileSidebar
+                        showSidebar={showSidebar}
+                        setShowSidebar={setShowSidebar}
+                    />
                 )}
-                {isAuthorized && (
+                {isAuthenticated && (
                     <div className="w-full p-5">
                         <Navbar setShowSidebar={setShowSidebar} />
                         <Filter setFilter={setFilter} />
@@ -150,6 +138,28 @@ export default function Home() {
                                 indexBy="module"
                                 labelTextColor="#fff"
                                 data={barData}
+                                keys={["pending"]}
+                                colors={["#DC2626"]}
+                            />
+                            <BarChart
+                                title="Status"
+                                legendBottom=""
+                                legendLeft=""
+                                indexBy="module"
+                                labelTextColor="#fff"
+                                data={barData}
+                                keys={["inprogress"]}
+                                colors={["#2563EB"]}
+                            />
+                            <BarChart
+                                title="Status"
+                                legendBottom=""
+                                legendLeft=""
+                                indexBy="module"
+                                labelTextColor="#fff"
+                                data={barData}
+                                keys={["done"]}
+                                colors={["#16A34A"]}
                             />
                             <LineChart data={lineData} />
                         </div>

@@ -13,7 +13,7 @@ const StaffTableActions = ({
             <TableFilter setData={setData} />
             {setIsShowing && (
                 <Button
-                    className="bg-[#11047A] hover:bg-[#422AFB]"
+                    className="bg-[#4b99b7] hover:bg-[#58A7C6]"
                     onClick={() => setIsShowing((isShowing) => !isShowing)}
                 >
                     Add Record
