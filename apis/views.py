@@ -2,10 +2,11 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from .models import User, ShipmentStatus, CLRModel, PortStatus, CityWiseTracker, Addcity, ExpiringToken
+from .models import User, ShipmentStatus, CLRModel, PortStatus, CityWiseTracker, Addcity
 from .serializers import UserSerializer, ClrSerializer, ShipmentSerializer, PortSerializer, CityWiseTrackerSerializer, AddcitySerializer
 from rest_framework import status
-from .permissions import IsAdmin, IsStaff,IsCustomer, ExpiringTokenAuthentication
+from .permissions import IsAdmin, IsStaff,IsCustomer
+# , ExpiringTokenAuthentication
 from rest_framework.views import APIView
 from django.db import connection  # Import connection
 from django.http import JsonResponse
@@ -396,14 +397,41 @@ class ClientView(generics.CreateAPIView):
     
     
     def get(self, request):
+
+        page_number = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        offset = (page_number - 1) * limit
+        
+        if request.query_params.get('search'):
+            with connection.cursor() as cursor:
+                query = f"FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN \
+                    apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON \
+                    port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker \
+                    GROUP BY truck_no) AND( ship.bl LIKE '%{request.query_params.get('search')}%' \
+                    OR city.truck_no LIKE '%{request.query_params.get('search')}%' \
+                    OR clr.consignee = '{request.query_params.get('search')}' \
+                    OR city.bl = '{request.query_params.get('search')}' \
+                    OR city.curent_location = '{request.query_params.get('search')}' \
+                    OR clr.book_no = '{request.query_params.get('search')}' \
+                    OR clr.shipper = '{request.query_params.get('search')}' \
+                    OR clr.consignee = '{request.query_params.get('search')}')"
+
+                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                rows = cursor.fetchall()
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+                cursor.execute(f"SELECT COUNT(*) "+query)
+                total_count = cursor.fetchone()[0]
+
+                return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
+
         with connection.cursor() as cursor:
-            query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no);"
-            # query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.bl=city.bl WHERE city.date in ( SELECT MAX(date) as date FROM apis_citywisetracker GROUP BY truck_no)"
-            cursor.execute("SELECT * "+query)
+            query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
+            cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
-            cursor.execute(f"SELECT COUNT(*) "+query)
+            cursor.execute(f"SELECT COUNT(*) "+query+f" LIMIT {limit} OFFSET {offset}")
             total_count = cursor.fetchone()[0]
             
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
@@ -420,11 +448,12 @@ class Track(generics.CreateAPIView):
         # book_no
         # vessel
         with connection.cursor() as cursor:
-            query =f" SELECT book_no, vessel, shipper, consignee, no_container, product, port_of_loading,\
+            query =f" SELECT book_no, vessel, eta_karachi, etd, shipper, consignee, no_container, product, port_of_loading,\
             port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
             WHERE shipper_reference = '{request.query_params.get('search')}' \
             OR book_no = '{request.query_params.get('search')}'\
-            OR vessel = '{request.query_params.get('search')}'"
+            OR vessel = '{request.query_params.get('search')}' \
+            OR consignee = '{request.query_params.get('search')}'"
             cursor.execute(query)
             rows = cursor.fetchall()
 
@@ -438,7 +467,7 @@ class Track(generics.CreateAPIView):
                 else:
                     return JsonResponse({'track': {}}, status=status.HTTP_404_NOT_FOUND)
                 query =f" SELECT vessel, shipper, consignee, no_container, product, port_of_loading,\
-                port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
+                port_of_departure,eta_karachi, etd, final_port_of_destination FROM {CLRModel._meta.db_table} \
                 WHERE book_no = '{new.get('book_no')}'"
                 cursor.execute(query)
                 rows = cursor.fetchall()

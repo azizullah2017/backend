@@ -68,7 +68,7 @@ class CityWiseTrackerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CityWiseTracker
         fields = ['uid', 'bl', 'bl_containers', 'truck_no','curent_location', \
-          'date', 'status']
+          'date','comment', 'status']
         read_only_fields = ['uid']
 
     def update(self, instance, validated_data):

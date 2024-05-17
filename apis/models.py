@@ -18,12 +18,12 @@ class User(AbstractUser):
     company_name = models.CharField(max_length=50,default='Lachine',null=True,unique=False)
 
 
-class ExpiringToken(Token):
-    expiration = models.DateTimeField()
+# class ExpiringToken(Token):
+#     expiration = models.DateTimeField()
 
-    class Meta:
-        verbose_name = 'Expiring Token'
-        verbose_name_plural = 'Expiring Tokens'
+#     class Meta:
+#         verbose_name = 'Expiring Token'
+#         verbose_name_plural = 'Expiring Tokens'
 
 class CLRModel(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
@@ -39,7 +39,7 @@ class CLRModel(models.Model):
     final_port_of_destination = models.CharField(max_length=100)
     etd  =  models.DateField(blank=True, null=True)
     vessel  = models.CharField(max_length=100)
-    status  = models.CharField(blank=True, null=True,max_length=100)
+    status  = models.CharField(max_length=100)
     eta_karachi  = models.DateField()
     attachment = models.TextField(blank=True,null=True)
     # filename = models.CharField(max_length=255, blank=True, null=True)
@@ -59,9 +59,8 @@ class ShipmentStatus(models.Model):
     docs = models.DateField()
     surrender  = models.DateField(blank=True, null=True)
     containers  = models.CharField(max_length=300)
-    status  = models.CharField(blank=True, null=True,max_length=100)
+    status  = models.CharField(max_length=100)
     attachment = models.TextField(blank=True,null=True)
-    # filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.uid
@@ -81,8 +80,7 @@ class PortStatus(models.Model):
     truck_placement_date = models.DateField()
     truck_out_date = models.DateField()
     attachment = models.TextField(blank=True,null=True)
-    # filename = models.CharField(max_length=255, blank=True, null=True)
-    status  = models.CharField(blank=True, null=True,max_length=100)
+    status  = models.CharField(max_length=100)
     
 
     def __str__(self):
@@ -96,7 +94,8 @@ class CityWiseTracker(models.Model):
     truck_no = models.CharField(max_length=100,blank=True, null=True)
     curent_location = models.CharField(max_length=100)
     date = models.DateField()
-    status  = models.CharField(blank=True, null=True,max_length=100)
+    comment = models.TextField(blank=True, null=True)
+    status  = models.CharField(max_length=100)
 
     def __str__(self):
         return self.uid
@@ -116,7 +115,7 @@ class EmptyContainerStatus(models.Model):
     uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, verbose_name='identifier')
     bl_container  = models.CharField(max_length=300)
     date = models.DateField()
-    status  = models.CharField(blank=True, null=True,max_length=100)
+    status  = models.CharField(max_length=100)
 
     def __str__(self):
         return self.uid
