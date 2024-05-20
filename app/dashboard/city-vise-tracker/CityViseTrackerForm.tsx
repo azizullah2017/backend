@@ -31,6 +31,7 @@ import { useAuth } from "@/context/AuthContext";
 import Combobox from "@/components/Combobox";
 import { DataTable } from "@/components/ui/data-tables";
 import FormTransition from "../_components/FormTransition";
+import { Textarea } from "@/components/ui/textarea";
 
 type CityViseTrackerFormType = {
     isShowing: boolean;
@@ -63,6 +64,7 @@ const CityViseTrackerForm = ({
     const [trucks, setTrucks] = useState([]);
     const [truckDetails, setTruckDetails] = useState([]);
     const [truckData, setTruckData] = useState({});
+    const [comments, setComments] = useState("");
     const { userData } = useAuth();
 
     const editing = Object.keys(tracker).length !== 0;
@@ -161,6 +163,8 @@ const CityViseTrackerForm = ({
 
             setStatus("");
             setDate("");
+            setCurrentLocation("");
+            setComments("");
         }
     }, [cityDialog]);
 
@@ -178,6 +182,7 @@ const CityViseTrackerForm = ({
             date,
             status,
             truck_no: currentTruck,
+            comment: comments,
         };
 
         if (!editing) {
@@ -288,9 +293,23 @@ const CityViseTrackerForm = ({
                                             <SelectItem value="done">
                                                 Done
                                             </SelectItem>
+                                            <SelectItem value="emptyertkarachi">
+                                                Empty ERT Karachi
+                                            </SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
+                            </div>
+                            <div className="grid w-full items-center gap-1.5">
+                                <Label htmlFor="message">Comments</Label>
+                                <Textarea
+                                    placeholder="Type your message here."
+                                    id="message"
+                                    onChange={(e) =>
+                                        setComments(e.target.value)
+                                    }
+                                    value={comments}
+                                />
                             </div>
                         </div>
                         <DialogFooter>

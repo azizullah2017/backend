@@ -7,15 +7,27 @@ import { BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
+import { VisibilityState } from "@tanstack/react-table";
+import useGetWindowWidth from "@/hooks/GetWindowSize";
 
-const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
+const ClientView = ({
+    searchParams,
+}: {
+    searchParams: { page: string; search?: string };
+}) => {
     const [showDetails, setShowDetails] = useState<boolean>(false);
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState<number>(0);
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+        {}
+    );
     const page = parseInt(searchParams.page) || 1;
+    const searchQuery =
+        searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = 10;
     const router = useRouter();
     const { userData } = useAuth();
+    const windowWidth = useGetWindowWidth();
     const isAuthenticated = userData?.role !== "";
 
     useEffect(() => {
@@ -24,14 +36,17 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await fetch(
-                `${BASE_URL}/api/client?page=${page}&limit=${pageSize}`,
-                {
-                    headers: {
-                        Authorization: `Token ${userData.token}`,
-                    },
-                }
-            );
+            let queryString = "";
+            if (searchQuery !== "") {
+                queryString = `search=${searchQuery}&page=${page}&limit=${pageSize}`;
+            } else {
+                queryString = `page=${page}&limit=${pageSize}`;
+            }
+            const res = await fetch(`${BASE_URL}/api/client?${queryString}`, {
+                headers: {
+                    Authorization: `Token ${userData.token}`,
+                },
+            });
 
             if (!res.ok) {
                 throw new Error("Something went wrong");
@@ -44,7 +59,33 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
         };
 
         fetchData();
-    }, [page]);
+    }, [page, searchQuery]);
+
+    useEffect(() => {
+        if (windowWidth < 768) {
+            setColumnVisibility((prevState) => ({
+                ...prevState,
+                shipper: false,
+                shipper_reference: false,
+                consignee: false,
+                containers: false,
+                port_of_loading: false,
+                port_of_departure: false,
+                final_port_of_destination: false,
+            }));
+        } else {
+            setColumnVisibility((prevState) => ({
+                ...prevState,
+                shipper: true,
+                shipper_reference: true,
+                consignee: true,
+                containers: true,
+                port_of_loading: true,
+                port_of_departure: true,
+                final_port_of_destination: true,
+            }));
+        }
+    }, [windowWidth]);
 
     return (
         <>
@@ -58,6 +99,7 @@ const ClientView = ({ searchParams }: { searchParams: { page: string } }) => {
                             pageSize={pageSize}
                             currentPage={page}
                             totalRows={totalRows}
+                            columnVisibility={columnVisibility}
                         />
                     </div>
                 </div>

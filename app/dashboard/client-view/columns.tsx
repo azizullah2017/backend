@@ -43,7 +43,7 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
     },
     {
         accessorKey: "port_of_loading",
-        header: "POF",
+        header: "POL",
     },
     {
         accessorKey: "port_of_departure",
@@ -54,8 +54,12 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
         header: "FPOD",
     },
     {
-        accessorKey: "eta",
-        header: "Delivery ETA",
+        accessorKey: "eta_karachi",
+        header: "ETA Karachi",
+    },
+    {
+        accessorKey: "etd",
+        header: "Delivery ETD",
     },
     {
         accessorKey: "curent_location",

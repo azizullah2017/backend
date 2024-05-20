@@ -77,7 +77,7 @@ const LineChart = ({ data }: { data: any }) => {
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>Count Vs Month</CardTitle>
+                <CardTitle>Shipment Counts Per Month</CardTitle>
             </CardHeader>
             <CardContent className="h-[300px] xl:h-[350px]">
                 <MyResponsiveLine data={data} />

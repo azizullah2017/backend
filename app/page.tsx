@@ -132,7 +132,7 @@ export default function Home() {
                         <Filter setFilter={setFilter} />
                         <div className="grid lg:grid-cols-2 gap-2 mt-2">
                             <BarChart
-                                title="Status"
+                                title="Pending Status Counts"
                                 legendBottom=""
                                 legendLeft=""
                                 indexBy="module"
@@ -142,7 +142,7 @@ export default function Home() {
                                 colors={["#DC2626"]}
                             />
                             <BarChart
-                                title="Status"
+                                title="Inprogress Status Counts"
                                 legendBottom=""
                                 legendLeft=""
                                 indexBy="module"
@@ -152,7 +152,7 @@ export default function Home() {
                                 colors={["#2563EB"]}
                             />
                             <BarChart
-                                title="Status"
+                                title="Done Status Counts"
                                 legendBottom=""
                                 legendLeft=""
                                 indexBy="module"

@@ -29,6 +29,10 @@ export const truckDetailColumns = ({
         header: "Date",
     },
     {
+        accessorKey: "comment",
+        header: "Comment",
+    },
+    {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (

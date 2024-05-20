@@ -23,10 +23,12 @@ export const shipmentColumns = ({
     {
         accessorKey: "book_no",
         header: "Booking No.",
+        size: 100,
     },
     {
         accessorKey: "bl",
         header: "BL",
+        size: 100,
     },
     {
         accessorKey: "no_container",

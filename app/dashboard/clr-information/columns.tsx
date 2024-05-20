@@ -30,6 +30,10 @@ export const clrColumns = ({
         },
     },
     {
+        accessorKey: "shipper_reference",
+        header: "Shipper Ref",
+    },
+    {
         accessorKey: "shipper",
         header: "Shipper",
     },
@@ -40,6 +44,10 @@ export const clrColumns = ({
     {
         accessorKey: "no_container",
         header: "Count",
+    },
+    {
+        accessorKey: "size",
+        header: "Size",
     },
     {
         accessorKey: "product",
@@ -60,6 +68,10 @@ export const clrColumns = ({
     {
         accessorKey: "vessel",
         header: "Vessel",
+    },
+    {
+        accessorKey: "etd",
+        header: "ETD",
     },
     {
         accessorKey: "eta_karachi",

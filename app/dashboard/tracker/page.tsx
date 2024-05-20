@@ -90,12 +90,12 @@ const Tracker = ({
 
     return (
         <>
-            <div className="flex justify-end gap-3 mb-4">
+            <div className="flex justify-start gap-3 mb-4">
                 <Input
                     onChange={(e) => setTrackerId(e.target.value)}
                     value={trackerId}
                     className="w-[400px]"
-                    placeholder="Tracking ID..."
+                    placeholder="Bl Number, Booking Number, Shipper Ref, Vessel"
                 />
                 <Button
                     type="button"
@@ -106,7 +106,7 @@ const Tracker = ({
                 </Button>
             </div>
             {Object.keys(data).length !== 0 ? (
-                <div className="flex flex-col md:flex-row justify-between gap-5">
+                <div className="flex flex-col justify-center gap-5">
                     <div className="flex flex-col gap-3 w-[500px]">
                         <p>
                             <span className="font-semibold">BL: </span>
@@ -143,6 +143,14 @@ const Tracker = ({
                             {data.port_of_loading}
                         </p>
                         <p>
+                            <span className="font-semibold">ETD: </span>
+                            {data.etd}
+                        </p>
+                        <p>
+                            <span className="font-semibold">ETA Karachi: </span>
+                            {data.eta_karachi}
+                        </p>
+                        <p>
                             <span className="font-semibold">Product: </span>
                             {data.product}
                         </p>
@@ -158,31 +166,38 @@ const Tracker = ({
                             <span className="font-semibold">Vessel : </span>
                             {data.vessel}
                         </p>
+                        <p>
+                            <span className="font-semibold">Comments : </span>
+                            {data.comment ? data.comment : "No Comments"}
+                        </p>
                     </div>
-                    {data.containers.map((con, index) => {
-                        return (
-                            <div className="flex flex-col w-full" key={index}>
-                                <div className="flex gap-5 mb-2">
-                                    <div>
-                                        <h2 className="font-semibold">
-                                            Truck No.
-                                        </h2>
-                                        <p>{con.truck_no}</p>
-                                    </div>
-                                    <div>
-                                        <h2 className="font-semibold">
-                                            Containers
-                                        </h2>
-                                        <p>
-                                            {con.bl_containers
-                                                .split(",")
-                                                .join(", ")}
-                                        </p>
-                                    </div>
-                                </div>
-                                <Card className="w-full lg:mb-5 shadow-md last:mb-5">
+                    <div className="flex gap-5">
+                        {data.containers.map((con, index) => {
+                            return (
+                                <Card
+                                    className="lg:mb-5 shadow-md last:mb-5"
+                                    key={index}
+                                >
                                     <CardContent className="p-5 flex flex-col gap-5">
                                         <div className="h-full">
+                                            <div className="flex gap-5 mb-2">
+                                                <div>
+                                                    <h2 className="font-semibold">
+                                                        Truck No.
+                                                    </h2>
+                                                    <p>{con.truck_no}</p>
+                                                </div>
+                                                <div>
+                                                    <h2 className="font-semibold">
+                                                        Containers
+                                                    </h2>
+                                                    <p>
+                                                        {con.bl_containers
+                                                            .split(",")
+                                                            .join(", ")}
+                                                    </p>
+                                                </div>
+                                            </div>
                                             <DataTable
                                                 data={con.location}
                                                 columns={locationColumns}
@@ -191,9 +206,9 @@ const Tracker = ({
                                         </div>
                                     </CardContent>
                                 </Card>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
             ) : (
                 data === "" && (

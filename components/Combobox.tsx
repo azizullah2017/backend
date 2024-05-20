@@ -25,7 +25,7 @@ type ComboboxType = {
     commandEmptyMessage: string;
     setCurrentItem: (arg: string) => void;
     btnWidth: string;
-    editing: boolean;
+    editing?: boolean;
 };
 
 const Combobox = ({
@@ -35,7 +35,7 @@ const Combobox = ({
     commandEmptyMessage,
     setCurrentItem,
     btnWidth,
-    editing,
+    editing = false,
 }: ComboboxType) => {
     const [open, setOpen] = useState<boolean>(false);
 

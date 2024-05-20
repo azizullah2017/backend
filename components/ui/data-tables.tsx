@@ -2,6 +2,7 @@
 
 import {
     ColumnDef,
+    VisibilityState,
     flexRender,
     getCoreRowModel,
     useReactTable,
@@ -25,6 +26,7 @@ interface DataTableProps<TData, TValue> {
     totalRows?: number;
     pagination?: boolean;
     tableHeight?: string;
+    columnVisibility?: VisibilityState;
 }
 
 export function DataTable<TData, TValue>({
@@ -34,13 +36,17 @@ export function DataTable<TData, TValue>({
     currentPage,
     totalRows,
     pagination = true,
-    tableHeight = "h-[70vh]",
+    tableHeight = "h-full",
+    columnVisibility,
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
+        state: {
+            columnVisibility,
+        },
     });
 
     return (
@@ -49,15 +55,15 @@ export function DataTable<TData, TValue>({
                 <div
                     className={`${tableHeight} relative overflow-auto rounded-xl`}
                 >
-                    <Table>
-                        <TableHeader className="sticky top-0 bg-[#58A7C6] ">
+                    <Table className="text-xs md:text-sm">
+                        <TableHeader className="bg-[#58A7C6]">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => {
                                         return (
                                             <TableHead
                                                 key={header.id}
-                                                className="text-white"
+                                                className={`text-white w-[${header.getSize()}px]`}
                                             >
                                                 {header.isPlaceholder
                                                     ? null

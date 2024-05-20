@@ -32,7 +32,7 @@ const Navbar = ({
 
     return (
         <div className="flex justify-between items-end lg:items-center py-3 mb-8">
-            <div className="text-4xl font-bold mt-4">
+            <div className="text-3xl lg:text-4xl font-bold mt-4">
                 <div className="lg:hidden mb-3">
                     <IoReorderFourOutline
                         className="w-7 h-7"
