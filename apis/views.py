@@ -383,11 +383,39 @@ class CityInfo(generics.CreateAPIView):
     
     
     def get(self, request):
-        trackers = CityWiseTracker.objects.all()
-        trackers = list(trackers.values())
+        # trackers = CityWiseTracker.objects.all()
+        # trackers = list(trackers.values())
+        # print(trackers)
 
-        cities = ["Karachi","Lasbella","Wadh","Khuzdar","Quetta","ChamanYard","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Mardab","Torkham","Ghulam khan","Salang","Hairtan","Torkham","Jalal abad","Kabul","Salang","Hairtan","Chaman","Spin Boldak","Kandahar","Ghazni","Salang","Hairtan"]
-        return Response({'cities': list(set(cities))}, status=status.HTTP_200_OK) 
+        route_cities = {"chaman":["Karachi","Lasbella","Wadh","Khuzdar","Quetta","Kozak","Chaman","Spin Boldak" ,"Kandahar" ,"Ghazni","Salang","Hairtan"],
+                  "torkham":["Karachi","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Landikotal","Torkham","Jalal abad","Kabul" ,"Salang","Hairtan"],
+                  "ghulam khan":["Karachi","Hyderabad" ,"Moro","Sukkur","Kashmore","Ramak","Khyber","Landikotal","Ghulam khan","Kabul","Salang","Hairtan"]}
+        # print(request.query_params.get('truck'))
+        if request.query_params.get('truck'):
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(f"SELECT delivery_at, bl  FROM {PortStatus._meta.db_table} WHERE truck_no='{request.query_params.get('truck')}'")
+                    rows = cursor.fetchall()
+                    serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
+                    # delivery_at = serialized_data.get('delivery_at')
+                    # cursor.execute(f"SELECT book_no  FROM {ShipmentStatus._meta.db_table} WHERE bl='{serialized_data.get('bl')}'")
+                    # rows = cursor.fetchall()
+                    # serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
+                    # print(serialized_data)
+                    # cursor.execute(f"SELECT final_port_of_destination  FROM {CLRModel._meta.db_table} WHERE book_no='{serialized_data.get('book_no')}'")
+                    # rows = cursor.fetchall()
+                    # serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
+                    # print(serialized_data)
+                    # FPOD = serialized_data.get('final_port_of_destination')
+                    # print(delivery_at.lower()+" "+FPOD.lower())
+                    cities = route_cities.get(serialized_data.get('delivery_at'))
+            except Exception as e:
+                print(e)
+
+        all_cities = ["Karachi","Lasbella","Wadh","Khuzdar","Quetta","ChamanYard","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Mardab","Torkham","Ghulam khan","Salang","Hairtan","Torkham","Jalal abad","Kabul","Salang","Hairtan","Chaman","Spin Boldak","Kandahar","Ghazni","Salang","Hairtan"]
+        if not cities:
+            cities = list(set(all_cities))
+        return Response({'cities': cities }, status=status.HTTP_200_OK) 
 
 
 
