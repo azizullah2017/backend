@@ -43,7 +43,7 @@ const Navbar = ({
                 </div>
                 {pathname === "/" ? "Dashboard" : formatString(currentPath)}
             </div>
-            <div className="bg-[#4b99b7] rounded-full flex items-center p-4 cursor-pointer text-white">
+            <div className="rounded-full flex items-center lg:pr-4 cursor-pointer font-semibold text-2xl">
                 {isClient ? userData?.username : "User"}
             </div>
         </div>
