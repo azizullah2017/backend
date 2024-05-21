@@ -41,8 +41,9 @@ class CLRModel(models.Model):
     vessel  = models.CharField(max_length=100)
     status  = models.CharField(max_length=100)
     eta_karachi  = models.DateField()
+    comment = models.TextField(blank=True,null=True)
+    bls = models.TextField(blank=True,null=True)
     attachment = models.TextField(blank=True,null=True)
-    # filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.uid
