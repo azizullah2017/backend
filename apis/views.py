@@ -518,7 +518,7 @@ class Track(generics.CreateAPIView):
                 tmp['bl_containers'] = bl_containers
                 tmp["truck_no"] = truck_no
                 
-                cursor.execute(f"SELECT curent_location as location, date, truck_no FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{truck_no}';")
+                cursor.execute(f"SELECT curent_location as location, date, truck_no, comment FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{truck_no}';")
                 rows = cursor.fetchall()
                 tmp["location"] = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
                 data["containers"].append(tmp)
