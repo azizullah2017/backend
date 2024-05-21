@@ -41,7 +41,7 @@ class CLRModel(models.Model):
     vessel  = models.CharField(max_length=100)
     status  = models.CharField(max_length=100)
     eta_karachi  = models.DateField()
-    comment = models.TextField(blank=True,null=True)
+    shipment_comment = models.TextField(blank=True,null=True)
     bls = models.TextField(blank=True,null=True)
     attachment = models.TextField(blank=True,null=True)
 
