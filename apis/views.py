@@ -475,6 +475,7 @@ class Track(generics.CreateAPIView):
         # shipper_reference
         # book_no
         # vessel
+        # consignee
         with connection.cursor() as cursor:
             query =f" SELECT book_no, vessel, eta_karachi, etd, shipper, consignee, no_container, product, port_of_loading,\
             port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
@@ -523,7 +524,6 @@ class Track(generics.CreateAPIView):
                 tmp["location"] = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
                 data["containers"].append(tmp)
 
-            
             return JsonResponse({'track': data}, status=status.HTTP_200_OK)
 
 
