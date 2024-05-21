@@ -12,7 +12,8 @@ from django.db import connection  # Import connection
 from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
-
+import pandas as pd
+from django.http import HttpResponse
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -420,7 +421,7 @@ class CityInfo(generics.CreateAPIView):
 
 
 class ClientView(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get']
     
     
@@ -429,6 +430,8 @@ class ClientView(generics.CreateAPIView):
         page_number = int(request.query_params.get('page', 1))
         limit = int(request.query_params.get('limit', 10))
         offset = (page_number - 1) * limit
+
+        
         
         if request.query_params.get('search'):
             with connection.cursor() as cursor:
@@ -452,7 +455,23 @@ class ClientView(generics.CreateAPIView):
                 total_count = cursor.fetchone()[0]
 
                 return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
+        elif request.query_params.get('export'):
+            with connection.cursor() as cursor:
+                query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
+                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                rows = cursor.fetchall()
+                columns = [col[0] for col in cursor.description]
+                df = pd.DataFrame(rows, columns=columns)
 
+                df.drop(["attachment","uid"], axis=1,inplace=True) 
+                # Create an Excel writer object and write the DataFrame to an Excel file
+                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                response['Content-Disposition'] = 'attachment; filename="data.xlsx"'
+
+                with pd.ExcelWriter(response, engine='openpyxl') as writer:
+                    df.to_excel(writer, index=False, sheet_name='tracker')
+
+                return response
         with connection.cursor() as cursor:
             query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
