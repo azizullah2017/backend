@@ -87,6 +87,7 @@ class UserLoginView(ObtainAuthToken):
         response_data = {
             'token': token.key,
             'username': user_data['username'],
+            'company': user_data['company'],
             'role': user_data['role'],
         }
         return Response(response_data)
