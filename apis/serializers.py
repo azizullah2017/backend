@@ -5,7 +5,7 @@ from .models import User, ShipmentStatus, CLRModel, \
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['uid', 'username', 'password', 'email', 'role','mobile_no','company']
+        fields = ['uid', 'username', 'password', 'email', 'role','mobile_no','company_name']
         extra_kwargs = {'password': {'write_only': True}}
         read_only_fields = ['uid']
 

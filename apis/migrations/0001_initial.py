@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                 ("shipper", models.CharField(max_length=100)),
                 ("shipper_reference", models.CharField(max_length=100, unique=True)),
                 ("consignee", models.CharField(max_length=100)),
-                ("book_no", models.CharField(max_length=100, unique=True)),
+                ("book_no", models.CharField(max_length=100)),
                 ("no_container", models.CharField(max_length=100)),
                 ("size", models.CharField(max_length=100)),
                 ("product", models.CharField(max_length=100)),

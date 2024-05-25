@@ -87,7 +87,7 @@ class UserLoginView(ObtainAuthToken):
         response_data = {
             'token': token.key,
             'username': user_data['username'],
-            'company': user_data['company'],
+            'company_name': user_data['company_name'],
             'role': user_data['role'],
         }
         return Response(response_data)
@@ -125,10 +125,12 @@ class ClrInfo(generics.CreateAPIView):
         if request.query_params.get('search'):
             with connection.cursor() as cursor:
                 query =f" FROM {CLRModel._meta.db_table} \
-                WHERE shipper LIKE '%{request.query_params.get('search')}%' \
+                WHERE (shipper LIKE '%{request.query_params.get('search')}%' \
                 OR shipper_reference LIKE '%{request.query_params.get('search')}%' \
                 OR consignee LIKE '%{request.query_params.get('search')}%' \
-                OR book_no LIKE '%{request.query_params.get('search')}%'"
+                OR book_no LIKE '%{request.query_params.get('search')}%')"
+                if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                    query += f" AND consignee='{request.query_params.get('company_name')}'" 
                 
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
@@ -143,12 +145,15 @@ class ClrInfo(generics.CreateAPIView):
 
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM {CLRModel._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            query = f"SELECT * FROM {CLRModel._meta.db_table}"
+            if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                query += f" AND consignee='{request.query_params.get('company_name')}'"
+            
+            cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
-
             # Execute query to fetch total count of records
-            cursor.execute(f"SELECT COUNT(*) FROM {CLRModel._meta.db_table}")
+            cursor.execute(f"SELECT COUNT(*) "+query)
             total_count = cursor.fetchone()[0]
 
             return JsonResponse({'total_count': total_count,'clrs': serialized_data}, status=status.HTTP_200_OK)
@@ -447,6 +452,9 @@ class ClientView(generics.CreateAPIView):
                     OR clr.book_no = '{request.query_params.get('search')}' \
                     OR clr.shipper = '{request.query_params.get('search')}' \
                     OR clr.consignee = '{request.query_params.get('search')}')"
+                
+                if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                    query += f" AND consignee='{request.query_params.get('company_name')}'"
 
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
@@ -459,6 +467,9 @@ class ClientView(generics.CreateAPIView):
         elif request.query_params.get('export'):
             with connection.cursor() as cursor:
                 query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
+                
+                if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                    query += f" AND consignee='{request.query_params.get('company_name')}'"
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
                 columns = [col[0] for col in cursor.description]
@@ -475,6 +486,9 @@ class ClientView(generics.CreateAPIView):
                 return response
         with connection.cursor() as cursor:
             query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
+            
+            if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                    query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -582,5 +596,3 @@ class ChartView(generics.CreateAPIView):
                     reponse[tb.split("_")[1]] = [pending[0][0],inprogress[0][0], done[0][0]]
 
                 return JsonResponse(reponse, status=status.HTTP_200_OK)
-
-

@@ -15,7 +15,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
     mobile_no = models.CharField(max_length=40)
-    company = models.CharField(max_length=50,default='Lachine')
+    company_name = models.CharField(max_length=50,default='Lachine')
 
 
 # class ExpiringToken(Token):
@@ -30,7 +30,7 @@ class CLRModel(models.Model):
     shipper = models.CharField(max_length=100)
     shipper_reference = models.CharField(max_length=100)
     consignee = models.CharField(max_length=100)
-    book_no = models.CharField(max_length=100,unique=True)
+    book_no = models.CharField(max_length=100)
     no_container = models.CharField(max_length=100)
     size = models.CharField(max_length=100)
     product = models.CharField(max_length=100)
