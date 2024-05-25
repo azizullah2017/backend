@@ -186,6 +186,13 @@ class ShipmentInfo(generics.CreateAPIView):
                 rows = cursor.fetchall()
                 flat_list = [item for sublist in rows for item in sublist]
                 return JsonResponse({'booking_list': flat_list}, status=status.HTTP_200_OK)
+        
+        elif request.query_params.get('query') == "bls_list":
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT bls FROM {CLRModel._meta.db_table} WHERE status = 'done'  AND bls NOT IN (SELECT bls FROM {ShipmentStatus._meta.db_table})")
+                rows = cursor.fetchall()
+                flat_list = [item for sublist in rows for item in sublist]
+                return JsonResponse({'bls_list': flat_list}, status=status.HTTP_200_OK)
 
         elif request.query_params.get('search'):
             with connection.cursor() as cursor:
@@ -454,7 +461,7 @@ class ClientView(generics.CreateAPIView):
                     OR clr.consignee = '{request.query_params.get('search')}')"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" AND consignee='{request.query_params.get('company_name')}'"
+                    query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
 
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
@@ -488,7 +495,7 @@ class ClientView(generics.CreateAPIView):
             query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
             
             if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
+                query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -513,16 +520,20 @@ class Track(generics.CreateAPIView):
         with connection.cursor() as cursor:
             query =f" SELECT book_no, vessel, eta_karachi, etd, shipper, consignee, no_container, product, port_of_loading,\
             port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
-            WHERE shipper_reference = '{request.query_params.get('search')}' \
+            WHERE (shipper_reference = '{request.query_params.get('search')}' \
             OR book_no = '{request.query_params.get('search')}'\
             OR vessel = '{request.query_params.get('search')}' \
-            OR consignee = '{request.query_params.get('search')}'"
+            OR consignee = '{request.query_params.get('search')}')"
+
+            if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                query += f" AND consignee='{request.query_params.get('company_name')}'"
             cursor.execute(query)
             rows = cursor.fetchall()
 
             if not rows:
                 query =f"SELECT book_no, bl, docs, surrender, containers FROM {ShipmentStatus._meta.db_table} \
                 WHERE bl = '{request.query_params.get('search')}'"
+                
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 if rows:
@@ -532,6 +543,9 @@ class Track(generics.CreateAPIView):
                 query =f" SELECT vessel, shipper, consignee, no_container, product, port_of_loading,\
                 port_of_departure,eta_karachi, etd, final_port_of_destination FROM {CLRModel._meta.db_table} \
                 WHERE book_no = '{new.get('book_no')}'"
+                
+                if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                    query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
@@ -570,6 +584,8 @@ class ChartView(generics.CreateAPIView):
         if request.query_params.get('get') == "month": 
             with connection.cursor() as cursor:
                 query = f"SELECT strftime('%Y-%m', etd) AS month, COUNT(apis_clrmodel.etd) AS count FROM {CLRModel._meta.db_table} GROUP BY strftime('%m', etd);"
+                if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                    query += f" WHERE clr.consignee='{request.query_params.get('company_name')}'"
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]

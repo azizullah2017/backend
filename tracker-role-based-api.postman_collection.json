@@ -50,7 +50,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
+						"value": "Token 710ca5695ce14deaaa3bca7bd7da2eb9944a931b",
 						"type": "default"
 					}
 				],
@@ -146,7 +146,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"value": "Token 710ca5695ce14deaaa3bca7bd7da2eb9944a931b",
 						"type": "default"
 					},
 					{
@@ -227,12 +227,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"value": "Token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
 						"type": "default"
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/clr?search=MOI&page=1&limit=10",
+					"raw": "http://127.0.0.1:8000/api/clr?search=MOI&company_name=Silver food&page=1&limit=10",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -249,6 +249,10 @@
 						{
 							"key": "search",
 							"value": "MOI"
+						},
+						{
+							"key": "company_name",
+							"value": "Silver food"
 						},
 						{
 							"key": "page",
@@ -276,7 +280,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"shipper_reference\": \"aziz\",\n    \"shipper\": \"0LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"eta\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-04-30\"\n}",
+					"raw": "{\n    \"shipper_reference\": \"aziz\",\n    \"shipper\": \"0LL NEW MOI\",\n    \"consignee\": \"Silver food\",\n    \"book_no\": \"O0SL-2567/21\",\n    \"no_container\": \"6\",\n    \"size\": \"20 feed\",\n    \"product\": \"Coconut OIL\",\n    \"port_of_loading\": \"PGU\",\n    \"port_of_departure\": \"KHI\",\n    \"final_port_of_destination\": \"TASH\",\n    \"etd\": \"2024-03-01\",\n    \"vessel\": \"INDFADAFS;ALK-DFADSFASD\",\n    \"status\": \"pending\",\n    \"eta_karachi\": \"2024-04-30\",\n    \"bls\":\"ada,arada,dada\",\n    \"shipment_comment\":\"work in progress\",\n    \"attachment\":\"\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -492,6 +496,41 @@
 			"response": []
 		},
 		{
+			"name": "get bls list (any)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/shipment?query=bls_list",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"shipment"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "bls_list"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "post create shipment (staff)",
 			"request": {
 				"method": "POST",
@@ -504,7 +543,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"book_no\": \"POSL-2567/21\",\n    \"bl\": \"PDF23324AFDDSA-ADFAS\",\n    \"no_container\": \"6\",\n    \"eta_departure\": \"2024-03-07\",\n    \"eta_arrival\": \"2024-04-24\",\n    \"port\": \"KICT\",\n    \"docs\": \"2024-04-17\",\n    \"surrender\": \"2024-04-25\",\n    \"containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"status\": \"pending\",\n    \"attachment\": null\n}",
+					"raw": "{\n    \"book_no\": \"DOSL-2567/21\",\n    \"bl\": \"DDF23324AFDDSA-ADFAS\",\n    \"no_container\": \"6\",\n    \"eta_departure\": \"2024-03-07\",\n    \"eta_arrival\": \"2024-04-24\",\n    \"port\": \"KICT\",\n    \"docs\": \"2024-04-17\",\n    \"surrender\": \"2024-04-25\",\n    \"containers\": \"23s423adf,213dfsfd21,32423afsd423\",\n    \"status\": \"pending\",\n    \"attachment\": null\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -973,13 +1012,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token c1fa087e7459ca8ba2a6625df2b15487aa659698",
+						"value": "Token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"C322012,B322012\",\n    \"truck_no\": \"123DDD\",\n    \"date\": \"2024-05-10\",\n    \"curent_location\": \"Hairtan\",\n    \"status\": \"inprogress\"\n}",
+					"raw": "{\n    \"bl\": \"23324AFDDSA-ADFAS\",\n    \"bl_containers\": \"C322012,B322012\",\n    \"truck_no\": \"123DDD\",\n    \"date\": \"2024-05-10\",\n    \"curent_location\": \"Hairtan\",\n    \"comment\": \"work in progress\",\n    \"status\": \"inprogress\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1194,7 +1233,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/client",
+					"raw": "http://127.0.0.1:8000/api/client?search=Tls-173",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -1206,6 +1245,12 @@
 					"path": [
 						"api",
 						"client"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "Tls-173"
+						}
 					]
 				}
 			},
@@ -1300,12 +1345,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "token 18088d28af31d3d6fc3dc3d27b5527e2b42107d1",
+						"value": "token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
 						"type": "default"
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/track?search=RWLPKGKHI000667",
+					"raw": "http://127.0.0.1:8000/api/track?search=OSLPGUKHI263673",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -1321,7 +1366,7 @@
 					"query": [
 						{
 							"key": "search",
-							"value": "RWLPKGKHI000667"
+							"value": "OSLPGUKHI263673"
 						}
 					]
 				}
