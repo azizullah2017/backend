@@ -15,7 +15,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
     mobile_no = models.CharField(max_length=40)
-    company_name = models.CharField(max_length=50,default='Lachine')
+    company_name = models.CharField(max_length=50,default='Lachin')
 
 
 # class ExpiringToken(Token):
