@@ -146,7 +146,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 710ca5695ce14deaaa3bca7bd7da2eb9944a931b",
+						"value": "Token 17f91458fe88acf3d9d32bf7414252da2fe51c73",
 						"type": "default"
 					},
 					{
@@ -157,12 +157,10 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8000/api/users?limit=2&offset=1",
-					"protocol": "http",
+					"raw": "{{base_url}}/api/users?limit=10&offset=1&search=khan",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8000",
 					"path": [
 						"api",
 						"users"
@@ -170,11 +168,15 @@
 					"query": [
 						{
 							"key": "limit",
-							"value": "2"
+							"value": "10"
 						},
 						{
 							"key": "offset",
 							"value": "1"
+						},
+						{
+							"key": "search",
+							"value": "khan"
 						}
 					]
 				}
@@ -232,7 +234,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:8000/api/clr?search=MOI&company_name=Silver food&page=1&limit=10",
+					"raw": "http://127.0.0.1:8000/api/clr?page=1&limit=10&company_name=Lachin",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -247,20 +249,16 @@
 					],
 					"query": [
 						{
-							"key": "search",
-							"value": "MOI"
-						},
-						{
-							"key": "company_name",
-							"value": "Silver food"
-						},
-						{
 							"key": "page",
 							"value": "1"
 						},
 						{
 							"key": "limit",
 							"value": "10"
+						},
+						{
+							"key": "company_name",
+							"value": "Lachin"
 						}
 					]
 				}
