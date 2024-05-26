@@ -107,9 +107,44 @@ class GetUser(generics.ListAPIView):
     # authentication_classes = [ExpiringTokenAuthentication]
     # queryset = User.objects.filter(role='staff')
     permission_classes = (permissions.IsAuthenticated,IsAdmin)
-    queryset = User.objects.filter()
     serializer_class = UserSerializer
-    http_method_names = ['get'] 
+    http_method_names = ['get']
+
+    def get(self, request):
+        page_number = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        offset = (page_number - 1) * limit
+
+        if request.query_params.get('search'):
+            with connection.cursor() as cursor:
+                query =f"FROM {User._meta.db_table} \
+                WHERE username LIKE '%{request.query_params.get('search')}%' \
+                OR email LIKE '%{request.query_params.get('search')}%'\
+                OR role LIKE '%{request.query_params.get('search')}%'\
+                OR company_name LIKE '%{request.query_params.get('search')}%'\
+                OR mobile_no LIKE '%{request.query_params.get('search')}%'"
+
+                cursor.execute("SELECT uid, username, email, role, mobile_no, company_name "+query+f" LIMIT {limit} OFFSET {offset}")
+                rows = cursor.fetchall()
+                serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+
+                cursor.execute(f"SELECT COUNT(*) "+query)
+                total_count = cursor.fetchone()[0]
+
+                return JsonResponse({'total_count': total_count,'users': serialized_data}, status=status.HTTP_200_OK)
+        
+
+        with connection.cursor() as cursor:
+            query = f"FROM {User._meta.db_table}"
+
+            cursor.execute("SELECT uid, username, email, role, mobile_no, company_name "+query+f" LIMIT {limit} OFFSET {offset}")
+            rows = cursor.fetchall()
+            serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
+            cursor.execute(f"SELECT COUNT(*) "+query)
+            total_count = cursor.fetchone()[0]
+
+            return JsonResponse({'total_count': total_count,'users': serialized_data}, status=status.HTTP_200_OK)
+        
 
 class ClrInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
