@@ -145,7 +145,7 @@ class ClrInfo(generics.CreateAPIView):
 
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
-            query = f"SELECT * FROM {CLRModel._meta.db_table}"
+            query = f" * FROM {CLRModel._meta.db_table}"
             if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
                 query += f" AND consignee='{request.query_params.get('company_name')}'"
             
