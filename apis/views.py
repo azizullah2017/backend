@@ -145,10 +145,11 @@ class ClrInfo(generics.CreateAPIView):
 
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
-            query = f" * FROM {CLRModel._meta.db_table}"
+            query = f"FROM {CLRModel._meta.db_table}"
             if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                query += f" AND consignee='{request.query_params.get('company_name')}'"
+                query += f" WHERE consignee='{request.query_params.get('company_name')}'"
             
+            print("query: ",query)
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
