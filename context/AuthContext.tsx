@@ -2,14 +2,19 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-export type UserDTO = { token: string; username: string; role: string };
+export type UserDTO = {
+    token: string;
+    username: string;
+    role: string;
+    companyName: string;
+};
 type AuthContextType = {
     userData: UserDTO;
     setUserData: (arg: UserDTO) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
-    userData: { token: "", username: "", role: "" },
+    userData: { token: "", username: "", role: "", companyName: "" },
     setUserData: (arg: UserDTO) => {},
 });
 
@@ -18,6 +23,7 @@ const getFromLocalStorage = () => {
         token: "",
         username: "",
         role: "",
+        companyName: "",
     };
 
     if (typeof window !== "undefined") {

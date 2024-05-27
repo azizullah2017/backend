@@ -17,4 +17,8 @@ export const locationColumns: ColumnDef<LocationColumns>[] = [
         accessorKey: "date",
         header: "Date",
     },
+    {
+        accessorKey: "comment",
+        header: "Comments",
+    },
 ];

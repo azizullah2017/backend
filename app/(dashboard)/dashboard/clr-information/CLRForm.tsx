@@ -24,8 +24,10 @@ import { BASE_URL } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import FormTransition from "../_components/FormTransition";
+import { Textarea } from "@/components/ui/textarea";
 
 const defaultValues = {
+    bl_1: "",
     shipper_reference: "",
     shipper: "",
     consignee: "",
@@ -40,6 +42,7 @@ const defaultValues = {
     vessel: "",
     status: "",
     eta_karachi: "",
+    shipment_comment: "",
 };
 
 type CLRFormPropsType = {
@@ -57,9 +60,12 @@ const CLRForm = ({
     setClr,
     setRevalidate,
 }: CLRFormPropsType) => {
+    const [formReset, setFormReset] = useState(false);
+    const [blCount, setBlCount] = useState(1);
+    const [blInput, setBlInput] = useState([]);
     const router = useRouter();
     const { userData } = useAuth();
-    const [formReset, setFormReset] = useState(false);
+
     const editing = Object.keys(clr).length !== 0;
 
     const form = useForm({
@@ -67,7 +73,40 @@ const CLRForm = ({
     });
 
     const onSubmit = async (data: { [key: string]: string }) => {
+        let blList = [];
+        let bls = "";
         let res;
+
+        if (blCount > 1) {
+            blList.push(data.bl_1);
+            blInput.map((bl) => {
+                if (data[bl.name] !== "") {
+                    blList.push(data[bl.name]);
+                }
+            });
+            bls = blList.join(",");
+        } else {
+            bls = data.bl_1;
+        }
+
+        const updatedData = {
+            shipper_reference: data.shipper_reference,
+            shipper: data.shipper,
+            consignee: data.consignee,
+            book_no: data.book_no,
+            no_container: data.no_container,
+            size: data.size,
+            product: data.product,
+            port_of_loading: data.port_of_loading,
+            port_of_departure: data.port_of_departure,
+            final_port_of_destination: data.final_port_of_destination,
+            etd: data.etd,
+            vessel: data.vessel,
+            status: data.status,
+            eta_karachi: data.eta_karachi,
+            shipment_comment: data?.shipment_comment,
+            bls,
+        };
 
         if (!editing) {
             res = await fetch(`${BASE_URL}/api/clr`, {
@@ -76,11 +115,11 @@ const CLRForm = ({
                     Authorization: `Token ${userData.token}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(updatedData),
             });
         } else {
             const dataWithUID = {
-                ...data,
+                ...updatedData,
                 uid: clr.uid,
             };
             res = await fetch(`${BASE_URL}/api/clr/update/${clr.uid}/`, {
@@ -121,6 +160,11 @@ const CLRForm = ({
             Object.entries(clr).map((clr) => {
                 form.setValue(clr[0], clr[1]);
             });
+
+            const bls = clr.bls.split(",");
+
+            form.setValue("bl_1", bls[0]);
+            setBlCount(bls.length);
         }
     }, [editing]);
 
@@ -142,15 +186,82 @@ const CLRForm = ({
                 setRevalidate(true);
             }
 
+            setBlCount(1);
+            setBlInput([]);
             setFormReset(true);
         }
     }, [isShowing]);
+
+    useEffect(() => {
+        if (blCount > 1 && !editing) {
+            const inputObject = {
+                name: `bl_${blCount}`,
+                label: `BL ${blCount}`,
+            };
+
+            setBlInput((prevValue) => [...prevValue, inputObject]);
+        } else if (blCount > 1 && editing) {
+            const cont = clr.bls.split(",");
+            for (let i = 2; i <= blCount; i++) {
+                const inputObject = {
+                    name: `container_id_${i}`,
+                    label: `Container ID ${i}`,
+                };
+                setBlInput((prevValue) => [...prevValue, inputObject]);
+                form.setValue(inputObject.name, cont[i - 1]);
+            }
+        }
+    }, [blCount]);
 
     return (
         <FormTransition isShowing={isShowing} setIsShowing={setIsShowing}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-4 p-7">
+                        <div className="flex flex-wrap items-center gap-4">
+                            <FormField
+                                control={form.control}
+                                name="bl_1"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>BL 1</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <div className="lg:mt-5">
+                                <Button
+                                    onClick={() =>
+                                        setBlCount((prevValue) => prevValue + 1)
+                                    }
+                                    type="button"
+                                >
+                                    Add BL
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            {blInput.map((bl, index) => (
+                                <FormField
+                                    control={form.control}
+                                    name={bl.name}
+                                    key={index}
+                                    render={({ field }) => (
+                                        <FormItem className="w-full lg:flex-1">
+                                            <FormLabel>{bl.label}</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder=""
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            ))}
+                        </div>
                         <div className="flex flex-wrap gap-4">
                             <FormField
                                 control={form.control}
@@ -351,6 +462,24 @@ const CLRForm = ({
                                             <Input
                                                 type="date"
                                                 placeholder=""
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-4">
+                            <FormField
+                                control={form.control}
+                                name="shipment_comment"
+                                render={({ field }) => (
+                                    <FormItem className="w-full lg:flex-1">
+                                        <FormLabel>Comments</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder=""
+                                                className="resize-none"
                                                 {...field}
                                             />
                                         </FormControl>

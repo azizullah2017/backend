@@ -65,6 +65,7 @@ const Login = () => {
                     token: resp.token,
                     username: resp.username,
                     role: resp.role,
+                    companyName: resp.company_name,
                 });
             }
             router.push(pushToRoute[resp?.role]);
@@ -91,7 +92,7 @@ const Login = () => {
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <div className="flex justify-center">
                         <Image
-                            src="/logo.jpg"
+                            src="/logo.png"
                             alt="logo"
                             width={250}
                             height={250}

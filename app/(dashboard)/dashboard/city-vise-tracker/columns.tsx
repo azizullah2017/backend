@@ -1,16 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { TbEdit, TbTrash } from "react-icons/tb";
 import DataTableRowStatus from "../_components/DataTableRowStatus";
 
 export type CityViseTrackerType = {

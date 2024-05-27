@@ -41,7 +41,7 @@ const MobileSidebar = ({
                 open={showSidebar}
                 onOpenChange={() => setShowSidebar((prevValue) => !prevValue)}
             >
-                <DialogContent className="sm:max-w-[500px] absolute left-[0%] top-[0%] translate-x-[0%] translate-y-0 h-[calc(100vh)] flex flex-col justify-start data-[state=open]:slide-in-from-top-[0%] data-[state=closed]:slide-out-to-top-[0%]">
+                <DialogContent className="sm:max-w-[500px] absolute left-[0%] top-[0%] translate-x-[0%] translate-y-[0%] h-[calc(100vh)] flex flex-col justify-start data-[state=open]:slide-in-from-top-[0%] data-[state=closed]:slide-out-to-top-[0%]">
                     <ul className="list-none mt-3">
                         {menuItems
                             .filter((item) =>

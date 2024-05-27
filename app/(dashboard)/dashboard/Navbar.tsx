@@ -43,7 +43,7 @@ const Navbar = ({
                 </div>
                 {pathname === "/" ? "Dashboard" : formatString(currentPath)}
             </div>
-            <div className="rounded-full flex items-center lg:pr-4 cursor-pointer font-semibold text-2xl">
+            <div className="rounded-full flex items-center lg:pr-4 cursor-pointer font-semibold text-2xl text-[#58A7C6]">
                 {isClient ? userData?.username : "User"}
             </div>
         </div>

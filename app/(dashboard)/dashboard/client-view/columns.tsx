@@ -62,13 +62,24 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
         header: "Delivery ETD",
     },
     {
+        accessorKey: "surrender",
+        header: "Surrender",
+    },
+    {
+        accessorKey: "docs",
+        header: "Docs",
+    },
+    {
+        accessorKey: "no_container",
+        header: "Volume",
+    },
+    {
         accessorKey: "curent_location",
         header: "Current Location",
     },
     {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => <DataTableRowStatus status={row.original.status} />,
+        accessorKey: "comment",
+        header: "Comments",
     },
     {
         id: "actions",

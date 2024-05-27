@@ -15,7 +15,6 @@ const ClientView = ({
 }: {
     searchParams: { page: string; search?: string };
 }) => {
-    const [showDetails, setShowDetails] = useState<boolean>(false);
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState<number>(0);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -42,11 +41,14 @@ const ClientView = ({
             } else {
                 queryString = `page=${page}&limit=${pageSize}`;
             }
-            const res = await fetch(`${BASE_URL}/api/client?${queryString}`, {
-                headers: {
-                    Authorization: `Token ${userData.token}`,
-                },
-            });
+            const res = await fetch(
+                `${BASE_URL}/api/client?${queryString}&company_name=${userData?.companyName}`,
+                {
+                    headers: {
+                        Authorization: `Token ${userData.token}`,
+                    },
+                }
+            );
 
             if (!res.ok) {
                 throw new Error("Something went wrong");
@@ -63,26 +65,32 @@ const ClientView = ({
 
     useEffect(() => {
         if (windowWidth < 768) {
-            setColumnVisibility((prevState) => ({
-                ...prevState,
+            setColumnVisibility(() => ({
                 shipper: false,
                 shipper_reference: false,
-                consignee: false,
                 containers: false,
                 port_of_loading: false,
                 port_of_departure: false,
                 final_port_of_destination: false,
+                docs: false,
+                no_container: false,
+                surrender: false,
+                etd: false,
+                eta_karachi: false,
             }));
         } else {
-            setColumnVisibility((prevState) => ({
-                ...prevState,
+            setColumnVisibility(() => ({
                 shipper: true,
                 shipper_reference: true,
-                consignee: true,
                 containers: true,
                 port_of_loading: true,
                 port_of_departure: true,
                 final_port_of_destination: true,
+                docs: true,
+                no_container: true,
+                surrender: true,
+                etd: true,
+                eta_karachi: true,
             }));
         }
     }, [windowWidth]);
