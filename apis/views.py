@@ -25,15 +25,16 @@ class UserRegistrationView(generics.CreateAPIView):
 class UpdateUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all()
+    # queryset = User.objects.all()
 
     def perform_update(self, serializer):
         if 'password' in serializer.validated_data:
             serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
         serializer.save()
 
-    def get_object(self):
-        return self.request.user
+    
+    def get_queryset(self):
+        return User.objects.filter(pk=self.kwargs.get('pk'))
 
     # def update(self, request, *args, **kwargs):
     #     serializer = self.get_serializer(data=request.data)
