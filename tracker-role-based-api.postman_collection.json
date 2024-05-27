@@ -50,13 +50,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 710ca5695ce14deaaa3bca7bd7da2eb9944a931b",
+						"value": "Token d23fa196f4de9326cadf62b72c06ecaf2245f23f",
 						"type": "default"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"alli\",\n  \"password\": \"Str0ngPa$$w0rd\"\n\n}",
+					"raw": "{\n    \"username\": \"john2\",\n    \"email\": \"john3@example.com\",\n    \"role\": \"admin\",\n    \"mobile_no\": \"021231231231\",\n    \"company_name\": \"Lachin\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -74,6 +74,35 @@
 						"api",
 						"auth",
 						"update",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 572bb9aed455fbc144be12ad1a573c9c7af38d0d",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/auth/update/5404e66c9cab436e84fa4467b8254942/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"update",
+						"5404e66c9cab436e84fa4467b8254942",
 						""
 					]
 				}
