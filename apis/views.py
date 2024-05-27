@@ -582,7 +582,7 @@ class Track(generics.CreateAPIView):
                 WHERE book_no = '{new.get('book_no')}'"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
+                    query += f" AND consignee='{request.query_params.get('company_name')}'"
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
