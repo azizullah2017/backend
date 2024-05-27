@@ -12,10 +12,12 @@ WORKDIR /code
 COPY . /code/
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Expose the port that the app runs on
 EXPOSE 8000
 
 # Define the command to run your server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runsslserver", "0.0.0.0:8000","--certificate","fullchain.pem","--key","privkey.pem"]
+
