@@ -16,7 +16,7 @@ const TrackerActions = ({
                 onChange={(e) => setTrackerId(e.target.value)}
                 value={trackerId}
                 className="w-[400px]"
-                placeholder="BL Number, Booking Number, Consignee, Vessel"
+                placeholder="BL Number, Booking Number, Vessel"
             />
             <Button
                 type="button"

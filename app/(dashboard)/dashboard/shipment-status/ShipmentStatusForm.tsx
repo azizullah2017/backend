@@ -176,13 +176,25 @@ const ShipmentStatusForm = ({
             setContainerInput((prevValue) => [...prevValue, inputObject]);
         } else if (containerCount > 1 && editing) {
             const cont = shipment.containers.split(",");
-            for (let i = 2; i <= containerCount; i++) {
+            if (cont && cont.length === containerCount) {
+                for (let i = 2; i <= containerCount; i++) {
+                    const inputObject = {
+                        name: `container_id_${i}`,
+                        label: `Container ID ${i}`,
+                    };
+                    setContainerInput((prevValue) => [
+                        ...prevValue,
+                        inputObject,
+                    ]);
+                    form.setValue(inputObject.name, cont[i - 1]);
+                }
+            } else {
                 const inputObject = {
-                    name: `container_id_${i}`,
-                    label: `Container ID ${i}`,
+                    name: `container_id_${containerCount}`,
+                    label: `Container ID ${containerCount}`,
                 };
+
                 setContainerInput((prevValue) => [...prevValue, inputObject]);
-                form.setValue(inputObject.name, cont[i - 1]);
             }
         }
     }, [containerCount]);

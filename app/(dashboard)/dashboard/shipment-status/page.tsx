@@ -7,7 +7,7 @@ import { shipmentColumns } from "./columns";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import StaffTableActions from "@/components/StaffTableActions";
-import { BASE_URL } from "@/lib/constants";
+import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
 
@@ -27,7 +27,7 @@ const ShipmentStatus = ({
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
-    const pageSize = 10;
+    const pageSize = TABLE_ROW_SIZE;
     const isAuthenticated = userData?.role !== "";
     const isAuthorized =
         userData?.role !== "" &&

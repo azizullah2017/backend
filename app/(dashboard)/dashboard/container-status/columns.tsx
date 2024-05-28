@@ -52,9 +52,9 @@ export const containerPortColumns = ({
         accessorKey: "bl_containers",
         header: "Containers",
         cell: ({ row }) => {
-            const containers = row.original.bl_containers.split(",");
+            const containers = row.original.bl_containers?.split(",");
 
-            return containers.map((container, index) => (
+            return containers?.map((container, index) => (
                 <p key={index}>{container}</p>
             ));
         },

@@ -7,10 +7,6 @@ import { useState, useEffect } from "react";
 import RegisterForm from "@/app/(dashboard)/dashboard/_components/RegisterForm";
 
 const Register = () => {
-    const [error, setError] = useState<{ email?: string; username?: string }>(
-        {}
-    );
-
     // const { userData } = useAuth();
     // const pushToRoute = {
     //     staff: "/dashboard/clr-information",
@@ -41,18 +37,6 @@ const Register = () => {
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    {(error.email || error.username) && (
-                        <div className="p-7 bg-red-400 rounded-md mb-5">
-                            <p className="text-white">
-                                {error.email &&
-                                    capitalizeFirstLetter(error.email)}
-                            </p>
-                            <p className="text-white">
-                                {error.username &&
-                                    capitalizeFirstLetter(error.username)}
-                            </p>
-                        </div>
-                    )}
                     <RegisterForm />
                 </div>
             </div>

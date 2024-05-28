@@ -26,6 +26,15 @@ export const clrColumns: ColumnDef<CLRInformation>[] = [
         header: "Shipper Ref",
     },
     {
+        accessorKey: "bls",
+        header: "BLs",
+        cell: ({ row }) => {
+            const bls = row.original.bls?.split(",");
+
+            return bls?.map((bl, index) => <p key={index}>{bl}</p>);
+        },
+    },
+    {
         accessorKey: "shipper",
         header: "Shipper",
     },
@@ -70,7 +79,7 @@ export const clrColumns: ColumnDef<CLRInformation>[] = [
         header: "ETA Karachi",
     },
     {
-        accessorKey: "comment",
+        accessorKey: "shipment_comment",
         header: "Comments",
     },
 ];

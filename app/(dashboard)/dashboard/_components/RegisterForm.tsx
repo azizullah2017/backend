@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -25,6 +26,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 const registerSchema = z.object({
     username: z.string().min(1, "User is required"),
@@ -44,7 +46,6 @@ const defaultValues = {
 };
 
 const RegisterForm = ({
-    setError,
     user,
     formReset,
     setFormReset,
@@ -52,7 +53,6 @@ const RegisterForm = ({
     setIsShowing,
     setRevalidate,
 }: {
-    setError: (arg: { [key: string]: string }) => void;
     user?: { [key: string]: string };
     formReset?: boolean;
     setFormReset?: (arg: boolean) => void;
@@ -62,6 +62,9 @@ const RegisterForm = ({
     setRevalidate?: (arg: boolean) => void;
 }) => {
     const [isCustomer, setIsCustomer] = useState(false);
+    const [error, setError] = useState<{ email?: string; username?: string }>(
+        {}
+    );
     const pathname = usePathname();
     const router = useRouter();
     const { userData } = useAuth();
@@ -106,8 +109,6 @@ const RegisterForm = ({
                 "Content-Type": "application/json",
             };
         }
-
-        console.log(headers);
 
         if (!editing) {
             res = await fetch(`${BASE_URL}/api/auth/register/`, {
@@ -194,54 +195,32 @@ const RegisterForm = ({
     }, [formReset]);
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
+        <>
+            <Form {...form}>
+                <div>
+                    {error && (error.email || error.username) && (
+                        <div className="p-7 bg-red-400 rounded-md mb-5">
+                            <p className="text-white">
+                                {error.email &&
+                                    capitalizeFirstLetter(error.email)}
+                            </p>
+                            <p className="text-white">
+                                {error.username &&
+                                    capitalizeFirstLetter(error.username)}
+                            </p>
+                        </div>
                     )}
-                />
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input type="email" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="mobile_no"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Mobile Number</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                {isCustomer && (
+                </div>
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-4"
+                >
                     <FormField
                         control={form.control}
-                        name="company_name"
+                        name="username"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Company Name</FormLabel>
+                                <FormLabel>Username</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -249,54 +228,105 @@ const RegisterForm = ({
                             </FormItem>
                         )}
                     />
-                )}
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input {...field} type="password" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="role"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Role</FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                value={field.value}
-                            >
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a role" />
-                                    </SelectTrigger>
+                                    <Input type="email" {...field} />
                                 </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="staff">Staff</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                    <SelectItem value="customer">
-                                        Customer
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="mobile_no"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Mobile Number</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    {isCustomer && (
+                        <FormField
+                            control={form.control}
+                            name="company_name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Company Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     )}
-                />
-                <div className="pt-6">
-                    <Button className="w-full" type="submit">
-                        Submit
-                    </Button>
-                </div>
-            </form>
-        </Form>
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input {...field} type="password" />
+                                </FormControl>
+                                {pathname !== "/register" && editing && (
+                                    <FormDescription>
+                                        {`Leave this field blank if you don't
+                                            want to change password`}
+                                    </FormDescription>
+                                )}
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Role</FormLabel>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a role" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="staff">
+                                            Staff
+                                        </SelectItem>
+                                        <SelectItem value="admin">
+                                            Admin
+                                        </SelectItem>
+                                        <SelectItem value="customer">
+                                            Customer
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="pt-6">
+                        <Button className="w-full" type="submit">
+                            Submit
+                        </Button>
+                    </div>
+                </form>
+            </Form>
+        </>
     );
 };
 

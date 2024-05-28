@@ -161,10 +161,12 @@ const CLRForm = ({
                 form.setValue(clr[0], clr[1]);
             });
 
-            const bls = clr.bls.split(",");
+            const bls = clr.bls?.split(",");
 
-            form.setValue("bl_1", bls[0]);
-            setBlCount(bls.length);
+            if (bls) {
+                form.setValue("bl_1", bls[0]);
+                setBlCount(bls.length);
+            }
         }
     }, [editing]);
 
@@ -201,14 +203,23 @@ const CLRForm = ({
 
             setBlInput((prevValue) => [...prevValue, inputObject]);
         } else if (blCount > 1 && editing) {
-            const cont = clr.bls.split(",");
-            for (let i = 2; i <= blCount; i++) {
+            const bl = clr.bls?.split(",");
+            if (bl && bl.length === blCount) {
+                for (let i = 2; i <= blCount; i++) {
+                    const inputObject = {
+                        name: `bl_${i}`,
+                        label: `BL ${i}`,
+                    };
+                    setBlInput((prevValue) => [...prevValue, inputObject]);
+                    form.setValue(inputObject.name, bl[i - 1]);
+                }
+            } else {
                 const inputObject = {
-                    name: `container_id_${i}`,
-                    label: `Container ID ${i}`,
+                    name: `bl_${blCount}`,
+                    label: `BL ${blCount}`,
                 };
+
                 setBlInput((prevValue) => [...prevValue, inputObject]);
-                form.setValue(inputObject.name, cont[i - 1]);
             }
         }
     }, [blCount]);

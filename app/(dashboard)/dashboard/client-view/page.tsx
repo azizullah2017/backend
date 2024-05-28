@@ -3,7 +3,7 @@
 import StaffTableActions from "@/components/StaffTableActions";
 import { DataTable } from "@/components/ui/data-tables";
 import { useAuth } from "@/context/AuthContext";
-import { BASE_URL } from "@/lib/constants";
+import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
@@ -23,7 +23,7 @@ const ClientView = ({
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
-    const pageSize = 10;
+    const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
     const { userData } = useAuth();
     const windowWidth = useGetWindowWidth();

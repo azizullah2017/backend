@@ -66,6 +66,8 @@ const Login = () => {
                     username: resp.username,
                     role: resp.role,
                     companyName: resp.company_name,
+                    mobileNumber: resp.mobile_no,
+                    email: resp.email,
                 });
             }
             router.push(pushToRoute[resp?.role]);

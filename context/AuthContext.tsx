@@ -7,6 +7,9 @@ export type UserDTO = {
     username: string;
     role: string;
     companyName: string;
+    mobileNumber: string;
+    email: string;
+    uid: string;
 };
 type AuthContextType = {
     userData: UserDTO;
@@ -14,7 +17,15 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType>({
-    userData: { token: "", username: "", role: "", companyName: "" },
+    userData: {
+        token: "",
+        username: "",
+        role: "",
+        companyName: "",
+        email: "",
+        mobileNumber: "",
+        uid: "",
+    },
     setUserData: (arg: UserDTO) => {},
 });
 
@@ -24,6 +35,9 @@ const getFromLocalStorage = () => {
         username: "",
         role: "",
         companyName: "",
+        email: "",
+        mobileNumber: "",
+        uid: "",
     };
 
     if (typeof window !== "undefined") {

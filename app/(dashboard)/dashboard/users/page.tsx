@@ -6,7 +6,7 @@ import { userColumns } from "./columns";
 import StaffTableActions from "@/components/StaffTableActions";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { BASE_URL } from "@/lib/constants";
+import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
 import RegisterForm from "../_components/RegisterForm";
@@ -31,7 +31,7 @@ const Users = ({
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
-    const pageSize = 10;
+    const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
     const { userData } = useAuth();
     const isAuthenticated = userData?.role !== "";
@@ -106,8 +106,6 @@ const Users = ({
 
                     setData(tableData.users);
                     setTotalRows(tableData.total_count);
-
-                    console.log(tableData.users);
                 }
                 setRevalidate(false);
             };
@@ -151,7 +149,6 @@ const Users = ({
                             editing={editing}
                             setFormReset={setFormReset}
                             formReset={formReset}
-                            setError={setError}
                             setIsShowing={setIsShowing}
                             setRevalidate={setRevalidate}
                         />

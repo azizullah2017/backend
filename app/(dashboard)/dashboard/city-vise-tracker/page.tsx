@@ -7,7 +7,7 @@ import { columns } from "./columns";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import StaffTableActions from "@/components/StaffTableActions";
-import { BASE_URL } from "@/lib/constants";
+import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import { truckDetailColumns } from "./truckDetailColumns";
 import DeleteAlert from "../_components/DeleteAlert";
@@ -33,7 +33,7 @@ const CityViseTracker = ({
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
-    const pageSize = 10;
+    const pageSize = TABLE_ROW_SIZE;
 
     const onEdit = useCallback((data) => {
         setTracker(data);

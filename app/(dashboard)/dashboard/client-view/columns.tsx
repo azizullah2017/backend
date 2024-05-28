@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
-import DataTableRowStatus from "../_components/DataTableRowStatus";
-
 export type CityViseTrackerType = {
     id: string;
     amount: number;
@@ -34,9 +32,9 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
         accessorKey: "containers",
         header: "Containers",
         cell: ({ row }) => {
-            const containers = row.original.containers.split(",");
+            const containers = row.original.containers?.split(",");
 
-            return containers.map((container, index) => (
+            return containers?.map((container, index) => (
                 <p key={index}>{container}</p>
             ));
         },
@@ -88,10 +86,7 @@ export const columns: ColumnDef<CityViseTrackerType>[] = [
             const clientView = row.original;
 
             return (
-                <Button
-                    variant="outline"
-                    onClick={() => console.log("hello world")}
-                >
+                <Button variant="outline">
                     <Link href={`/dashboard/tracker?bl=${clientView.bl}`}>
                         Details
                     </Link>

@@ -5,7 +5,7 @@ import { GiDigitalTrace, GiProgression } from "react-icons/gi";
 import { HiInformationCircle } from "react-icons/hi";
 import { ImHome } from "react-icons/im";
 import { RiShipFill } from "react-icons/ri";
-import { FaCity, FaTruck } from "react-icons/fa";
+import { FaCity, FaTruck, FaUser } from "react-icons/fa";
 import MenuLink from "./MenuLink";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
@@ -38,7 +38,7 @@ export const menuItems: menuItemsType[] = [
     {
         title: "Users",
         path: "/dashboard/users",
-        icon: <ImHome className="w-5 h-5" />,
+        icon: <FaUser className="w-5 h-5" />,
         role: ["admin"],
     },
     {
@@ -90,22 +90,6 @@ const SideBar = () => {
     const { userData, setUserData } = useAuth();
     const router = useRouter();
 
-    const logout = async () => {
-        const res = await fetch(`${BASE_URL}/api/auth/logout/`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Token ${userData?.token}`,
-            },
-        });
-
-        if (!res.ok) {
-            throw new Error("Something went wrong");
-        } else {
-            setUserData({ token: "", username: "", role: "" });
-            router.push("/login");
-        }
-    };
-
     return (
         <aside className="h-screen">
             <nav className="h-full flex flex-col bg-white border-r shadow-sm overflow-auto">
@@ -150,15 +134,6 @@ const SideBar = () => {
                                 }
                             </li>
                         ))}
-                    <div
-                        className={`flex items-center w-full py-5 ${
-                            expanded ? "px-6" : "px-5"
-                        } gap-1 cursor-pointer hover:text-gray-700`}
-                        onClick={logout}
-                    >
-                        <IoLogOut className="w-5 h-5" />
-                        {expanded && "Logout"}
-                    </div>
                 </ul>
             </nav>
         </aside>

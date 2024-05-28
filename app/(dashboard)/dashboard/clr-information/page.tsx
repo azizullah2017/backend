@@ -7,7 +7,7 @@ import { clrColumns } from "./columns";
 import StaffTableActions from "@/components/StaffTableActions";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { BASE_URL } from "@/lib/constants";
+import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import DeleteAlert from "../_components/DeleteAlert";
 import { toast } from "@/components/ui/use-toast";
 
@@ -25,7 +25,7 @@ const CLRInformation = ({
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
-    const pageSize = 10;
+    const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
     const { userData } = useAuth();
     const isAuthenticated = userData?.role !== "";

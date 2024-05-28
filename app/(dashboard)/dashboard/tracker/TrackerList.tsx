@@ -4,10 +4,13 @@ import { locationColumns } from "./LocationColumns";
 
 const TrackerList = ({ containers }: { containers: any }) => {
     return (
-        <div className="flex gap-5">
+        <div className="flex flex-col md:flex-row justify-center gap-10">
             {containers.map((con, index) => {
                 return (
-                    <Card className="lg:mb-5 shadow-md last:mb-5" key={index}>
+                    <Card
+                        className="lg:mb-5 shadow-md last:mb-5 w-full md:w-[50%] lg:w-[30%]"
+                        key={index}
+                    >
                         <CardContent className="p-5 flex flex-col gap-5">
                             <div className="h-full">
                                 <div className="flex gap-5 mb-2">

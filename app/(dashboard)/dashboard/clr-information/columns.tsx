@@ -34,6 +34,15 @@ export const clrColumns = ({
         header: "Shipper Ref",
     },
     {
+        accessorKey: "bls",
+        header: "BLs",
+        cell: ({ row }) => {
+            const bls = row.original.bls?.split(",");
+
+            return bls?.map((bl, index) => <p key={index}>{bl}</p>);
+        },
+    },
+    {
         accessorKey: "shipper",
         header: "Shipper",
     },

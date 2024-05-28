@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "Lachin Shipping",
     description: "Lachin Shipping LLC",
+    icons: {
+        icon: "favicon.png",
+    },
 };
 
 export default function RootLayout({
