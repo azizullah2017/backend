@@ -22,6 +22,7 @@ const ShipmentStatus = ({
     const [shipment, setShipment] = useState({});
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [revalidate, setRevalidate] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { userData } = useAuth();
     const page = parseInt(searchParams.page) || 1;
@@ -77,6 +78,7 @@ const ShipmentStatus = ({
     useEffect(() => {
         if (page || revalidate || searchQuery) {
             const fetchData = async () => {
+                setIsLoading(true);
                 let queryString = "";
                 if (searchQuery !== "") {
                     queryString = `search=${searchQuery}&page=${page}&limit=${pageSize}`;
@@ -101,6 +103,7 @@ const ShipmentStatus = ({
                     setTotalRows(tableData.total_count);
                     setRevalidate(false);
                 }
+                setIsLoading(false);
             };
 
             fetchData();
@@ -131,6 +134,7 @@ const ShipmentStatus = ({
                     pageSize={pageSize}
                     currentPage={page}
                     totalRows={totalRows}
+                    isLoading={isLoading}
                 />
             </div>
             <DeleteAlert

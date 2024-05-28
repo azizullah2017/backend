@@ -25,7 +25,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/AuthContext";
+import { UserDTO, useAuth } from "@/context/AuthContext";
 import { capitalizeFirstLetter } from "@/lib/utils";
 
 const registerSchema = z.object({
@@ -52,6 +52,8 @@ const RegisterForm = ({
     editing,
     setIsShowing,
     setRevalidate,
+    userEdit,
+    setUserData,
 }: {
     user?: { [key: string]: string };
     formReset?: boolean;
@@ -60,6 +62,8 @@ const RegisterForm = ({
     editing?: boolean;
     setIsShowing?: (arg: boolean) => void;
     setRevalidate?: (arg: boolean) => void;
+    userEdit?: boolean;
+    setUserData?: (arg: UserDTO) => void;
 }) => {
     const [isCustomer, setIsCustomer] = useState(false);
     const [error, setError] = useState<{ email?: string; username?: string }>(
@@ -159,6 +163,19 @@ const RegisterForm = ({
                         title: "Success",
                         description: `User Updated Successfully!`,
                         className: "bg-green-200",
+                    });
+                }
+                if (userEdit && setUserData) {
+                    const resp = await res.json();
+
+                    setUserData({
+                        token: userData?.token,
+                        username: resp.username,
+                        role: resp.role,
+                        companyName: resp.company_name,
+                        email: resp.email,
+                        mobileNumber: resp.mobile_no,
+                        uid: resp.uid,
                     });
                 }
                 setIsShowing && setIsShowing(false);

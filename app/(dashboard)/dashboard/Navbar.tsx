@@ -36,7 +36,6 @@ const Navbar = ({
     const [isClient, setIsClient] = useState(false);
     const [isShowing, setIsShowing] = useState(false);
     const [editing, setEditing] = useState(false);
-    const [revalidate, setRevalidate] = useState(false);
     const { userData, setUserData } = useAuth();
     const router = useRouter();
 
@@ -45,9 +44,12 @@ const Navbar = ({
     }, []);
 
     const data = {
-        ...userData,
+        username: userData?.username,
         company_name: userData?.companyName,
         mobile_no: userData?.mobileNumber,
+        role: userData?.role,
+        email: userData?.email,
+        uid: userData?.uid,
     };
 
     const logout = async () => {
@@ -65,10 +67,6 @@ const Navbar = ({
             router.push("/login");
         }
     };
-
-    useEffect(() => {
-        console.log("Response data");
-    }, [revalidate]);
 
     return (
         <>
@@ -125,7 +123,8 @@ const Navbar = ({
                         user={data}
                         editing={editing}
                         setIsShowing={setIsShowing}
-                        setRevalidate={setRevalidate}
+                        userEdit={true}
+                        setUserData={setUserData}
                     />
                 </FormTransition>
             </div>

@@ -20,6 +20,7 @@ const ClientView = ({
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     );
+    const [isLoading, setIsLoading] = useState(false);
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
@@ -35,6 +36,7 @@ const ClientView = ({
 
     useEffect(() => {
         const fetchData = async () => {
+            setIsLoading(true);
             let queryString = "";
             if (searchQuery !== "") {
                 queryString = `search=${searchQuery}&page=${page}&limit=${pageSize}`;
@@ -58,6 +60,7 @@ const ClientView = ({
                 setData(trackers);
                 setTotalRows(total_count);
             }
+            setIsLoading(false);
         };
 
         fetchData();
@@ -108,6 +111,7 @@ const ClientView = ({
                             currentPage={page}
                             totalRows={totalRows}
                             columnVisibility={columnVisibility}
+                            isLoading={isLoading}
                         />
                     </div>
                 </div>

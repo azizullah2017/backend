@@ -23,6 +23,7 @@ const ContainerStatus = ({
     const [port, setPort] = useState({});
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [revalidate, setRevalidate] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { userData } = useAuth();
     const isAuthenticated = userData?.role !== "";
@@ -79,6 +80,7 @@ const ContainerStatus = ({
     useEffect(() => {
         if (page || revalidate || searchQuery) {
             const fetchData = async () => {
+                setIsLoading(true);
                 let queryString = "";
                 if (searchQuery !== "") {
                     queryString = `search=${searchQuery}&page=${page}&limit=${pageSize}`;
@@ -100,6 +102,7 @@ const ContainerStatus = ({
                     setTotalRows(tableData.total_count);
                     setRevalidate(false);
                 }
+                setIsLoading(false);
             };
 
             fetchData();
@@ -134,6 +137,7 @@ const ContainerStatus = ({
                     pageSize={pageSize}
                     currentPage={page}
                     totalRows={totalRows}
+                    isLoading={isLoading}
                 />
             </div>
             <DeleteAlert

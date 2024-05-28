@@ -15,6 +15,7 @@ const CLRView = ({
 }) => {
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState(false);
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
@@ -36,6 +37,7 @@ const CLRView = ({
                 queryString = `page=${page}&limit=${pageSize}`;
             }
             const fetchData = async () => {
+                setIsLoading(true);
                 const res = await fetch(
                     `${BASE_URL}/api/clr?${queryString}&company_name=${userData?.companyName}`,
                     {
@@ -53,6 +55,7 @@ const CLRView = ({
                     setData(tableData.clrs);
                     setTotalRows(tableData.total_count);
                 }
+                setIsLoading(false);
             };
 
             fetchData();
@@ -70,6 +73,7 @@ const CLRView = ({
                         pageSize={pageSize}
                         currentPage={page}
                         totalRows={totalRows}
+                        isLoading={isLoading}
                     />
                 </div>
             </div>

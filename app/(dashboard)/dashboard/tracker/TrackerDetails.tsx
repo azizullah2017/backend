@@ -4,7 +4,7 @@ const TrackerDetails = (data: { data: any }) => {
     const dataItem = data.data;
 
     return (
-        <div className="flex flex-col md:flex-row md:justify-center gap-1">
+        <div className="flex flex-col md:flex-row md:justify-center gap-1 bg-white p-3 md:p-5 xl:mx-44 shadow-md rounded-lg">
             <div className="flex flex-col gap-1 w-[400px]">
                 <p>
                     <span className="font-semibold">BL: </span>

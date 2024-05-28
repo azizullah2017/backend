@@ -24,6 +24,7 @@ const CityViseTracker = ({
     const [tracker, setTracker] = useState({});
     const [cityDialog, setCityDialog] = useState(false);
     const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const { userData } = useAuth();
     const router = useRouter();
     const isAuthenticated = userData?.role !== "";
@@ -88,6 +89,7 @@ const CityViseTracker = ({
                 queryString = `page=${page}&limit=${pageSize}`;
             }
             const fetchData = async () => {
+                setIsLoading(true);
                 const res = await fetch(
                     `${BASE_URL}/api/tracker?${queryString}`,
                     {
@@ -106,6 +108,7 @@ const CityViseTracker = ({
                     setTotalRows(tableData.total_count);
                     setRevalidate(false);
                 }
+                setIsLoading(false);
             };
 
             fetchData();
@@ -140,6 +143,7 @@ const CityViseTracker = ({
                     pageSize={pageSize}
                     currentPage={page}
                     totalRows={totalRows}
+                    isLoading={isLoading}
                 />
             </div>
             <DeleteAlert

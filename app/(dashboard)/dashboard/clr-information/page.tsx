@@ -22,6 +22,7 @@ const CLRInformation = ({
     const [clr, setClr] = useState({});
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [revalidate, setRevalidate] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
@@ -80,6 +81,7 @@ const CLRInformation = ({
                 queryString = `page=${page}&limit=${pageSize}`;
             }
             const fetchData = async () => {
+                setIsLoading(true);
                 const res = await fetch(`${BASE_URL}/api/clr?${queryString}`, {
                     headers: {
                         Authorization: `Token ${userData.token}`,
@@ -95,6 +97,7 @@ const CLRInformation = ({
                     setTotalRows(tableData.total_count);
                     setRevalidate(false);
                 }
+                setIsLoading(false);
             };
 
             fetchData();
@@ -124,6 +127,7 @@ const CLRInformation = ({
                         pageSize={pageSize}
                         currentPage={page}
                         totalRows={totalRows}
+                        isLoading={isLoading}
                     />
                 </div>
                 <DeleteAlert

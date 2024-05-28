@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import TrackerDetails from "./TrackerDetails";
 import TrackerList from "./TrackerList";
 import TrackerActions from "./TrackerActions";
+import Spinner from "@/components/ui/Spinner";
 
 const Tracker = ({
     searchParams,
@@ -17,6 +18,7 @@ const Tracker = ({
 }) => {
     const [trackerId, setTrackerId] = useState("");
     const [data, setData] = useState<Object | string>({});
+    const [isLoading, setIsLoading] = useState(false);
     const { userData } = useAuth();
     const router = useRouter();
 
@@ -64,6 +66,7 @@ const Tracker = ({
 
     const onSubmit = () => {
         const fetchData = async () => {
+            setIsLoading(true);
             const res = await fetch(
                 `${BASE_URL}/api/track?search=${trackerId}&company_name=${userData?.companyName}`,
                 {
@@ -84,6 +87,7 @@ const Tracker = ({
 
                 setData(track);
             }
+            setIsLoading(false);
         };
 
         fetchData();
@@ -96,7 +100,11 @@ const Tracker = ({
                 setTrackerId={setTrackerId}
                 onSubmit={onSubmit}
             />
-            {Object.keys(data).length !== 0 ? (
+            {isLoading ? (
+                <div className="flex justify-center items-center h-full">
+                    <Spinner />
+                </div>
+            ) : Object.keys(data).length !== 0 ? (
                 <div className="flex flex-col justify-center gap-5">
                     <TrackerDetails data={data} />
                     <TrackerList containers={data.containers} />

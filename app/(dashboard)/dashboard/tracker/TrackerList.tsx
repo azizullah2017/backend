@@ -4,7 +4,7 @@ import { locationColumns } from "./LocationColumns";
 
 const TrackerList = ({ containers }: { containers: any }) => {
     return (
-        <div className="flex flex-col md:flex-row justify-center gap-10">
+        <div className="flex flex-col md:flex-row justify-center gap-5 md:gap-10">
             {containers.map((con, index) => {
                 return (
                     <Card

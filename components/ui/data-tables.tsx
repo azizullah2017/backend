@@ -17,6 +17,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import Pagination from "../Pagination";
+import Spinner from "./Spinner";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -27,6 +28,7 @@ interface DataTableProps<TData, TValue> {
     pagination?: boolean;
     tableHeight?: string;
     columnVisibility?: VisibilityState;
+    isLoading: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -38,6 +40,7 @@ export function DataTable<TData, TValue>({
     pagination = true,
     tableHeight = "h-full",
     columnVisibility,
+    isLoading,
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -104,7 +107,11 @@ export function DataTable<TData, TValue>({
                                         colSpan={columns.length}
                                         className="h-24 text-center"
                                     >
-                                        No results.
+                                        {isLoading ? (
+                                            <Spinner />
+                                        ) : (
+                                            "No results."
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             )}
