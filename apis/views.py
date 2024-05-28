@@ -83,15 +83,9 @@ class UserLoginView(ObtainAuthToken):
         # token = ExpiringToken.objects.create(expiration=expiration_time)
         token.expiration = expiration_time
         token.save()
-
-        # Include username, role, and token in the response
-        response_data = {
-            'token': token.key,
-            'username': user_data['username'],
-            'company_name': user_data['company_name'],
-            'role': user_data['role'],
-        }
-        return Response(response_data)
+     
+        user_data["token"] = token.key
+        return Response(user_data)
     
         # return Response({'token': token.key , "username": user})
 

@@ -56,3 +56,19 @@ docker build -t tracker .
 
 ## run
 docker run -p 8000:8000 tracker
+
+
+<!-- openssl genrsa > privkey.pem
+openssl req -new -x509 -key privkey.pem > fullchain.pem -->
+
+# updat record on subdomain
+A	tracker	ip
+
+# network Firewall Policies
+Allow	All	TCP	8000 backend tcp
+
+# install node
+sudo apt update
+sudo apt install -y curl software-properties-common
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
