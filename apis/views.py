@@ -14,6 +14,9 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 import pandas as pd
 from django.http import HttpResponse
+from .models import ExpiringToken
+
+
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -36,58 +39,29 @@ class UpdateUser(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return User.objects.filter(pk=self.kwargs.get('pk'))
 
-    # def update(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     print("serializer: ",serializer)
-    #     serializer.is_valid(raise_exception=True)
-
-    #     user = request.user
-    #     if serializer.validated_data.get('old_password'):
-    #         old_password = serializer.validated_data.get('old_password')
-    #         new_password = serializer.validated_data.get('new_password')
-    #         user.set_password(new_password)
-
-    #     if not user.check_password(old_password):
-    #         return Response({'detail': 'Incorrect old password'}, status=status.HTTP_400_BAD_REQUEST)
-
-    #     if 'username' in serializer.validated_data:
-    #         user.username = serializer.validated_data['username']
-    #     if 'email' in serializer.validated_data:
-    #         user.email = serializer.validated_data['email']
-    #     if 'contact' in serializer.validated_data:
-    #         user.contact = serializer.validated_data['contact']
-
-        
-    #     user.save()
-
-    #     return Response({'detail': 'User information updated successfully'}, status=status.HTTP_200_OK)
-
 
 class UserLoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
+
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        # print(serializer.validated_data)
-        token, created = Token.objects.get_or_create(user=user)
-        if not created:
-            token.created = timezone.now()
-            token.save()
+
+        # Check for existing token and its expiration
+        try:
+            token = ExpiringToken.objects.get(user=user)
+            if token.is_expired:
+                token.delete()
+                token = ExpiringToken.objects.create(user=user)
+        except ExpiringToken.DoesNotExist:
+            token = ExpiringToken.objects.create(user=user)
 
         # Retrieve additional user data such as username and role
         user_serializer = UserSerializer(user)
         user_data = user_serializer.data
 
-        # Set token expiration to 10 minutes
-        expiration_time = token.created + timezone.timedelta(minutes=5)
-        # token = ExpiringToken.objects.create(expiration=expiration_time)
-        token.expiration = expiration_time
-        token.save()
-     
         user_data["token"] = token.key
         return Response(user_data)
-    
-        # return Response({'token': token.key , "username": user})
 
 class UserLogoutView(generics.DestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)

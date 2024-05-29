@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from rest_framework.authtoken.models import Token
 import uuid
+from django.utils import timezone
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -18,6 +19,15 @@ class User(AbstractUser):
     company_name = models.CharField(max_length=50,default='Lachin')
 
 
+class ExpiringToken(Token):
+    expiration = models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def is_expired(self):
+        now = timezone.now()
+        expiration_time = self.expiration + settings.TOKEN_EXPIRATION_TIME
+        return now >= expiration_time
+    
 # class ExpiringToken(Token):
 #     expiration = models.DateTimeField()
 

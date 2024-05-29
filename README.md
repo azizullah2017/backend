@@ -51,6 +51,21 @@ admin/
 5. http://127.0.0.1:8000/api/tracker/create
 
 
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - 
+sudo apt install -y nodejs
+
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d tracker.lachinshipping.com -d www.tracker.lachinshipping.com
+
+
+
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+
 ## build
 docker build -t tracker .
 
