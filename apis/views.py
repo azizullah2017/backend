@@ -235,7 +235,7 @@ class UpdateShipmentInfo(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PortInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = PortSerializer
     queryset = PortStatus.objects.all()
     http_method_names = ['get','post']
