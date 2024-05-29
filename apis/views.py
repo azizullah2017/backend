@@ -178,6 +178,16 @@ class ShipmentInfo(generics.CreateAPIView):
     serializer_class = ShipmentSerializer
     http_method_names = ['get','post']
 
+    def create(self, request, *args, **kwargs):
+        data = self._convert_empty_strings_to_none(request.data)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def _convert_empty_strings_to_none(self, data):
+        return {key: (None if value == '' else value) for key, value in data.items()}
 
     def get(self, request):
         page_number = int(request.query_params.get('page', 1))
