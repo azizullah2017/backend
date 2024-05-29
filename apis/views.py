@@ -21,7 +21,7 @@ from .models import ExpiringToken
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsAdmin]
     allowed_methods = ['get','post']
 
 
@@ -165,7 +165,7 @@ class ClrInfo(generics.CreateAPIView):
         
 class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ClrSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
 
     def get_queryset(self):
         # print(self.kwargs.get('pk'))
@@ -173,7 +173,7 @@ class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     
 class ShipmentInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
     # queryset = ShipmentStatus.objects.all()
     serializer_class = ShipmentSerializer
     http_method_names = ['get','post']
@@ -227,7 +227,7 @@ class ShipmentInfo(generics.CreateAPIView):
             return JsonResponse({'total_count': total_count,'shipments': serialized_data}, status=status.HTTP_200_OK)
 
 class UpdateShipmentInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
     serializer_class = ShipmentSerializer
 
     def get_queryset(self):
@@ -235,7 +235,7 @@ class UpdateShipmentInfo(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PortInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
     serializer_class = PortSerializer
     queryset = PortStatus.objects.all()
     http_method_names = ['get','post']
@@ -300,7 +300,7 @@ class PortInfo(generics.CreateAPIView):
 
 
 class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
     serializer_class = PortSerializer
 
     def get_queryset(self):
@@ -308,7 +308,7 @@ class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TrackerInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
     serializer_class = CityWiseTrackerSerializer
     http_method_names = ['get','post']
     
@@ -367,7 +367,7 @@ class TrackerInfo(generics.CreateAPIView):
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
 
 class AddcityInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
     serializer_class = AddcitySerializer
     http_method_names = ['get','post']
     
@@ -389,7 +389,7 @@ class AddcityInfo(generics.CreateAPIView):
        
 
 class UpdateTrackerInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
     serializer_class = CityWiseTrackerSerializer
 
     def get_queryset(self):
@@ -439,7 +439,7 @@ class CityInfo(generics.CreateAPIView):
 
 
 class ClientView(generics.CreateAPIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get']
     
     
