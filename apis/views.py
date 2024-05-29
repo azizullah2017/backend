@@ -458,12 +458,11 @@ class ClientView(generics.CreateAPIView):
                     port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker \
                     GROUP BY truck_no) AND( ship.bl LIKE '%{request.query_params.get('search')}%' \
                     OR city.truck_no LIKE '%{request.query_params.get('search')}%' \
-                    OR clr.consignee = '{request.query_params.get('search')}' \
-                    OR city.bl = '{request.query_params.get('search')}' \
-                    OR city.curent_location = '{request.query_params.get('search')}' \
-                    OR clr.book_no = '{request.query_params.get('search')}' \
-                    OR clr.shipper = '{request.query_params.get('search')}' \
-                    OR clr.consignee = '{request.query_params.get('search')}')"
+                    OR clr.consignee LIKE '%{request.query_params.get('search')}%' \
+                    OR city.bl LIKE '%{request.query_params.get('search')}%' \
+                    OR city.curent_location LIKE '%{request.query_params.get('search')}%' \
+                    OR clr.book_no LIKE '%{request.query_params.get('search')}%' \
+                    OR clr.shipper LIKE '%{request.query_params.get('search')}%'"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
                     query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
