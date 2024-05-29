@@ -7,7 +7,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, logout } from "@/lib/utils";
 import { ArrowDown } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import { IoReorderFourOutline } from "react-icons/io5";
 import FormTransition from "./_components/FormTransition";
 import RegisterForm from "./_components/RegisterForm";
 import { BASE_URL } from "@/lib/constants";
+import { toast } from "@/components/ui/use-toast";
 
 function formatString(input: string) {
     const parts = input.split("-");
@@ -37,7 +38,6 @@ const Navbar = ({
     const [isShowing, setIsShowing] = useState(false);
     const [editing, setEditing] = useState(false);
     const { userData, setUserData } = useAuth();
-    const router = useRouter();
 
     useEffect(() => {
         setIsClient(true);
@@ -50,22 +50,6 @@ const Navbar = ({
         role: userData?.role,
         email: userData?.email,
         uid: userData?.uid,
-    };
-
-    const logout = async () => {
-        const res = await fetch(`${BASE_URL}/api/auth/logout/`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Token ${userData?.token}`,
-            },
-        });
-
-        if (!res.ok) {
-            throw new Error("Something went wrong");
-        } else {
-            setUserData({ token: "" });
-            router.push("/login");
-        }
     };
 
     return (

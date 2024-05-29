@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { VisibilityState } from "@tanstack/react-table";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
+import { toast } from "@/components/ui/use-toast";
 
 const ClientView = ({
     searchParams,
@@ -53,7 +54,11 @@ const ClientView = ({
             );
 
             if (!res.ok) {
-                throw new Error("Something went wrong");
+                toast({
+                    title: "Alert",
+                    description: "Something went wrong!",
+                    className: "bg-red-200 border-none",
+                });
             } else {
                 const { trackers, total_count } = await res.json();
 
@@ -102,7 +107,7 @@ const ClientView = ({
         <>
             {isAuthenticated && (
                 <div className="flex flex-col">
-                    <StaffTableActions setData={setData} />
+                    <StaffTableActions setData={setData} exportButton={true} />
                     <div className="mt-5">
                         <DataTable
                             columns={columns}

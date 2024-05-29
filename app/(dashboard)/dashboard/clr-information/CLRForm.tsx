@@ -133,7 +133,11 @@ const CLRForm = ({
         }
 
         if (!res.ok) {
-            throw new Error("Something went wrong");
+            toast({
+                title: "Alert",
+                description: "Something went wrong!",
+                className: "bg-red-200 border-none",
+            });
         } else {
             let description = "";
             if (editing) {

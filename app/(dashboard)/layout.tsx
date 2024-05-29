@@ -3,7 +3,7 @@
 import SideBar from "./dashboard/Sidebar";
 import MobileSidebar from "./dashboard/MobileSidebar";
 import Navbar from "./dashboard/Navbar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

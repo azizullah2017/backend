@@ -51,7 +51,7 @@ export const menuItems: menuItemsType[] = [
         title: "CLR View",
         path: "/dashboard/clr-view",
         icon: <HiInformationCircle className="w-5 h-5" />,
-        role: ["staff", "admin", "customer"],
+        role: ["admin", "customer"],
     },
     {
         title: "Shipment Status",

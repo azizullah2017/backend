@@ -1,7 +1,5 @@
 "use client";
 
-import Navbar from "../dashboard/Navbar";
-import MobileSidebar from "../dashboard/MobileSidebar";
 import BarChart from "../BarChart";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "@/lib/constants";
@@ -10,16 +8,16 @@ import { useAuth } from "@/context/AuthContext";
 import LineChart from "../LineChart";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
 import { useRouter } from "next/navigation";
-import SideBar from "../dashboard/Sidebar";
+import { toast } from "@/components/ui/use-toast";
+import useLogout from "@/hooks/Logout";
 
 export default function Home() {
     const [barData, setBarData] = useState([]);
     const [lineData, setLineData] = useState([]);
     const [filter, setFilter] = useState("monthly");
-    const [showSidebar, setShowSidebar] = useState(false);
     const { userData } = useAuth();
-    const windowWidth = useGetWindowWidth();
     const router = useRouter();
+    const logout = useLogout();
 
     const isAuthenticated = userData?.role !== "";
 
@@ -35,7 +33,11 @@ export default function Home() {
             );
 
             if (!res.ok) {
-                throw new Error("Something went wrong");
+                toast({
+                    title: "Alert",
+                    description: "Something went wrong!",
+                    className: "bg-red-200 border-none",
+                });
             } else {
                 const {
                     clrmodel,
@@ -86,7 +88,14 @@ export default function Home() {
             );
 
             if (!res.ok) {
-                throw new Error("Something went wrong");
+                if (res.status === 401) {
+                    logout();
+                }
+                toast({
+                    title: "Alert",
+                    description: "Something went wrong!",
+                    className: "bg-red-200 border-none",
+                });
             } else {
                 const { monthly } = await res.json();
 

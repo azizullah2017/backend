@@ -37,6 +37,16 @@ const registerSchema = z.object({
     role: z.string().min(1, "Role is required"),
 });
 
+const registerSchemaWithoutPassword = z.object({
+    uid: z.string(),
+    username: z.string().min(1, "User is required"),
+    email: z.string().min(1, "Email is required").email("Invalid Email"),
+    mobile_no: z.string().min(1, "Mobile number is required"),
+    company_name: z.string().optional(),
+    password: z.string().optional(),
+    role: z.string().min(1, "Role is required"),
+});
+
 const defaultValues = {
     username: "",
     email: "",
@@ -75,6 +85,9 @@ const RegisterForm = ({
 
     const form = useForm<z.infer<typeof registerSchema>>({
         defaultValues: user,
+        resolver: zodResolver(
+            editing ? registerSchemaWithoutPassword : registerSchema
+        ),
     });
 
     const watchRole = form.watch("role");
@@ -146,7 +159,11 @@ const RegisterForm = ({
                     setError({ username: resp.username[0] });
                 }
             } else {
-                throw new Error("Something went wrong");
+                toast({
+                    title: "Alert",
+                    description: "Something went wrong!",
+                    className: "bg-red-200 border-none",
+                });
             }
         } else {
             if (pathname === "/register") {
@@ -239,7 +256,10 @@ const RegisterForm = ({
                             <FormItem>
                                 <FormLabel>Username</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input
+                                        {...field}
+                                        disabled={userEdit ? true : false}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -265,7 +285,10 @@ const RegisterForm = ({
                             <FormItem>
                                 <FormLabel>Mobile Number</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input
+                                        {...field}
+                                        disabled={userEdit ? true : false}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -279,7 +302,10 @@ const RegisterForm = ({
                                 <FormItem>
                                     <FormLabel>Company Name</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input
+                                            {...field}
+                                            disabled={userEdit ? true : false}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -314,23 +340,34 @@ const RegisterForm = ({
                                 <Select
                                     onValueChange={field.onChange}
                                     value={field.value}
+                                    disabled={userEdit ? true : false}
                                 >
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a role" />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="staff">
-                                            Staff
-                                        </SelectItem>
-                                        <SelectItem value="admin">
-                                            Admin
-                                        </SelectItem>
-                                        <SelectItem value="customer">
-                                            Customer
-                                        </SelectItem>
-                                    </SelectContent>
+                                    {!userEdit ? (
+                                        <SelectContent>
+                                            <SelectItem value="staff">
+                                                Staff
+                                            </SelectItem>
+                                            <SelectItem value="admin">
+                                                Admin
+                                            </SelectItem>
+                                            <SelectItem value="customer">
+                                                Customer
+                                            </SelectItem>
+                                        </SelectContent>
+                                    ) : (
+                                        <SelectContent>
+                                            <SelectItem value={user?.role}>
+                                                {capitalizeFirstLetter(
+                                                    user?.role
+                                                )}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    )}
                                 </Select>
                                 <FormMessage />
                             </FormItem>

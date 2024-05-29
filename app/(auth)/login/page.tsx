@@ -56,7 +56,11 @@ const Login = () => {
                     setError(resp.non_field_errors[0]);
                 }
             } else {
-                throw new Error("Something went wrong");
+                toast({
+                    title: "Alert",
+                    description: "Something went wrong!",
+                    className: "bg-red-200 border-none",
+                });
             }
         } else {
             const resp = await res.json();
@@ -150,14 +154,14 @@ const Login = () => {
                             </div>
                         </form>
                     </Form>
-                    <div className="mt-3 text-right">
+                    {/* <div className="mt-3 text-right">
                         <Link
                             href="/register"
                             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
                         >
                             Register
                         </Link>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>

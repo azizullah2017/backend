@@ -8,6 +8,7 @@ import TrackerDetails from "./TrackerDetails";
 import TrackerList from "./TrackerList";
 import TrackerActions from "./TrackerActions";
 import Spinner from "@/components/ui/Spinner";
+import { toast } from "@/components/ui/use-toast";
 
 const Tracker = ({
     searchParams,
@@ -51,7 +52,11 @@ const Tracker = ({
                     if (res.status === 404) {
                         setData("");
                     } else {
-                        throw new Error("Something went wrong");
+                        toast({
+                            title: "Alert",
+                            description: "Something went wrong!",
+                            className: "bg-red-200 border-none",
+                        });
                     }
                 } else {
                     const { track } = await res.json();
@@ -80,7 +85,11 @@ const Tracker = ({
                 if (res.status === 404) {
                     setData("");
                 } else {
-                    throw new Error("Something went wrong");
+                    toast({
+                        title: "Alert",
+                        description: "Something went wrong!",
+                        className: "bg-red-200 border-none",
+                    });
                 }
             } else {
                 const { track } = await res.json();

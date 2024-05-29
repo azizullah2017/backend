@@ -7,6 +7,7 @@ import StaffTableActions from "@/components/StaffTableActions";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
+import { toast } from "@/components/ui/use-toast";
 
 const CLRView = ({
     searchParams,
@@ -48,7 +49,11 @@ const CLRView = ({
                 );
 
                 if (!res.ok) {
-                    throw new Error("Something went wrong");
+                    toast({
+                        title: "Alert",
+                        description: "Something went wrong!",
+                        className: "bg-red-200 border-none",
+                    });
                 } else {
                     const tableData = await res.json();
 

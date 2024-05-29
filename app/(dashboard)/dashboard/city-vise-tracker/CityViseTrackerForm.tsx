@@ -82,7 +82,11 @@ const CityViseTrackerForm = ({
                 );
 
                 if (!res.ok) {
-                    throw new Error("Something went wrong");
+                    toast({
+                        title: "Alert",
+                        description: "Something went wrong!",
+                        className: "bg-red-200 border-none",
+                    });
                 } else {
                     const { cities } = await res.json();
                     setLocations(cities);
@@ -101,7 +105,11 @@ const CityViseTrackerForm = ({
             });
 
             if (!res.ok) {
-                throw new Error("Something went wrong");
+                toast({
+                    title: "Alert",
+                    description: "Something went wrong!",
+                    className: "bg-red-200 border-none",
+                });
             } else {
                 const { truck_list } = await res.json();
 
@@ -125,7 +133,11 @@ const CityViseTrackerForm = ({
                 );
 
                 if (!res.ok) {
-                    throw new Error("Something went wrong");
+                    toast({
+                        title: "Alert",
+                        description: "Something went wrong!",
+                        className: "bg-red-200 border-none",
+                    });
                 } else {
                     const { truck_list } = await res.json();
 
@@ -214,7 +226,11 @@ const CityViseTrackerForm = ({
         }
 
         if (!res.ok) {
-            throw new Error("Something went wrong");
+            toast({
+                title: "Alert",
+                description: "Something went wrong!",
+                className: "bg-red-200 border-none",
+            });
         } else {
             toast({
                 title: "Success",
