@@ -462,7 +462,7 @@ class ClientView(generics.CreateAPIView):
                     OR city.bl LIKE '%{request.query_params.get('search')}%' \
                     OR city.curent_location LIKE '%{request.query_params.get('search')}%' \
                     OR clr.book_no LIKE '%{request.query_params.get('search')}%' \
-                    OR clr.shipper LIKE '%{request.query_params.get('search')}%'"
+                    OR clr.shipper LIKE '%{request.query_params.get('search')}%')"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
                     query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
