@@ -21,7 +21,7 @@ from .models import ExpiringToken
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     allowed_methods = ['get','post']
 
 
@@ -64,7 +64,7 @@ class UserLoginView(ObtainAuthToken):
         return Response(user_data)
 
 class UserLogoutView(generics.DestroyAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Token.objects.all()
 
 
@@ -75,7 +75,7 @@ class UserLogoutView(generics.DestroyAPIView):
 class GetUser(generics.ListAPIView):
     # authentication_classes = [ExpiringTokenAuthentication]
     # queryset = User.objects.filter(role='staff')
-    permission_classes = (permissions.IsAuthenticated)
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer
     http_method_names = ['get']
 
