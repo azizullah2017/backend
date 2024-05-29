@@ -308,7 +308,7 @@ class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TrackerInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = CityWiseTrackerSerializer
     http_method_names = ['get','post']
     
@@ -503,8 +503,8 @@ class ClientView(generics.CreateAPIView):
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
-
-            cursor.execute(f"SELECT COUNT(*) "+query+f" LIMIT {limit} OFFSET {offset}")
+            # print("serialized_data: ",serialized_data)
+            cursor.execute(f"SELECT COUNT(*) "+query)
             total_count = cursor.fetchone()[0]
             
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
