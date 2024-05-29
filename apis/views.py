@@ -173,7 +173,7 @@ class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     
 class ShipmentInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     # queryset = ShipmentStatus.objects.all()
     serializer_class = ShipmentSerializer
     http_method_names = ['get','post']
