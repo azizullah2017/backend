@@ -75,7 +75,7 @@ class UserLogoutView(generics.DestroyAPIView):
 class GetUser(generics.ListAPIView):
     # authentication_classes = [ExpiringTokenAuthentication]
     # queryset = User.objects.filter(role='staff')
-    permission_classes = (permissions.IsAuthenticated,IsAdmin)
+    permission_classes = (permissions.IsAuthenticated)
     serializer_class = UserSerializer
     http_method_names = ['get']
 
@@ -165,7 +165,7 @@ class ClrInfo(generics.CreateAPIView):
         
 class UpdateCLRAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ClrSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         # print(self.kwargs.get('pk'))
@@ -237,7 +237,7 @@ class ShipmentInfo(generics.CreateAPIView):
             return JsonResponse({'total_count': total_count,'shipments': serialized_data}, status=status.HTTP_200_OK)
 
 class UpdateShipmentInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = ShipmentSerializer
 
     def get_queryset(self):
@@ -310,7 +310,7 @@ class PortInfo(generics.CreateAPIView):
 
 
 class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = PortSerializer
 
     def get_queryset(self):
@@ -377,7 +377,7 @@ class TrackerInfo(generics.CreateAPIView):
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
 
 class AddcityInfo(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = AddcitySerializer
     http_method_names = ['get','post']
     
@@ -399,7 +399,7 @@ class AddcityInfo(generics.CreateAPIView):
        
 
 class UpdateTrackerInfo(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated,IsStaff, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = CityWiseTrackerSerializer
 
     def get_queryset(self):
