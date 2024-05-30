@@ -67,7 +67,6 @@ class UserLogoutView(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Token.objects.all()
 
-
     def delete(self, request, *args, **kwargs):
         request.user.auth_token.delete()
         return Response({'message': 'Logout successful'}, status=status.HTTP_204_NO_CONTENT)

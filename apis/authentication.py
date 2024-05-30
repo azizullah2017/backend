@@ -12,9 +12,11 @@ class ExpiringTokenAuthentication(TokenAuthentication):
             raise AuthenticationFailed('Invalid token.')
 
         if token.is_expired:
+            token.delete()
             raise AuthenticationFailed('Token has expired.')
 
         if not token.user.is_active:
+            token.delete()
             raise AuthenticationFailed('User is inactive or deleted.')
 
         return (token.user, token)

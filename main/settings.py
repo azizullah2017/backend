@@ -133,7 +133,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+# TIME_ZONE = "UTC"
+# Set the time zone to a representative time zone with a GMT+5 offset
+TIME_ZONE = 'Asia/Karachi'
+# Enable timezone support
+USE_TZ = True
 
 USE_I18N = True
 
