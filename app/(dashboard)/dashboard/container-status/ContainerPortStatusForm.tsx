@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import Combobox from "@/components/Combobox";
 import { MultiSelect } from "@/components/MultiSelect";
 import FormTransition from "../_components/FormTransition";
+import useLogout from "@/hooks/Logout";
 
 const defaultValues = {
     delivery_at: "",
@@ -66,6 +67,7 @@ const ContainerPortStatusForm = ({
     const [formReset, setFormReset] = useState(false);
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
 
     const editing = Object.keys(port).length !== 0;
 
@@ -139,6 +141,7 @@ const ContainerPortStatusForm = ({
         }
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",
@@ -173,6 +176,7 @@ const ContainerPortStatusForm = ({
             });
 
             if (!res.ok) {
+                if (res.status === 401) return logout();
                 toast({
                     title: "Alert",
                     description: "Something went wrong!",
@@ -201,6 +205,7 @@ const ContainerPortStatusForm = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return;
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",

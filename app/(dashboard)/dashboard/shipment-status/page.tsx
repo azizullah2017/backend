@@ -10,6 +10,7 @@ import StaffTableActions from "@/components/StaffTableActions";
 import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
+import useLogout from "@/hooks/Logout";
 
 const ShipmentStatus = ({
     searchParams,
@@ -25,6 +26,8 @@ const ShipmentStatus = ({
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
+
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
@@ -47,6 +50,7 @@ const ShipmentStatus = ({
     const columns = useMemo(() => shipmentColumns({ onEdit, onDelete }), []);
 
     const deleteRow = async () => {
+        setIsLoading(true);
         const res = await fetch(
             `${BASE_URL}/api/shipment/update/${shipment?.uid}`,
             {
@@ -59,6 +63,7 @@ const ShipmentStatus = ({
         );
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",
@@ -72,6 +77,7 @@ const ShipmentStatus = ({
             });
             setRevalidate(true);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -99,6 +105,7 @@ const ShipmentStatus = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
@@ -149,6 +156,7 @@ const ShipmentStatus = ({
                 dialogIsOpen={dialogIsOpen}
                 setDialogIsOpen={setDialogIsOpen}
                 deleteRow={deleteRow}
+                isLoading={isLoading}
             />
         </>
     );

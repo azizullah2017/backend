@@ -9,6 +9,7 @@ import TrackerList from "./TrackerList";
 import TrackerActions from "./TrackerActions";
 import Spinner from "@/components/ui/Spinner";
 import { toast } from "@/components/ui/use-toast";
+import useLogout from "@/hooks/Logout";
 
 const Tracker = ({
     searchParams,
@@ -22,6 +23,7 @@ const Tracker = ({
     const [isLoading, setIsLoading] = useState(false);
     const { userData } = useAuth();
     const router = useRouter();
+    const logout = useLogout();
 
     const isAuthenticated = userData?.role !== "";
     const bl = searchParams.bl !== undefined ? searchParams.bl : "";
@@ -49,6 +51,7 @@ const Tracker = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     if (res.status === 404) {
                         setData("");
                     } else {
@@ -82,6 +85,7 @@ const Tracker = ({
             );
 
             if (!res.ok) {
+                if (res.status === 401) return logout();
                 if (res.status === 404) {
                     setData("");
                 } else {

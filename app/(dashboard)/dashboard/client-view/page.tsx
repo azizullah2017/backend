@@ -10,6 +10,7 @@ import { columns } from "./columns";
 import { VisibilityState } from "@tanstack/react-table";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
 import { toast } from "@/components/ui/use-toast";
+import useLogout from "@/hooks/Logout";
 
 const ClientView = ({
     searchParams,
@@ -22,14 +23,16 @@ const ClientView = ({
         {}
     );
     const [isLoading, setIsLoading] = useState(false);
-    const page = parseInt(searchParams.page) || 1;
-    const searchQuery =
-        searchParams.search !== undefined ? searchParams.search : "";
-    const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
     const { userData } = useAuth();
     const windowWidth = useGetWindowWidth();
+    const logout = useLogout(true);
+
     const isAuthenticated = userData?.role !== "";
+    const page = parseInt(searchParams.page) || 1;
+    const pageSize = TABLE_ROW_SIZE;
+    const searchQuery =
+        searchParams.search !== undefined ? searchParams.search : "";
 
     useEffect(() => {
         if (!isAuthenticated) return router.push("/login");
@@ -54,6 +57,7 @@ const ClientView = ({
             );
 
             if (!res.ok) {
+                if (res.status === 401) return logout();
                 toast({
                     title: "Alert",
                     description: "Something went wrong!",

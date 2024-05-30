@@ -17,14 +17,14 @@ export default function Home() {
     const [filter, setFilter] = useState("monthly");
     const { userData } = useAuth();
     const router = useRouter();
-    const logout = useLogout();
+    const logout = useLogout(true);
 
     const isAuthenticated = userData?.role !== "";
 
     useEffect(() => {
         const fetchBarChartData = async () => {
             const res = await fetch(
-                `${BASE_URL}/api/chart?get=eachstatus&filter=${filter}`,
+                `${BASE_URL}/api/chart?get=eachstatus&filter=${filter}&company_name=${userData?.companyName}`,
                 {
                     headers: {
                         Authorization: `Token ${userData.token}`,
@@ -33,6 +33,7 @@ export default function Home() {
             );
 
             if (!res.ok) {
+                if (res.status === 401) return logout();
                 toast({
                     title: "Alert",
                     description: "Something went wrong!",
@@ -79,7 +80,7 @@ export default function Home() {
 
         const fetchLineData = async () => {
             const res = await fetch(
-                `${BASE_URL}/api/chart?get=month&filter=${filter}`,
+                `${BASE_URL}/api/chart?get=month&filter=${filter}&company_name=${userData?.companyName}`,
                 {
                     headers: {
                         Authorization: `Token ${userData.token}`,
@@ -88,9 +89,7 @@ export default function Home() {
             );
 
             if (!res.ok) {
-                if (res.status === 401) {
-                    logout();
-                }
+                if (res.status === 401) return;
                 toast({
                     title: "Alert",
                     description: "Something went wrong!",

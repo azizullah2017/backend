@@ -25,6 +25,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import FormTransition from "../_components/FormTransition";
 import { Textarea } from "@/components/ui/textarea";
+import useLogout from "@/hooks/Logout";
 
 const defaultValues = {
     bl_1: "",
@@ -65,6 +66,7 @@ const CLRForm = ({
     const [blInput, setBlInput] = useState([]);
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
 
     const editing = Object.keys(clr).length !== 0;
 
@@ -133,6 +135,7 @@ const CLRForm = ({
         }
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",

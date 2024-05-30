@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import DeleteAlert from "../_components/DeleteAlert";
 import { toast } from "@/components/ui/use-toast";
+import useLogout from "@/hooks/Logout";
 
 const CLRInformation = ({
     searchParams,
@@ -29,6 +30,8 @@ const CLRInformation = ({
     const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
+
     const isAuthenticated = userData?.role !== "";
     const isAuthorized =
         userData?.role !== "" &&
@@ -47,6 +50,7 @@ const CLRInformation = ({
     const columns = useMemo(() => clrColumns({ onEdit, onDelete }), []);
 
     const deleteRow = async () => {
+        setIsLoading(true);
         const res = await fetch(`${BASE_URL}/api/clr/update/${clr.uid}/`, {
             method: "DELETE",
             headers: {
@@ -56,6 +60,7 @@ const CLRInformation = ({
         });
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",
@@ -69,6 +74,7 @@ const CLRInformation = ({
             });
             setRevalidate(true);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -93,6 +99,7 @@ const CLRInformation = ({
                 });
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
@@ -142,6 +149,7 @@ const CLRInformation = ({
                     dialogIsOpen={dialogIsOpen}
                     setDialogIsOpen={setDialogIsOpen}
                     deleteRow={deleteRow}
+                    isLoading={isLoading}
                 />
             </div>
         </>

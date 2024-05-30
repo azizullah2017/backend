@@ -1,3 +1,4 @@
+import Spinner from "@/components/ui/Spinner";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,10 +14,12 @@ const DeleteAlert = ({
     dialogIsOpen,
     setDialogIsOpen,
     deleteRow,
+    isLoading,
 }: {
     dialogIsOpen: boolean;
     setDialogIsOpen: (arg: boolean) => void;
     deleteRow: () => void;
+    isLoading: boolean;
 }) => {
     return (
         <AlertDialog open={dialogIsOpen}>
@@ -37,7 +40,7 @@ const DeleteAlert = ({
                             setDialogIsOpen(false);
                         }}
                     >
-                        OK
+                        {isLoading ? <Spinner /> : "OK"}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

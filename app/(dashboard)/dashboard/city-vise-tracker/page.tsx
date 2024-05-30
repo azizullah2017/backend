@@ -11,6 +11,7 @@ import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import { truckDetailColumns } from "./truckDetailColumns";
 import DeleteAlert from "../_components/DeleteAlert";
+import useLogout from "@/hooks/Logout";
 
 const CityViseTracker = ({
     searchParams,
@@ -27,6 +28,8 @@ const CityViseTracker = ({
     const [isLoading, setIsLoading] = useState(false);
     const { userData } = useAuth();
     const router = useRouter();
+    const logout = useLogout(true);
+
     const isAuthenticated = userData?.role !== "";
     const isAuthorized =
         userData?.role !== "" &&
@@ -52,6 +55,7 @@ const CityViseTracker = ({
     );
 
     const deleteRow = async () => {
+        setIsLoading(true);
         const res = await fetch(
             `${BASE_URL}/api/tracker/update/${tracker?.uid}`,
             {
@@ -64,6 +68,7 @@ const CityViseTracker = ({
         );
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",
@@ -77,6 +82,7 @@ const CityViseTracker = ({
             });
             setRevalidate(true);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -104,6 +110,7 @@ const CityViseTracker = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
@@ -158,6 +165,7 @@ const CityViseTracker = ({
                 dialogIsOpen={deleteDialogIsOpen}
                 setDialogIsOpen={setDeleteDialogIsOpen}
                 deleteRow={deleteRow}
+                isLoading={isLoading}
             />
         </>
     );

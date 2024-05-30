@@ -7,6 +7,7 @@ import { BASE_URL } from "@/lib/constants";
 import { useState } from "react";
 import { toast } from "./ui/use-toast";
 import Spinner from "./ui/Spinner";
+import Link from "next/link";
 
 const StaffTableActions = ({
     setIsShowing,
@@ -22,6 +23,9 @@ const StaffTableActions = ({
 
     const exportData = async () => {
         setIsLoading(true);
+
+        const newWindow = window.open("", "_blank");
+
         const res = await fetch(
             `${BASE_URL}/api/client?export=data&company_name=${userData?.companyName}`,
             {
@@ -38,6 +42,9 @@ const StaffTableActions = ({
                 className: "bg-red-200 border-none",
             });
         } else {
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            newWindow.location.href = url;
             toast({
                 title: "Success",
                 className: "bg-green-200",

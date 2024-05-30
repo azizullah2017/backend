@@ -32,6 +32,7 @@ import Combobox from "@/components/Combobox";
 import { DataTable } from "@/components/ui/data-tables";
 import FormTransition from "../_components/FormTransition";
 import { Textarea } from "@/components/ui/textarea";
+import useLogout from "@/hooks/Logout";
 
 type CityViseTrackerFormType = {
     isShowing: boolean;
@@ -66,6 +67,7 @@ const CityViseTrackerForm = ({
     const [truckData, setTruckData] = useState({});
     const [comments, setComments] = useState("");
     const { userData } = useAuth();
+    const logout = useLogout(true);
 
     const editing = Object.keys(tracker).length !== 0;
 
@@ -82,6 +84,7 @@ const CityViseTrackerForm = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
@@ -105,6 +108,7 @@ const CityViseTrackerForm = ({
             });
 
             if (!res.ok) {
+                if (res.status === 401) return;
                 toast({
                     title: "Alert",
                     description: "Something went wrong!",
@@ -133,6 +137,7 @@ const CityViseTrackerForm = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return;
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
@@ -226,6 +231,7 @@ const CityViseTrackerForm = ({
         }
 
         if (!res.ok) {
+            if (res.status === 401) return;
             toast({
                 title: "Alert",
                 description: "Something went wrong!",

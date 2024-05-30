@@ -11,6 +11,7 @@ import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
+import useLogout from "@/hooks/Logout";
 
 const ContainerStatus = ({
     searchParams,
@@ -26,6 +27,8 @@ const ContainerStatus = ({
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
+
     const isAuthenticated = userData?.role !== "";
     const isAuthorized =
         userData?.role !== "" &&
@@ -52,6 +55,7 @@ const ContainerStatus = ({
     );
 
     const deleteRow = async () => {
+        setIsLoading(true);
         const res = await fetch(`${BASE_URL}/api/port/update/${port?.uid}`, {
             method: "DELETE",
             headers: {
@@ -61,6 +65,7 @@ const ContainerStatus = ({
         });
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",
@@ -74,6 +79,7 @@ const ContainerStatus = ({
             });
             setRevalidate(true);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -98,6 +104,7 @@ const ContainerStatus = ({
                 });
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
@@ -152,6 +159,7 @@ const ContainerStatus = ({
                 dialogIsOpen={dialogIsOpen}
                 setDialogIsOpen={setDialogIsOpen}
                 deleteRow={deleteRow}
+                isLoading={isLoading}
             />
         </>
     );

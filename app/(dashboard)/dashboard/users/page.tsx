@@ -11,6 +11,7 @@ import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
 import RegisterForm from "../_components/RegisterForm";
 import FormTransition from "../_components/FormTransition";
+import useLogout from "@/hooks/Logout";
 
 const Users = ({
     searchParams,
@@ -25,15 +26,15 @@ const Users = ({
     const [revalidate, setRevalidate] = useState(false);
     const [editing, setEditing] = useState(false);
     const [formReset, setFormReset] = useState(false);
-    const [error, setError] = useState<{ email?: string; username?: string }>(
-        {}
-    );
+    const [isLoading, setIsLoading] = useState(false);
     const page = parseInt(searchParams.page) || 1;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
+
     const isAuthenticated = userData?.role !== "";
     const isAuthorized = userData?.role !== "" && userData?.role === "admin";
 
@@ -51,6 +52,7 @@ const Users = ({
     const columns = useMemo(() => userColumns({ onEdit, onDelete }), []);
 
     const deleteRow = async () => {
+        setIsLoading(true);
         const res = await fetch(`${BASE_URL}/api/auth/update/${user?.uid}`, {
             method: "DELETE",
             headers: {
@@ -60,6 +62,7 @@ const Users = ({
         });
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",
@@ -73,6 +76,7 @@ const Users = ({
             });
             setRevalidate(true);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -94,6 +98,7 @@ const Users = ({
                 queryString = `page=${page}&limit=${pageSize}`;
             }
             const fetchData = async () => {
+                setIsLoading(true);
                 const res = await fetch(
                     `${BASE_URL}/api/users?${queryString}`,
                     {
@@ -104,6 +109,7 @@ const Users = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
@@ -116,6 +122,7 @@ const Users = ({
                     setTotalRows(tableData.total_count);
                 }
                 setRevalidate(false);
+                setIsLoading(false);
             };
 
             fetchData();
@@ -169,6 +176,7 @@ const Users = ({
                         pageSize={pageSize}
                         currentPage={page}
                         totalRows={totalRows}
+                        isLoading={isLoading}
                     />
                 </div>
             </div>
@@ -176,6 +184,7 @@ const Users = ({
                 dialogIsOpen={dialogIsOpen}
                 setDialogIsOpen={setDialogIsOpen}
                 deleteRow={deleteRow}
+                isLoading={isLoading}
             />
         </>
     );

@@ -27,6 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
 import { UserDTO, useAuth } from "@/context/AuthContext";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import useLogout from "@/hooks/Logout";
 
 const registerSchema = z.object({
     username: z.string().min(1, "User is required"),
@@ -82,6 +83,7 @@ const RegisterForm = ({
     const pathname = usePathname();
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
 
     const form = useForm<z.infer<typeof registerSchema>>({
         defaultValues: user,
@@ -146,6 +148,7 @@ const RegisterForm = ({
         }
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             if (res.status === 400) {
                 const resp = await res.json();
                 if (resp.email && resp.username) {

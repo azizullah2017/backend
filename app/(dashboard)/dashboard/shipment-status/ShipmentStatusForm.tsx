@@ -29,6 +29,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Label } from "@/components/ui/label";
 import Combobox from "@/components/Combobox";
 import FormTransition from "../_components/FormTransition";
+import useLogout from "@/hooks/Logout";
 
 const defaultValues = {
     bl: "",
@@ -65,6 +66,7 @@ const ShipmentStatusForm = ({
     const [file, setFile] = useState<string>();
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
 
     const editing = Object.keys(shipment).length !== 0;
 
@@ -144,6 +146,7 @@ const ShipmentStatusForm = ({
         }
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
+import useLogout from "@/hooks/Logout";
 
 const CLRView = ({
     searchParams,
@@ -23,6 +24,8 @@ const CLRView = ({
     const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
     const { userData } = useAuth();
+    const logout = useLogout(true);
+
     const isAuthenticated = userData?.role !== "";
 
     useEffect(() => {
@@ -49,6 +52,7 @@ const CLRView = ({
                 );
 
                 if (!res.ok) {
+                    if (res.status === 401) return logout();
                     toast({
                         title: "Alert",
                         description: "Something went wrong!",
