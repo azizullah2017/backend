@@ -532,7 +532,7 @@ class Track(generics.CreateAPIView):
         # consignee
         with connection.cursor() as cursor:
             query =f" SELECT book_no, vessel, eta_karachi, etd, shipper, consignee, no_container, product, port_of_loading,\
-            port_of_departure, final_port_of_destination FROM {CLRModel._meta.db_table} \
+            port_of_departure, final_port_of_destination, shipment_comment FROM {CLRModel._meta.db_table} \
             WHERE (shipper_reference = '{request.query_params.get('search')}' \
             OR book_no = '{request.query_params.get('search')}'\
             OR vessel = '{request.query_params.get('search')}' \
@@ -554,7 +554,7 @@ class Track(generics.CreateAPIView):
                 else:
                     return JsonResponse({'track': {}}, status=status.HTTP_404_NOT_FOUND)
                 query =f" SELECT vessel, shipper, consignee, no_container, product, port_of_loading,\
-                port_of_departure,eta_karachi, etd, final_port_of_destination FROM {CLRModel._meta.db_table} \
+                port_of_departure,eta_karachi, etd, final_port_of_destination, shipment_comment FROM {CLRModel._meta.db_table} \
                 WHERE book_no = '{new.get('book_no')}'"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
