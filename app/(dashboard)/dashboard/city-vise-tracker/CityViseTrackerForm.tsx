@@ -153,6 +153,7 @@ const CityViseTrackerForm = ({
                             .split(",")
                             .join(", "),
                         truckNo: currentTruck,
+                        currentLoc: truck_list[0]?.curent_location,
                     });
                 }
             };
@@ -370,7 +371,7 @@ const CityViseTrackerForm = ({
                 </p>
                 <DataTable
                     columns={truckDetailsColumn}
-                    data={truckDetails}
+                    data={truckData.currentLoc ? truckDetails : []}
                     pagination={false}
                 />
             </div>

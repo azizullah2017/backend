@@ -8,6 +8,7 @@ import { useState } from "react";
 import { toast } from "./ui/use-toast";
 import Spinner from "./ui/Spinner";
 import Link from "next/link";
+import useLogout from "@/hooks/Logout";
 
 const StaffTableActions = ({
     setIsShowing,
@@ -20,11 +21,10 @@ const StaffTableActions = ({
 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const { userData } = useAuth();
+    const logout = useLogout(true);
 
     const exportData = async () => {
         setIsLoading(true);
-
-        const newWindow = window.open("", "_blank");
 
         const res = await fetch(
             `${BASE_URL}/api/client?export=data&company_name=${userData?.companyName}`,
@@ -36,15 +36,13 @@ const StaffTableActions = ({
         );
 
         if (!res.ok) {
+            if (res.status === 401) return logout();
             toast({
                 title: "Alert",
                 description: "Something went wrong!",
                 className: "bg-red-200 border-none",
             });
         } else {
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            newWindow.location.href = url;
             toast({
                 title: "Success",
                 className: "bg-green-200",
