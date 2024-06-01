@@ -26,6 +26,8 @@ const StaffTableActions = ({
     const exportData = async () => {
         setIsLoading(true);
 
+        const newWindow = window.open("", "_blank");
+
         const res = await fetch(
             `${BASE_URL}/api/client?export=data&company_name=${userData?.companyName}`,
             {
@@ -43,6 +45,9 @@ const StaffTableActions = ({
                 className: "bg-red-200 border-none",
             });
         } else {
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            newWindow.location.href = url;
             toast({
                 title: "Success",
                 className: "bg-green-200",
