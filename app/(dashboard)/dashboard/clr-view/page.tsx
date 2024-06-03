@@ -22,15 +22,8 @@ const CLRView = ({
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = TABLE_ROW_SIZE;
-    const router = useRouter();
     const { userData } = useAuth();
     const logout = useLogout(true);
-
-    const isAuthenticated = userData?.role !== "";
-
-    useEffect(() => {
-        if (!isAuthenticated) return router.push("/login");
-    }, []);
 
     useEffect(() => {
         if (page || searchQuery) {

@@ -32,7 +32,6 @@ const CLRInformation = ({
     const { userData } = useAuth();
     const logout = useLogout(true);
 
-    const isAuthenticated = userData?.role !== "";
     const isAuthorized =
         userData?.role !== "" &&
         (userData?.role === "staff" || userData?.role === "admin");
@@ -78,7 +77,6 @@ const CLRInformation = ({
     };
 
     useEffect(() => {
-        if (!isAuthenticated) return router.push("/login");
         if (!isAuthorized) return router.push(`/dashboard/client-view`);
     }, []);
 

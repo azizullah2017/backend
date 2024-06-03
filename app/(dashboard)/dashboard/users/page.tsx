@@ -35,7 +35,6 @@ const Users = ({
     const { userData } = useAuth();
     const logout = useLogout(true);
 
-    const isAuthenticated = userData?.role !== "";
     const isAuthorized = userData?.role !== "" && userData?.role === "admin";
 
     const onEdit = useCallback((data) => {
@@ -80,7 +79,6 @@ const Users = ({
     };
 
     useEffect(() => {
-        if (!isAuthenticated) return router.push("/login");
         if (!isAuthorized) {
             if (userData?.role === "staff")
                 return router.push("/dashboard/clr-information");

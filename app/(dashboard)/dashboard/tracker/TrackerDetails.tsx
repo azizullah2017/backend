@@ -66,6 +66,10 @@ const TrackerDetails = (data: { data: any }) => {
                     <span className="font-semibold">Vessel : </span>
                     {dataItem.vessel}
                 </p>
+                <p>
+                    <span className="font-semibold">Shipment Status : </span>
+                    {dataItem.shipment_comment}
+                </p>
             </div>
         </div>
     );

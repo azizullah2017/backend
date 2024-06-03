@@ -4,7 +4,7 @@ import { BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 
 const useLogout = (tokenExpire: boolean = false) => {
-    const { userData, setUserData } = useAuth();
+    const { userData, setUserData, setIsAuthenticated } = useAuth();
     const router = useRouter();
 
     const logout = async () => {
@@ -24,10 +24,16 @@ const useLogout = (tokenExpire: boolean = false) => {
                 });
             } else {
                 setUserData({ token: "" });
+                setTimeout(() => {
+                    setIsAuthenticated(null);
+                }, 2000);
                 router.push("/login");
             }
         } else {
             setUserData({ token: "" });
+            setTimeout(() => {
+                setIsAuthenticated(null);
+            }, 2000);
             router.push("/login");
         }
     };

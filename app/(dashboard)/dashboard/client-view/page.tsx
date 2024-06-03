@@ -28,15 +28,10 @@ const ClientView = ({
     const windowWidth = useGetWindowWidth();
     const logout = useLogout(true);
 
-    const isAuthenticated = userData?.role !== "";
     const page = parseInt(searchParams.page) || 1;
     const pageSize = TABLE_ROW_SIZE;
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
-
-    useEffect(() => {
-        if (!isAuthenticated) return router.push("/login");
-    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -109,22 +104,20 @@ const ClientView = ({
 
     return (
         <>
-            {isAuthenticated && (
-                <div className="flex flex-col">
-                    <StaffTableActions setData={setData} exportButton={true} />
-                    <div className="mt-5">
-                        <DataTable
-                            columns={columns}
-                            data={data}
-                            pageSize={pageSize}
-                            currentPage={page}
-                            totalRows={totalRows}
-                            columnVisibility={columnVisibility}
-                            isLoading={isLoading}
-                        />
-                    </div>
+            <div className="flex flex-col">
+                <StaffTableActions setData={setData} exportButton={true} />
+                <div className="mt-5">
+                    <DataTable
+                        columns={columns}
+                        data={data}
+                        pageSize={pageSize}
+                        currentPage={page}
+                        totalRows={totalRows}
+                        columnVisibility={columnVisibility}
+                        isLoading={isLoading}
+                    />
                 </div>
-            )}
+            </div>
         </>
     );
 };

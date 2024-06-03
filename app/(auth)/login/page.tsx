@@ -20,6 +20,7 @@ import { toast } from "@/components/ui/use-toast";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import Spinner from "@/components/ui/Spinner";
 
 const loginSchema = z.object({
     username: z.string().min(1, "Username is required"),
@@ -33,7 +34,8 @@ const Login = () => {
         resolver: zodResolver(loginSchema),
     });
     const [error, setError] = useState<string>("");
-    const { userData, setUserData } = useAuth();
+    const { userData, setUserData, setIsAuthenticated, isAuthenticated } =
+        useAuth();
 
     const pushToRoute = {
         staff: "/dashboard/clr-information",
@@ -74,6 +76,7 @@ const Login = () => {
                     email: resp.email,
                     uid: resp.uid,
                 });
+                setIsAuthenticated(true);
             }
             router.push(pushToRoute[resp?.role]);
         }
@@ -95,66 +98,74 @@ const Login = () => {
 
     return (
         <>
-            <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <div className="flex justify-center">
-                        <Image
-                            src="/logo.png"
-                            alt="logo"
-                            width={250}
-                            height={250}
-                        />
-                    </div>
-                    <h2 className="mt-3 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                        Login
-                    </h2>
+            {isAuthenticated || isAuthenticated === null ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner height="h-10" width="w-10" />
                 </div>
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    {error !== "" && (
-                        <div className="p-7 bg-red-400 rounded-md mb-5">
-                            <p className="text-white">{error}</p>
+            ) : (
+                <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+                    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                        <div className="flex justify-center">
+                            <Image
+                                src="/logo.png"
+                                alt="logo"
+                                width={250}
+                                height={250}
+                            />
                         </div>
-                    )}
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-4"
-                        >
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Username</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} type="password" />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <div className="pt-6">
-                                <Button className="w-full" type="submit">
-                                    Submit
-                                </Button>
+                        <h2 className="mt-3 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                            Login
+                        </h2>
+                    </div>
+                    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                        {error !== "" && (
+                            <div className="p-7 bg-red-400 rounded-md mb-5">
+                                <p className="text-white">{error}</p>
                             </div>
-                        </form>
-                    </Form>
-                    {/* <div className="mt-3 text-right">
+                        )}
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(onSubmit)}
+                                className="space-y-4"
+                            >
+                                <FormField
+                                    control={form.control}
+                                    name="username"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Username</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type="password"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <div className="pt-6">
+                                    <Button className="w-full" type="submit">
+                                        Submit
+                                    </Button>
+                                </div>
+                            </form>
+                        </Form>
+                        {/* <div className="mt-3 text-right">
                         <Link
                             href="/register"
                             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
@@ -162,8 +173,9 @@ const Login = () => {
                             Register
                         </Link>
                     </div> */}
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };

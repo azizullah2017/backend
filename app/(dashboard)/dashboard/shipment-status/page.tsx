@@ -32,7 +32,6 @@ const ShipmentStatus = ({
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = TABLE_ROW_SIZE;
-    const isAuthenticated = userData?.role !== "";
     const isAuthorized =
         userData?.role !== "" &&
         (userData?.role === "staff" || userData?.role === "admin");
@@ -81,7 +80,6 @@ const ShipmentStatus = ({
     };
 
     useEffect(() => {
-        if (!isAuthenticated) return router.push("/login");
         if (!isAuthorized) return router.push(`/dashboard/client-view`);
     }, []);
 

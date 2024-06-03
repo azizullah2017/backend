@@ -1,5 +1,7 @@
 "use client";
 
+import { BASE_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export type UserDTO = {
@@ -14,6 +16,8 @@ export type UserDTO = {
 type AuthContextType = {
     userData: UserDTO;
     setUserData: (arg: UserDTO) => void;
+    isAuthenticated: boolean | null;
+    setIsAuthenticated: (arg: boolean | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -27,6 +31,8 @@ const AuthContext = createContext<AuthContextType>({
         uid: "",
     },
     setUserData: (arg: UserDTO) => {},
+    isAuthenticated: null,
+    setIsAuthenticated: (arg: boolean | null) => {},
 });
 
 const getFromLocalStorage = () => {
@@ -50,10 +56,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [userData, setUserData] = useState<UserDTO>(() =>
         getFromLocalStorage()
     );
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(
+        null
+    );
+    const router = useRouter();
+
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            if (userData?.token === "") {
+                setIsAuthenticated(false);
+                router.push("/login");
+                return;
+            }
+
+            const res = await fetch(
+                `${BASE_URL}/api/chart?get=eachstatus&filter=monthly&company_name=${userData?.companyName}`,
+                {
+                    headers: {
+                        Authorization: `Token ${userData.token}`,
+                    },
+                }
+            );
+
+            if (!res.ok) {
+                if (res.status === 401) {
+                    setIsAuthenticated(false);
+                    setUserData({ token: "" });
+                    router.push("/login");
+                }
+            } else {
+                setIsAuthenticated(true);
+            }
+        };
+
+        checkAuthentication();
+    }, [router, isAuthenticated]);
 
     const value = {
         userData,
         setUserData,
+        isAuthenticated,
+        setIsAuthenticated,
     };
 
     useEffect(() => {

@@ -25,7 +25,6 @@ const Tracker = ({
     const router = useRouter();
     const logout = useLogout();
 
-    const isAuthenticated = userData?.role !== "";
     const bl = searchParams.bl !== undefined ? searchParams.bl : "";
 
     useEffect(() => {
@@ -33,10 +32,6 @@ const Tracker = ({
             console.log(data, "data");
         }
     }, [data]);
-
-    useEffect(() => {
-        if (!isAuthenticated) return router.push("/login");
-    }, []);
 
     useEffect(() => {
         if (bl !== "") {
