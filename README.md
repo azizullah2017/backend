@@ -72,6 +72,8 @@ docker build -t tracker .
 ## run
 docker run -p 8000:8000 tracker
 
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--certfile", "fullchain.pem", "--keyfile", "privkey.pem", "apis.wsgi:application"]
+
 
 <!-- openssl genrsa > privkey.pem
 openssl req -new -x509 -key privkey.pem > fullchain.pem -->

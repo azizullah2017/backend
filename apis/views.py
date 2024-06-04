@@ -133,8 +133,9 @@ class ClrInfo(generics.CreateAPIView):
                 OR consignee LIKE '%{request.query_params.get('search')}%' \
                 OR book_no LIKE '%{request.query_params.get('search')}%')"
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" AND consignee='{request.query_params.get('company_name')}'" 
+                    query += f" AND LOWER(consignee)=LOWER('{request.query_params.get('company_name')}')"
                 
+                query+=" ORDER BY eta_karachi DESC"
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -150,9 +151,9 @@ class ClrInfo(generics.CreateAPIView):
         with connection.cursor() as cursor:
             query = f"FROM {CLRModel._meta.db_table}"
             if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                query += f" WHERE consignee='{request.query_params.get('company_name')}'"
+                query += f" WHERE LOWER(consignee)=LOWER('{request.query_params.get('company_name')}')"
             
-            print("query: ",query)
+            query+=" ORDER BY eta_karachi DESC"
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -471,11 +472,12 @@ class ClientView(generics.CreateAPIView):
                     OR city.bl LIKE '%{request.query_params.get('search')}%' \
                     OR city.curent_location LIKE '%{request.query_params.get('search')}%' \
                     OR clr.book_no LIKE '%{request.query_params.get('search')}%' \
-                    OR clr.shipper LIKE '%{request.query_params.get('search')}%')"
+                    OR clr.shipper LIKE '%{request.query_params.get('search')}%') \
+                    ORDER BY city.date  DESC"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
-
+                    query += f" AND LOWER(clr.consignee) = LOWER('{request.query_params.get('company_name')}')"
+                query+=" ORDER BY clr.eta_karachi DESC"
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -489,7 +491,9 @@ class ClientView(generics.CreateAPIView):
                 query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" AND consignee='{request.query_params.get('company_name')}'"
+                    query += f" AND LOWER(consignee)=LOWER('{request.query_params.get('company_name')}')"
+                
+                query+=" ORDER BY clr.eta_karachi DESC"
                 cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
                 columns = [col[0] for col in cursor.description]
@@ -505,10 +509,15 @@ class ClientView(generics.CreateAPIView):
 
                 return response
         with connection.cursor() as cursor:
-            query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no=city.truck_no WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
+            query = "FROM apis_clrmodel clr JOIN apis_shipmentstatus ship ON clr.book_no = ship.book_no \
+                JOIN apis_portstatus port ON ship.bl=port.bl JOIN apis_citywisetracker city ON port.truck_no = city.truck_no \
+                WHERE city.date in ( SELECT MAX(date) FROM apis_citywisetracker GROUP BY truck_no)"
             
             if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                query += f" AND clr.consignee='{request.query_params.get('company_name')}'"
+                query += f" AND LOWER(clr.consignee) = LOWER('{request.query_params.get('company_name')}')"
+            
+            query+=" ORDER BY clr.eta_karachi DESC"
+
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -539,7 +548,7 @@ class Track(generics.CreateAPIView):
             OR consignee = '{request.query_params.get('search')}')"
 
             if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                query += f" AND consignee='{request.query_params.get('company_name')}'"
+                query += f" AND LOWER(consignee)=LOWER('{request.query_params.get('company_name')}')"
             cursor.execute(query)
             rows = cursor.fetchall()
 
@@ -558,7 +567,7 @@ class Track(generics.CreateAPIView):
                 WHERE book_no = '{new.get('book_no')}'"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" AND consignee='{request.query_params.get('company_name')}'"
+                    query += f" AND LOWER(consignee)=LOWER('{request.query_params.get('company_name')}')"
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
@@ -598,7 +607,8 @@ class ChartView(generics.CreateAPIView):
             with connection.cursor() as cursor:
                 query = f"SELECT strftime('%Y-%m', etd) AS month, COUNT(apis_clrmodel.etd) AS count FROM {CLRModel._meta.db_table} GROUP BY strftime('%m', etd);"
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" WHERE clr.consignee='{request.query_params.get('company_name')}'"
+                    query += f" WHERE LOWER(clr.consignee)=LOWER('{request.query_params.get('company_name')}')"
+                print("query",query)
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
