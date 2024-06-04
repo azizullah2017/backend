@@ -28,12 +28,6 @@ const Tracker = ({
     const bl = searchParams.bl !== undefined ? searchParams.bl : "";
 
     useEffect(() => {
-        if (Object.keys(data).length !== 0) {
-            console.log(data, "data");
-        }
-    }, [data]);
-
-    useEffect(() => {
         if (bl !== "") {
             const fetchData = async () => {
                 const res = await fetch(
