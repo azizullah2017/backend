@@ -11,6 +11,7 @@ import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
 import useLogout from "@/hooks/Logout";
+import Spinner from "@/components/ui/Spinner";
 
 const ShipmentStatus = ({
     searchParams,
@@ -25,7 +26,7 @@ const ShipmentStatus = ({
     const [revalidate, setRevalidate] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const logout = useLogout(true);
 
     const page = parseInt(searchParams.page) || 1;
@@ -125,37 +126,45 @@ const ShipmentStatus = ({
 
     return (
         <>
-            <div className="flex">
-                <StaffTableActions
-                    setIsShowing={setIsShowing}
-                    setData={setData}
-                />
-                <div className="z-10">
-                    <ShipmentStatusForm
-                        isShowing={isShowing}
-                        setIsShowing={setIsShowing}
-                        shipment={shipment}
-                        setShipment={setShipment}
-                        setRevalidate={setRevalidate}
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-full">
+                    <Spinner width="w-10" height="h-10" />
+                </div>
+            ) : (
+                <div>
+                    <div className="flex">
+                        <StaffTableActions
+                            setIsShowing={setIsShowing}
+                            setData={setData}
+                        />
+                        <div className="z-10">
+                            <ShipmentStatusForm
+                                isShowing={isShowing}
+                                setIsShowing={setIsShowing}
+                                shipment={shipment}
+                                setShipment={setShipment}
+                                setRevalidate={setRevalidate}
+                            />
+                        </div>
+                    </div>
+                    <div className="mt-5">
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                    <DeleteAlert
+                        dialogIsOpen={dialogIsOpen}
+                        setDialogIsOpen={setDialogIsOpen}
+                        deleteRow={deleteRow}
+                        isLoading={isLoading}
                     />
                 </div>
-            </div>
-            <div className="mt-5">
-                <DataTable
-                    columns={columns}
-                    data={data}
-                    pageSize={pageSize}
-                    currentPage={page}
-                    totalRows={totalRows}
-                    isLoading={isLoading}
-                />
-            </div>
-            <DeleteAlert
-                dialogIsOpen={dialogIsOpen}
-                setDialogIsOpen={setDialogIsOpen}
-                deleteRow={deleteRow}
-                isLoading={isLoading}
-            />
+            )}
         </>
     );
 };

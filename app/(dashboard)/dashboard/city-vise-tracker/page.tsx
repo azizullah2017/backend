@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { truckDetailColumns } from "./truckDetailColumns";
 import DeleteAlert from "../_components/DeleteAlert";
 import useLogout from "@/hooks/Logout";
+import Spinner from "@/components/ui/Spinner";
 
 const CityViseTracker = ({
     searchParams,
@@ -26,7 +27,7 @@ const CityViseTracker = ({
     const [cityDialog, setCityDialog] = useState(false);
     const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const router = useRouter();
     const logout = useLogout(true);
 
@@ -130,41 +131,49 @@ const CityViseTracker = ({
 
     return (
         <>
-            <div className="flex">
-                <StaffTableActions
-                    setIsShowing={setIsShowing}
-                    setData={setData}
-                />
-                <div className="z-10">
-                    <CityViseTrackerForm
-                        isShowing={isShowing}
-                        setIsShowing={setIsShowing}
-                        setRevalidate={setRevalidate}
-                        revalidate={revalidate}
-                        cityDialog={cityDialog}
-                        setCityDialog={setCityDialog}
-                        truckDetailsColumn={detailColumns}
-                        tracker={tracker}
-                        setTracker={setTracker}
-                    />
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner width="w-10" height="h-10" />
                 </div>
-            </div>
-            <div className="mt-5 mb-5">
-                <DataTable
-                    columns={columns}
-                    data={data}
-                    pageSize={pageSize}
-                    currentPage={page}
-                    totalRows={totalRows}
-                    isLoading={isLoading}
-                />
-            </div>
-            <DeleteAlert
-                dialogIsOpen={deleteDialogIsOpen}
-                setDialogIsOpen={setDeleteDialogIsOpen}
-                deleteRow={deleteRow}
-                isLoading={isLoading}
-            />
+            ) : (
+                <>
+                    <div className="flex">
+                        <StaffTableActions
+                            setIsShowing={setIsShowing}
+                            setData={setData}
+                        />
+                        <div className="z-10">
+                            <CityViseTrackerForm
+                                isShowing={isShowing}
+                                setIsShowing={setIsShowing}
+                                setRevalidate={setRevalidate}
+                                revalidate={revalidate}
+                                cityDialog={cityDialog}
+                                setCityDialog={setCityDialog}
+                                truckDetailsColumn={detailColumns}
+                                tracker={tracker}
+                                setTracker={setTracker}
+                            />
+                        </div>
+                    </div>
+                    <div className="mt-5 mb-5">
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                    <DeleteAlert
+                        dialogIsOpen={deleteDialogIsOpen}
+                        setDialogIsOpen={setDeleteDialogIsOpen}
+                        deleteRow={deleteRow}
+                        isLoading={isLoading}
+                    />
+                </>
+            )}
         </>
     );
 };

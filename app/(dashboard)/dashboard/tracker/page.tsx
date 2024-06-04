@@ -21,7 +21,7 @@ const Tracker = ({
     const [trackerId, setTrackerId] = useState("");
     const [data, setData] = useState<Object | string>({});
     const [isLoading, setIsLoading] = useState(false);
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const router = useRouter();
     const logout = useLogout();
 
@@ -97,26 +97,34 @@ const Tracker = ({
 
     return (
         <>
-            <TrackerActions
-                trackerId={trackerId}
-                setTrackerId={setTrackerId}
-                onSubmit={onSubmit}
-            />
-            {isLoading ? (
-                <div className="flex justify-center items-center h-full">
-                    <Spinner />
-                </div>
-            ) : Object.keys(data).length !== 0 ? (
-                <div className="flex flex-col justify-center gap-5">
-                    <TrackerDetails data={data} />
-                    <TrackerList containers={data.containers} />
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner width="w-10" height="h-10" />
                 </div>
             ) : (
-                data === "" && (
-                    <p className="text-2xl">
-                        No data for the given tracker id found!
-                    </p>
-                )
+                <>
+                    <TrackerActions
+                        trackerId={trackerId}
+                        setTrackerId={setTrackerId}
+                        onSubmit={onSubmit}
+                    />
+                    {isLoading ? (
+                        <div className="flex justify-center items-center h-full">
+                            <Spinner />
+                        </div>
+                    ) : Object.keys(data).length !== 0 ? (
+                        <div className="flex flex-col justify-center gap-5">
+                            <TrackerDetails data={data} />
+                            <TrackerList containers={data.containers} />
+                        </div>
+                    ) : (
+                        data === "" && (
+                            <p className="text-2xl">
+                                No data for the given tracker id found!
+                            </p>
+                        )
+                    )}
+                </>
             )}
         </>
     );

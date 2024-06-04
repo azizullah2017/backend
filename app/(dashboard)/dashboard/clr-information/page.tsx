@@ -11,6 +11,7 @@ import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import DeleteAlert from "../_components/DeleteAlert";
 import { toast } from "@/components/ui/use-toast";
 import useLogout from "@/hooks/Logout";
+import Spinner from "@/components/ui/Spinner";
 
 const CLRInformation = ({
     searchParams,
@@ -29,7 +30,7 @@ const CLRInformation = ({
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const logout = useLogout(true);
 
     const isAuthorized =
@@ -119,37 +120,43 @@ const CLRInformation = ({
 
     return (
         <>
-            <div className="flex flex-col">
-                <StaffTableActions
-                    setIsShowing={setIsShowing}
-                    setData={setData}
-                />
-                <div className="z-10">
-                    <CLRForm
-                        isShowing={isShowing}
-                        setIsShowing={setIsShowing}
-                        clr={clr}
-                        setClr={setClr}
-                        setRevalidate={setRevalidate}
-                    />
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner width="w-10" height="h-10" />
                 </div>
-                <div className="mt-5">
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        pageSize={pageSize}
-                        currentPage={page}
-                        totalRows={totalRows}
+            ) : (
+                <div className="flex flex-col">
+                    <StaffTableActions
+                        setIsShowing={setIsShowing}
+                        setData={setData}
+                    />
+                    <div className="z-10">
+                        <CLRForm
+                            isShowing={isShowing}
+                            setIsShowing={setIsShowing}
+                            clr={clr}
+                            setClr={setClr}
+                            setRevalidate={setRevalidate}
+                        />
+                    </div>
+                    <div className="mt-5">
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                    <DeleteAlert
+                        dialogIsOpen={dialogIsOpen}
+                        setDialogIsOpen={setDialogIsOpen}
+                        deleteRow={deleteRow}
                         isLoading={isLoading}
                     />
                 </div>
-                <DeleteAlert
-                    dialogIsOpen={dialogIsOpen}
-                    setDialogIsOpen={setDialogIsOpen}
-                    deleteRow={deleteRow}
-                    isLoading={isLoading}
-                />
-            </div>
+            )}
         </>
     );
 };

@@ -12,6 +12,7 @@ import DeleteAlert from "../_components/DeleteAlert";
 import RegisterForm from "../_components/RegisterForm";
 import FormTransition from "../_components/FormTransition";
 import useLogout from "@/hooks/Logout";
+import Spinner from "@/components/ui/Spinner";
 
 const Users = ({
     searchParams,
@@ -32,7 +33,7 @@ const Users = ({
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = TABLE_ROW_SIZE;
     const router = useRouter();
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const logout = useLogout(true);
 
     const isAuthorized = userData?.role !== "" && userData?.role === "admin";
@@ -137,47 +138,53 @@ const Users = ({
 
     return (
         <>
-            <div className="flex flex-col">
-                <StaffTableActions
-                    setData={setData}
-                    setIsShowing={setIsShowing}
-                />
-                <div className="z-10">
-                    <FormTransition
-                        isShowing={isShowing}
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner width="w-10" height="h-10" />
+                </div>
+            ) : (
+                <div className="flex flex-col">
+                    <StaffTableActions
+                        setData={setData}
                         setIsShowing={setIsShowing}
-                    >
-                        <RegisterForm
-                            user={
-                                editing
-                                    ? user
-                                    : {
-                                          username: "",
-                                          email: "",
-                                          role: "",
-                                          mobile_no: "",
-                                          company_name: "",
-                                      }
-                            }
-                            editing={editing}
-                            setFormReset={setFormReset}
-                            formReset={formReset}
-                            setIsShowing={setIsShowing}
-                            setRevalidate={setRevalidate}
-                        />
-                    </FormTransition>
-                </div>
-                <div className="mt-5">
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        pageSize={pageSize}
-                        currentPage={page}
-                        totalRows={totalRows}
-                        isLoading={isLoading}
                     />
+                    <div className="z-10">
+                        <FormTransition
+                            isShowing={isShowing}
+                            setIsShowing={setIsShowing}
+                        >
+                            <RegisterForm
+                                user={
+                                    editing
+                                        ? user
+                                        : {
+                                              username: "",
+                                              email: "",
+                                              role: "",
+                                              mobile_no: "",
+                                              company_name: "",
+                                          }
+                                }
+                                editing={editing}
+                                setFormReset={setFormReset}
+                                formReset={formReset}
+                                setIsShowing={setIsShowing}
+                                setRevalidate={setRevalidate}
+                            />
+                        </FormTransition>
+                    </div>
+                    <div className="mt-5">
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                            isLoading={isLoading}
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
             <DeleteAlert
                 dialogIsOpen={dialogIsOpen}
                 setDialogIsOpen={setDialogIsOpen}

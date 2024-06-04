@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { BASE_URL, TABLE_ROW_SIZE } from "@/lib/constants";
 import { toast } from "@/components/ui/use-toast";
 import useLogout from "@/hooks/Logout";
+import Spinner from "@/components/ui/Spinner";
 
 const CLRView = ({
     searchParams,
@@ -22,7 +23,7 @@ const CLRView = ({
     const searchQuery =
         searchParams.search !== undefined ? searchParams.search : "";
     const pageSize = TABLE_ROW_SIZE;
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const logout = useLogout(true);
 
     useEffect(() => {
@@ -66,19 +67,25 @@ const CLRView = ({
 
     return (
         <>
-            <div className="flex flex-col">
-                <StaffTableActions setData={setData} />
-                <div className="mt-5">
-                    <DataTable
-                        columns={clrColumns}
-                        data={data}
-                        pageSize={pageSize}
-                        currentPage={page}
-                        totalRows={totalRows}
-                        isLoading={isLoading}
-                    />
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner width="w-10" height="h-10" />
                 </div>
-            </div>
+            ) : (
+                <div className="flex flex-col">
+                    <StaffTableActions setData={setData} />
+                    <div className="mt-5">
+                        <DataTable
+                            columns={clrColumns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                </div>
+            )}
         </>
     );
 };

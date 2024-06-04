@@ -11,6 +11,7 @@ import { VisibilityState } from "@tanstack/react-table";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
 import { toast } from "@/components/ui/use-toast";
 import useLogout from "@/hooks/Logout";
+import Spinner from "@/components/ui/Spinner";
 
 const ClientView = ({
     searchParams,
@@ -24,7 +25,7 @@ const ClientView = ({
     );
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const windowWidth = useGetWindowWidth();
     const logout = useLogout(true);
 
@@ -104,20 +105,26 @@ const ClientView = ({
 
     return (
         <>
-            <div className="flex flex-col">
-                <StaffTableActions setData={setData} exportButton={true} />
-                <div className="mt-5">
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        pageSize={pageSize}
-                        currentPage={page}
-                        totalRows={totalRows}
-                        columnVisibility={columnVisibility}
-                        isLoading={isLoading}
-                    />
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner width="w-10" height="h-10" />
                 </div>
-            </div>
+            ) : (
+                <div className="flex flex-col">
+                    <StaffTableActions setData={setData} exportButton={true} />
+                    <div className="mt-5">
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                            columnVisibility={columnVisibility}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                </div>
+            )}
         </>
     );
 };

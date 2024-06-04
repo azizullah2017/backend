@@ -24,16 +24,12 @@ const useLogout = (tokenExpire: boolean = false) => {
                 });
             } else {
                 setUserData({ token: "" });
-                setTimeout(() => {
-                    setIsAuthenticated(null);
-                }, 2000);
+                setIsAuthenticated(null);
                 router.push("/login");
             }
         } else {
             setUserData({ token: "" });
-            setTimeout(() => {
-                setIsAuthenticated(null);
-            }, 2000);
+            setIsAuthenticated(null);
             router.push("/login");
         }
     };

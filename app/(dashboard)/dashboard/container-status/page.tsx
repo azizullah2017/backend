@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import DeleteAlert from "../_components/DeleteAlert";
 import useGetWindowWidth from "@/hooks/GetWindowSize";
 import useLogout from "@/hooks/Logout";
+import Spinner from "@/components/ui/Spinner";
 
 const ContainerStatus = ({
     searchParams,
@@ -26,7 +27,7 @@ const ContainerStatus = ({
     const [revalidate, setRevalidate] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { userData } = useAuth();
+    const { userData, isAuthenticated } = useAuth();
     const logout = useLogout(true);
 
     const isAuthorized =
@@ -124,41 +125,51 @@ const ContainerStatus = ({
 
     return (
         <>
-            <div className="flex">
-                <StaffTableActions
-                    setIsShowing={setIsShowing}
-                    setData={setData}
-                />
-                <div className="z-10">
-                    <ContainerPortStatusForm
-                        isShowing={isShowing}
-                        setIsShowing={setIsShowing}
-                        port={port}
-                        setPort={setPort}
-                        setRevalidate={setRevalidate}
-                    />
+            {isAuthenticated === null || !isAuthenticated ? (
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner width="w-10" height="h-10" />
                 </div>
-            </div>
-            <div
-                className={`mt-5 w-full ${
-                    windowWidth >= 1024 && windowWidth <= 1536 && "w-[1156px]"
-                }`}
-            >
-                <DataTable
-                    columns={columns}
-                    data={data}
-                    pageSize={pageSize}
-                    currentPage={page}
-                    totalRows={totalRows}
-                    isLoading={isLoading}
-                />
-            </div>
-            <DeleteAlert
-                dialogIsOpen={dialogIsOpen}
-                setDialogIsOpen={setDialogIsOpen}
-                deleteRow={deleteRow}
-                isLoading={isLoading}
-            />
+            ) : (
+                <>
+                    <div className="flex">
+                        <StaffTableActions
+                            setIsShowing={setIsShowing}
+                            setData={setData}
+                        />
+                        <div className="z-10">
+                            <ContainerPortStatusForm
+                                isShowing={isShowing}
+                                setIsShowing={setIsShowing}
+                                port={port}
+                                setPort={setPort}
+                                setRevalidate={setRevalidate}
+                            />
+                        </div>
+                    </div>
+                    <div
+                        className={`mt-5 w-full ${
+                            windowWidth >= 1024 &&
+                            windowWidth <= 1536 &&
+                            "w-[1156px]"
+                        }`}
+                    >
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            pageSize={pageSize}
+                            currentPage={page}
+                            totalRows={totalRows}
+                            isLoading={isLoading}
+                        />
+                    </div>
+                    <DeleteAlert
+                        dialogIsOpen={dialogIsOpen}
+                        setDialogIsOpen={setDialogIsOpen}
+                        deleteRow={deleteRow}
+                        isLoading={isLoading}
+                    />
+                </>
+            )}
         </>
     );
 };
