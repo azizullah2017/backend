@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import path, include
 from apis.views import UserRegistrationView, UserLoginView, \
     UserLogoutView, ClrInfo, UpdatePortInfo,UpdateTrackerInfo, UpdateUser, \
-    GetUser, ShipmentInfo, PortInfo, TrackerInfo,UpdateCLRAPIView,Track,\
+    GetUser, ShipmentInfo, PortInfo, CityWiseTrackerInfo,UpdateCLRAPIView,Track,\
      UpdateShipmentInfo, CityInfo, AddcityInfo, ClientView, ChartView
 
 urlpatterns = [
@@ -18,7 +18,7 @@ urlpatterns = [
     path('api/shipment/update/<str:pk>/', UpdateShipmentInfo.as_view(), name='shipment-update'),
     path('api/port', PortInfo.as_view(), name='container'),
     path('api/port/update/<str:pk>/', UpdatePortInfo.as_view(), name='port-update'),
-    path('api/tracker', TrackerInfo.as_view(), name='tracker'),
+    path('api/tracker', CityWiseTrackerInfo.as_view(), name='tracker'),
     path('api/tracker/update/<str:pk>/', UpdateTrackerInfo.as_view(), name='tracker-update'),
     path('api/cities', CityInfo.as_view(), name='get-city'),
     path('api/city', AddcityInfo.as_view(), name='add-city'),

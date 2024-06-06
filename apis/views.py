@@ -151,7 +151,7 @@ class ClrInfo(generics.CreateAPIView):
         with connection.cursor() as cursor:
             query = f"FROM {CLRModel._meta.db_table}"
             if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                query += f" WHERE LOWER(consignee)=LOWER('{request.query_params.get('company_name')}')"
+                query += f" WHERE LOWER(consignee) = LOWER('{request.query_params.get('company_name')}')"
             
             query+=" ORDER BY eta_karachi DESC"
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
@@ -214,7 +214,7 @@ class ShipmentInfo(generics.CreateAPIView):
                 query =f" FROM {ShipmentStatus._meta.db_table} \
                 WHERE bl LIKE '%{request.query_params.get('search')}%' \
                 OR book_no LIKE '%{request.query_params.get('search')}%'"
-                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                cursor.execute("SELECT * "+query+f" LIMIT {limit} ORDER BY eta_arrival OFFSET {offset}")
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
@@ -226,7 +226,7 @@ class ShipmentInfo(generics.CreateAPIView):
 
         # Execute the raw SQL query to fetch the first N records with pagination
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM {ShipmentStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            cursor.execute(f"SELECT * FROM {ShipmentStatus._meta.db_table} ORDER BY eta_arrival LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
             
@@ -287,7 +287,7 @@ class PortInfo(generics.CreateAPIView):
                 OR driver_name LIKE '%{request.query_params.get('search')}%' \
                 OR bl LIKE '%{request.query_params.get('search')}%'"
 
-                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                cursor.execute("SELECT * "+query+f" ORDER BY truck_placement_date LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
@@ -298,7 +298,8 @@ class PortInfo(generics.CreateAPIView):
                 return JsonResponse({'total_count': total_count,'ports': serialized_data}, status=status.HTTP_200_OK)
             
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM {PortStatus._meta.db_table} LIMIT %s OFFSET %s", [limit, offset])
+            
+            cursor.execute(f"SELECT * FROM {PortStatus._meta.db_table} ORDER BY truck_placement_date DESC LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
@@ -317,7 +318,7 @@ class UpdatePortInfo(generics.RetrieveUpdateDestroyAPIView):
         return PortStatus.objects.filter(pk=self.kwargs.get('pk'))
 
 
-class TrackerInfo(generics.CreateAPIView):
+class CityWiseTrackerInfo(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CityWiseTrackerSerializer
     http_method_names = ['get','post']
@@ -333,7 +334,12 @@ class TrackerInfo(generics.CreateAPIView):
                 # cursor.execute(f"SELECT truck_no FROM {PortStatus._meta.db_table} WHERE status = 'done'  AND book_no NOT IN (SELECT book_no FROM {CityWiseTracker._meta.db_table})")
                 rows = cursor.fetchall()
                 flat_list = [item for sublist in rows for item in sublist]
-                return JsonResponse({'truck_list': flat_list}, status=status.HTTP_200_OK)
+                
+                cursor.execute(f"SELECT DISTINCT truck_no FROM {CityWiseTracker._meta.db_table}")
+                rows = cursor.fetchall()
+                flat_list.extend([item for sublist in rows for item in sublist])
+
+                return JsonResponse({'truck_list': list(set(flat_list))}, status=status.HTTP_200_OK)
         
         elif request.query_params.get('truck'):
             with connection.cursor() as cursor:
@@ -353,9 +359,10 @@ class TrackerInfo(generics.CreateAPIView):
                 OR bl LIKE '%{request.query_params.get('search')}%' \
                 OR truck_no LIKE '%{request.query_params.get('search')}%' \
                 OR curent_location LIKE '%{request.query_params.get('search')}%' \
-                OR status LIKE '%{request.query_params.get('search')}%'"
-
-                cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
+                OR status LIKE '%{request.query_params.get('search')}%' GROUP BY truck_no"
+                
+                query+=" ORDER BY date DESC"
+                cursor.execute("SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status "+query+f" LIMIT {limit} OFFSET {offset}")
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
@@ -366,7 +373,7 @@ class TrackerInfo(generics.CreateAPIView):
                 return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
 
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no LIMIT %s OFFSET %s", [limit, offset])
+            cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no ORDER BY date DESC LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
@@ -415,7 +422,7 @@ class CityInfo(generics.CreateAPIView):
         # trackers = CityWiseTracker.objects.all()
         # trackers = list(trackers.values())
         # print(trackers)
-
+        cities = None
         route_cities = {"chaman":["Karachi","Lasbella","Wadh","Khuzdar","Quetta","Kozak","Chaman","Spin Boldak" ,"Kandahar" ,"Ghazni","Salang","Hairtan"],
                   "torkham":["Karachi","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Landikotal","Torkham","Jalal abad","Kabul" ,"Salang","Hairtan"],
                   "ghulam khan":["Karachi","Hyderabad" ,"Moro","Sukkur","Kashmore","Ramak","Khyber","Landikotal","Ghulam khan","Kabul","Salang","Hairtan"]}
@@ -439,7 +446,7 @@ class CityInfo(generics.CreateAPIView):
                     # print(delivery_at.lower()+" "+FPOD.lower())
                     cities = route_cities.get(serialized_data.get('delivery_at'))
             except Exception as e:
-                print(e)
+                print("CityInfo Error: ",e)
 
         all_cities = ["Karachi","Lasbella","Wadh","Khuzdar","Quetta","ChamanYard","Hyderabad","Moro","Sukkur","Kashmore","Ramak","Khyber","Mardab","Torkham","Ghulam khan","Salang","Hairtan","Torkham","Jalal abad","Kabul","Salang","Hairtan","Chaman","Spin Boldak","Kandahar","Ghazni","Salang","Hairtan"]
         if not cities:
@@ -472,8 +479,7 @@ class ClientView(generics.CreateAPIView):
                     OR city.bl LIKE '%{request.query_params.get('search')}%' \
                     OR city.curent_location LIKE '%{request.query_params.get('search')}%' \
                     OR clr.book_no LIKE '%{request.query_params.get('search')}%' \
-                    OR clr.shipper LIKE '%{request.query_params.get('search')}%') \
-                    ORDER BY city.date  DESC"
+                    OR clr.shipper LIKE '%{request.query_params.get('search')}%')"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
                     query += f" AND LOWER(clr.consignee) = LOWER('{request.query_params.get('company_name')}')"
@@ -517,7 +523,7 @@ class ClientView(generics.CreateAPIView):
                 query += f" AND LOWER(clr.consignee) = LOWER('{request.query_params.get('company_name')}')"
             
             query+=" ORDER BY clr.eta_karachi DESC"
-
+            print("query: ",query)
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
