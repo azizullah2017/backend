@@ -214,7 +214,7 @@ class ShipmentInfo(generics.CreateAPIView):
                 query =f" FROM {ShipmentStatus._meta.db_table} \
                 WHERE bl LIKE '%{request.query_params.get('search')}%' \
                 OR book_no LIKE '%{request.query_params.get('search')}%'"
-                cursor.execute("SELECT * "+query+f" LIMIT {limit} ORDER BY eta_arrival OFFSET {offset}")
+                cursor.execute("SELECT * "+query+f" ORDER BY eta_arrival LIMIT {limit}  OFFSET {offset}")
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
@@ -523,7 +523,7 @@ class ClientView(generics.CreateAPIView):
                 query += f" AND LOWER(clr.consignee) = LOWER('{request.query_params.get('company_name')}')"
             
             query+=" ORDER BY clr.eta_karachi DESC"
-            print("query: ",query)
+
             cursor.execute("SELECT * "+query+f" LIMIT {limit} OFFSET {offset}")
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
