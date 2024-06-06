@@ -602,6 +602,20 @@ class Track(generics.CreateAPIView):
 
             return JsonResponse({'track': data}, status=status.HTTP_200_OK)
 
+def statusSquence(data):
+    order = ["pending", "inprogress", "done"]
+    squence = []
+    for o in order:
+        count = 0
+        for d in data:
+            if d['status'] == o:
+                count = d['count']
+                break
+        if count:
+            squence.append(count)
+        else:
+            squence.append(0)
+    return squence
 
 class ChartView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -611,10 +625,10 @@ class ChartView(generics.CreateAPIView):
 
         if request.query_params.get('get') == "month": 
             with connection.cursor() as cursor:
-                query = f"SELECT strftime('%Y-%m', etd) AS month, COUNT(apis_clrmodel.etd) AS count FROM {CLRModel._meta.db_table} GROUP BY strftime('%m', etd);"
+                query = f"SELECT strftime('%Y-%m', etd) AS month, COUNT(etd) AS count FROM {CLRModel._meta.db_table} GROUP BY strftime('%m', etd)"
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
-                    query += f" WHERE LOWER(clr.consignee)=LOWER('{request.query_params.get('company_name')}')"
-                print("query",query)
+                    query = f"SELECT strftime('%Y-%m', etd) AS month, COUNT(etd) AS count FROM {CLRModel._meta.db_table} WHERE LOWER(consignee) = LOWER('{request.query_params.get('company_name')}') GROUP BY strftime('%m', etd)"
+                
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
@@ -626,18 +640,44 @@ class ChartView(generics.CreateAPIView):
 
                 li = [CLRModel._meta.db_table, ShipmentStatus._meta.db_table, PortStatus._meta.db_table, CityWiseTracker._meta.db_table]
                 reponse = {}
+                if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
+                    # CLRModel
+                    query = f"SELECT COUNT(*) as count, status FROM {CLRModel._meta.db_table} WHERE LOWER(consignee) = LOWER('{request.query_params.get('company_name')}') GROUP by status"
+                    cursor.execute(query)
+                    raw_data = cursor.fetchall()
+                    data = [dict(zip([col[0] for col in cursor.description], row)) for row in raw_data]
+                    reponse[CLRModel._meta.db_table.split("_")[1]] = statusSquence(data)
+
+
+                    # ShipmentStatus
+                    query = f"SELECT COUNT(*) as count, status FROM {ShipmentStatus._meta.db_table}  WHERE book_no in ( select book_no FROM {CLRModel._meta.db_table} WHERE LOWER(consignee) = LOWER('{request.query_params.get('company_name')}')) GROUP by status"
+                    cursor.execute(query)
+                    raw_data = cursor.fetchall()
+                    data = [dict(zip([col[0] for col in cursor.description], row)) for row in raw_data]
+                    reponse[ShipmentStatus._meta.db_table.split("_")[1]] = statusSquence(data)
+
+                    # PortStatus._meta.db_table
+                    query = f"SELECT COUNT(*) as count, status FROM {PortStatus._meta.db_table} WHERE bl in ( select bl FROM {ShipmentStatus._meta.db_table} WHERE book_no in ( select book_no FROM {CLRModel._meta.db_table} WHERE LOWER(consignee) = LOWER('{request.query_params.get('company_name')}'))) GROUP by status"
+                    # print("query: ",query)
+                    cursor.execute(query)
+                    raw_data = cursor.fetchall()
+                    data = [dict(zip([col[0] for col in cursor.description], row)) for row in raw_data]
+                    reponse[PortStatus._meta.db_table.split("_")[1]] = statusSquence(data)
+
+                    query = f"SELECT COUNT(*) as count, status, MAX(date) FROM {CityWiseTracker._meta.db_table} WHERE truck_no in ( select truck_no FROM {PortStatus._meta.db_table} WHERE bl in ( select bl FROM {ShipmentStatus._meta.db_table} WHERE book_no in ( select book_no FROM {CLRModel._meta.db_table} WHERE LOWER(consignee) = LOWER('{request.query_params.get('company_name')}')))) GROUP by status"
+                    cursor.execute(query)
+                    raw_data = cursor.fetchall()
+                    data = [dict(zip([col[0] for col in cursor.description], row)) for row in raw_data]
+                    reponse[CityWiseTracker._meta.db_table.split("_")[1]] = statusSquence(data)
+                    return JsonResponse(reponse, status=status.HTTP_200_OK)
+                
                 for tb in li:
-                    query = f"SELECT COUNT(*) AS done_count FROM {tb} WHERE status = 'pending';"
+                    # data:  [{'count': 10, 'status': 'done'}, {'count': 3, 'status': 'inprogress'}, {'count': 2, 'status': 'pending'}]
+                    query = f"SELECT COUNT(*) as count, status  FROM {tb} GROUP BY status"
                     cursor.execute(query)
-                    pending = cursor.fetchall()
-
-                    query = f"SELECT COUNT(*) AS done_count FROM {tb} WHERE status = 'inprogress';"
-                    cursor.execute(query)
-                    inprogress = cursor.fetchall()
-
-                    query = f"SELECT COUNT(*) AS done_count FROM {tb} WHERE status = 'done';"
-                    cursor.execute(query)
-                    done = cursor.fetchall()
-                    reponse[tb.split("_")[1]] = [pending[0][0],inprogress[0][0], done[0][0]]
+                    raw_data = cursor.fetchall()
+                    data = [dict(zip([col[0] for col in cursor.description], row)) for row in raw_data]
+                    
+                    reponse[tb.split("_")[1]] = statusSquence(data)
 
                 return JsonResponse(reponse, status=status.HTTP_200_OK)
