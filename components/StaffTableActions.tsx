@@ -26,8 +26,6 @@ const StaffTableActions = ({
     const exportData = async () => {
         setIsLoading(true);
 
-        const newWindow = window.open("", "_blank");
-
         const res = await fetch(
             `${BASE_URL}/api/client?export=data&company_name=${userData?.companyName}`,
             {
@@ -46,8 +44,18 @@ const StaffTableActions = ({
             });
         } else {
             const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            newWindow.location.href = url;
+            const objectURL = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = objectURL;
+            link.download = "Tracker Info";
+
+            document.body.appendChild(link);
+            link.click();
+
+            URL.revokeObjectURL(objectURL);
+            document.body.removeChild(link);
+
             toast({
                 title: "Success",
                 className: "bg-green-200",
