@@ -328,14 +328,18 @@ class CityWiseTrackerInfo(generics.CreateAPIView):
         limit = int(request.query_params.get('limit', 10))
         offset = (page_number - 1) * limit
 
-        if request.query_params.get('query') == "truck":
+        if request.query_params.get('query') == "truck" or request.query_params.get('bl'):
             with connection.cursor() as cursor:
                 cursor.execute(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table}")
+                # cursor.execute(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table} Where bl={request.query_params.get('bl')}")
+
                 # cursor.execute(f"SELECT truck_no FROM {PortStatus._meta.db_table} WHERE status = 'done'  AND book_no NOT IN (SELECT book_no FROM {CityWiseTracker._meta.db_table})")
                 rows = cursor.fetchall()
                 flat_list = [item for sublist in rows for item in sublist]
                 
                 cursor.execute(f"SELECT DISTINCT truck_no FROM {CityWiseTracker._meta.db_table}")
+                # cursor.execute(f"SELECT DISTINCT truck_no FROM {CityWiseTracker._meta.db_table} Where bl={request.query_params.get('bl')}")
+
                 rows = cursor.fetchall()
                 flat_list.extend([item for sublist in rows for item in sublist])
 
@@ -359,7 +363,7 @@ class CityWiseTrackerInfo(generics.CreateAPIView):
                 OR bl LIKE '%{request.query_params.get('search')}%' \
                 OR truck_no LIKE '%{request.query_params.get('search')}%' \
                 OR curent_location LIKE '%{request.query_params.get('search')}%' \
-                OR status LIKE '%{request.query_params.get('search')}%' GROUP BY truck_no"
+                OR status LIKE '%{request.query_params.get('search')}%' GROUP BY bl, bl_containers"
                 
                 query+=" ORDER BY date DESC"
                 cursor.execute("SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status "+query+f" LIMIT {limit} OFFSET {offset}")
@@ -373,12 +377,12 @@ class CityWiseTrackerInfo(generics.CreateAPIView):
                 return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
 
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no ORDER BY date DESC LIMIT %s OFFSET %s", [limit, offset])
+            cursor.execute(f"SELECT uid,  bl, bl_containers, truck_no, MAX(date) as date, curent_location, status FROM {CityWiseTracker._meta.db_table} GROUP BY bl, bl_containers ORDER BY date DESC LIMIT %s OFFSET %s", [limit, offset])
             rows = cursor.fetchall()
             serialized_data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows]
 
             # Execute query to fetch total count of records
-            cursor.execute(f"SELECT COUNT(*) FROM (SELECT uid, curent_location,MAX(date), bl, bl_containers, status FROM {CityWiseTracker._meta.db_table} GROUP BY truck_no );")
+            cursor.execute(f"SELECT COUNT(*) FROM (SELECT uid, curent_location, MAX(date), bl, bl_containers, status FROM {CityWiseTracker._meta.db_table} GROUP BY bl, bl_containers );")
             total_count = cursor.fetchone()[0]
 
             return JsonResponse({'total_count': total_count,'trackers': serialized_data}, status=status.HTTP_200_OK)
