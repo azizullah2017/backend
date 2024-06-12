@@ -92,3 +92,6 @@ sudo apt install -y nodejs
 
 # copy db
 docker cp 8c27dac8231f:/code/db.sqlite3 .
+
+
+sudo docker run -it ubuntu bash

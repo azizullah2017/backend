@@ -176,6 +176,7 @@ class PortSerializer(serializers.ModelSerializer):
                         # Create a file name and save the file
                         file_name = str(count) + f'{instance.uid}.{ext}'
                         file_path = os.path.join(settings.MEDIA_ROOT, 'attachments', file_name)
+                        print("file_path",file_path)
                         
                         # Ensure the directory exists
                         os.makedirs(os.path.dirname(file_path), exist_ok=True)

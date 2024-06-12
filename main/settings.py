@@ -35,7 +35,7 @@ ALLOWED_HOSTS=['*']
 
 CORS_ORIGIN_ALLOW_ALL = True
 MEDIA_URL = '/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, '')
+MEDIA_ROOT = os.path.join(BASE_DIR, '')
 
 
 # Application definition

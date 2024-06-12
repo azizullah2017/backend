@@ -551,7 +551,7 @@ class Track(generics.CreateAPIView):
         # consignee
         with connection.cursor() as cursor:
             query =f" SELECT book_no, vessel, eta_karachi, etd, shipper, consignee, no_container, product, port_of_loading,\
-            port_of_departure, final_port_of_destination, shipment_comment FROM {CLRModel._meta.db_table} \
+            port_of_departure, final_port_of_destination, shipment_comment, attachment as clr_attachment FROM {CLRModel._meta.db_table} \
             WHERE (shipper_reference = '{request.query_params.get('search')}' \
             OR book_no = '{request.query_params.get('search')}'\
             OR vessel = '{request.query_params.get('search')}' \
@@ -563,7 +563,7 @@ class Track(generics.CreateAPIView):
             rows = cursor.fetchall()
 
             if not rows:
-                query =f"SELECT book_no, bl, docs, surrender, containers FROM {ShipmentStatus._meta.db_table} \
+                query =f"SELECT book_no, bl, docs, surrender, containers, attachment as shipment_attachment FROM {ShipmentStatus._meta.db_table} \
                 WHERE bl = '{request.query_params.get('search')}'"
                 
                 cursor.execute(query)
@@ -573,7 +573,7 @@ class Track(generics.CreateAPIView):
                 else:
                     return JsonResponse({'track': {}}, status=status.HTTP_404_NOT_FOUND)
                 query =f" SELECT vessel, shipper, consignee, no_container, product, port_of_loading,\
-                port_of_departure,eta_karachi, etd, final_port_of_destination, shipment_comment FROM {CLRModel._meta.db_table} \
+                port_of_departure,eta_karachi, etd, final_port_of_destination, shipment_comment, attachment as clr_attachment FROM {CLRModel._meta.db_table} \
                 WHERE book_no = '{new.get('book_no')}'"
                 
                 if request.query_params.get('company_name') and request.query_params.get('company_name') != "Lachin":
@@ -585,19 +585,21 @@ class Track(generics.CreateAPIView):
             else:
                 data = [dict(zip([col[0] for col in cursor.description], row)) for row in rows][0]
                 
-                query =f"SELECT bl, docs, surrender, containers FROM {ShipmentStatus._meta.db_table} \
+                query =f"SELECT bl, docs, surrender, containers, attachment as shipment_attachment FROM {ShipmentStatus._meta.db_table} \
                 WHERE book_no = '{data.get('book_no')}'"
                 cursor.execute(query)
                 rows = cursor.fetchall()
                 data.update([dict(zip([col[0] for col in cursor.description], row)) for row in rows][0])
 
-            cursor.execute(f"SELECT bl_containers, truck_no FROM {PortStatus._meta.db_table} WHERE bl='{data.get('bl')}';")
+            cursor.execute(f"SELECT bl_containers, truck_no, attachment as port_attachment FROM {PortStatus._meta.db_table} WHERE bl='{data.get('bl')}';")
             rows = cursor.fetchall()
             data["containers"] = list()
-            for bl_containers, truck_no in rows:
+            for bl_containers, truck_no, attachment  in rows:
                 tmp = {}
                 tmp['bl_containers'] = bl_containers
                 tmp["truck_no"] = truck_no
+                tmp["port_attachment"] = attachment
+
                 
                 cursor.execute(f"SELECT curent_location as location, date, truck_no, comment FROM {CityWiseTracker._meta.db_table} WHERE truck_no='{truck_no}';")
                 rows = cursor.fetchall()
