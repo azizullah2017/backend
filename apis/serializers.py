@@ -60,7 +60,7 @@ class ClrSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         attachment_data = validated_data.pop('attachment', None)
-        instance = PortStatus.objects.create(**validated_data)
+        instance = CLRModel.objects.create(**validated_data)
         
         self.save_attachment(instance, attachment_data)
         
@@ -112,7 +112,7 @@ class ShipmentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         attachment_data = validated_data.pop('attachment', None)
-        instance = PortStatus.objects.create(**validated_data)
+        instance = ShipmentStatus.objects.create(**validated_data)
         
         # Save attachment
         self.save_attachment(instance, attachment_data)
