@@ -35,25 +35,34 @@ class ClrSerializer(serializers.ModelSerializer):
 
         if attachment_data:
             try:
-                # Decode the base64 image data
-                format, imgstr = attachment_data.split(';base64,') 
-                ext = format.split('/')[-1]  # Extract the file extension
-                img_data = base64.b64decode(imgstr)
-                
-                # Create a file name and save the file
-                file_name = f'{instance.uid}.{ext}'
-                file_path = os.path.join(settings.MEDIA_ROOT, 'attachments', file_name)
-                
-                # Ensure the directory exists
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                
-                # Save the image data to the file
-                with open(file_path, 'wb') as f:
-                    f.write(img_data)
-                
+                count = 0
+                files = []
+                for attachment in attachment_data.split(",data:"):
+                    try:
+                        format, imgstr = attachment.split(';base64,')
+    
+                        ext = format.split('/')[-1]  # Extract the file extension
+                        img_data = base64.b64decode(imgstr)
+                        
+                        # Create a file name and save the file
+                        file_name = str(count) + f'{instance.uid}.{ext}'
+                        file_path = os.path.join(settings.MEDIA_ROOT, 'attachments', file_name)
+                        
+                        # Ensure the directory exists
+                        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                        
+                        # Save the image data to the file
+                        with open(file_path, 'wb') as f:
+                            f.write(img_data)
+                        count += 1
+                        files.append(file_name)
+                    except Exception as e:
+                        print("========>",e)
+                        raise serializers.ValidationError(f"Error saving attachment: {e}")
                 # Set the relative path to the attachment field
-                instance.attachment = os.path.join('attachments', file_name)
+                instance.attachment = os.path.join(",".join(files))
             except Exception as e:
+                print("========>",e)
                 raise serializers.ValidationError(f"Error saving attachment: {e}")
         
         return instance
@@ -85,27 +94,37 @@ class ShipmentSerializer(serializers.ModelSerializer):
         read_only_fields = ['uid']
 
     def save_attachment(self, instance, attachment_data):
+
         if attachment_data:
             try:
-                # Decode the base64 image data
-                format, imgstr = attachment_data.split(';base64,') 
-                ext = format.split('/')[-1]  # Extract the file extension
-                img_data = base64.b64decode(imgstr)
-                
-                # Create a file name and save the file
-                file_name = f'{instance.uid}.{ext}'
-                file_path = os.path.join(settings.MEDIA_ROOT, 'attachments', file_name)
-                
-                # Ensure the directory exists
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                
-                # Save the image data to the file
-                with open(file_path, 'wb') as f:
-                    f.write(img_data)
-                
+                count = 0
+                files = []
+                for attachment in attachment_data.split(",data:"):
+                    try:
+                        format, imgstr = attachment.split(';base64,')
+    
+                        ext = format.split('/')[-1]  # Extract the file extension
+                        img_data = base64.b64decode(imgstr)
+                        
+                        # Create a file name and save the file
+                        file_name = str(count) + f'{instance.uid}.{ext}'
+                        file_path = os.path.join(settings.MEDIA_ROOT, 'attachments', file_name)
+                        
+                        # Ensure the directory exists
+                        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                        
+                        # Save the image data to the file
+                        with open(file_path, 'wb') as f:
+                            f.write(img_data)
+                        count += 1
+                        files.append(file_name)
+                    except Exception as e:
+                        print("========>",e)
+                        raise serializers.ValidationError(f"Error saving attachment: {e}")
                 # Set the relative path to the attachment field
-                instance.attachment = os.path.join('attachments', file_name)
+                instance.attachment = os.path.join(",".join(files))
             except Exception as e:
+                print("========>",e)
                 raise serializers.ValidationError(f"Error saving attachment: {e}")
         
         return instance
@@ -145,25 +164,34 @@ class PortSerializer(serializers.ModelSerializer):
 
         if attachment_data:
             try:
-                # Decode the base64 image data
-                format, imgstr = attachment_data.split(';base64,') 
-                ext = format.split('/')[-1]  # Extract the file extension
-                img_data = base64.b64decode(imgstr)
-                
-                # Create a file name and save the file
-                file_name = f'{instance.uid}.{ext}'
-                file_path = os.path.join(settings.MEDIA_ROOT, 'attachments', file_name)
-                
-                # Ensure the directory exists
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                
-                # Save the image data to the file
-                with open(file_path, 'wb') as f:
-                    f.write(img_data)
-                
+                count = 0
+                files = []
+                for attachment in attachment_data.split(",data:"):
+                    try:
+                        format, imgstr = attachment.split(';base64,')
+    
+                        ext = format.split('/')[-1]  # Extract the file extension
+                        img_data = base64.b64decode(imgstr)
+                        
+                        # Create a file name and save the file
+                        file_name = str(count) + f'{instance.uid}.{ext}'
+                        file_path = os.path.join(settings.MEDIA_ROOT, 'attachments', file_name)
+                        
+                        # Ensure the directory exists
+                        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                        
+                        # Save the image data to the file
+                        with open(file_path, 'wb') as f:
+                            f.write(img_data)
+                        count += 1
+                        files.append(file_name)
+                    except Exception as e:
+                        print("========>",e)
+                        raise serializers.ValidationError(f"Error saving attachment: {e}")
                 # Set the relative path to the attachment field
-                instance.attachment = os.path.join('attachments', file_name)
+                instance.attachment = os.path.join(",".join(files))
             except Exception as e:
+                print("========>",e)
                 raise serializers.ValidationError(f"Error saving attachment: {e}")
         
         return instance
