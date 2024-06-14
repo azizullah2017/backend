@@ -328,18 +328,18 @@ class CityWiseTrackerInfo(generics.CreateAPIView):
         limit = int(request.query_params.get('limit', 10))
         offset = (page_number - 1) * limit
 
-        if request.query_params.get('query') == "truck" or request.query_params.get('bl'):
+        if request.query_params.get('query') == "truck" and request.query_params.get('bl'):
             with connection.cursor() as cursor:
-                cursor.execute(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table}")
-                # cursor.execute(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table} Where bl={request.query_params.get('bl')}")
+                print(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table} WHERE bl={request.query_params.get('bl')}")
+                
+                # cursor.execute(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table}")
+                cursor.execute(f"SELECT DISTINCT truck_no FROM {PortStatus._meta.db_table} WHERE bl='{request.query_params.get('bl')}'")
 
                 # cursor.execute(f"SELECT truck_no FROM {PortStatus._meta.db_table} WHERE status = 'done'  AND book_no NOT IN (SELECT book_no FROM {CityWiseTracker._meta.db_table})")
                 rows = cursor.fetchall()
                 flat_list = [item for sublist in rows for item in sublist]
-                
-                cursor.execute(f"SELECT DISTINCT truck_no FROM {CityWiseTracker._meta.db_table}")
-                # cursor.execute(f"SELECT DISTINCT truck_no FROM {CityWiseTracker._meta.db_table} Where bl={request.query_params.get('bl')}")
-
+                # cursor.execute(f"SELECT DISTINCT truck_no FROM {CityWiseTracker._meta.db_table}")
+                cursor.execute(f"SELECT DISTINCT truck_no FROM {CityWiseTracker._meta.db_table} WHERE bl='{request.query_params.get('bl')}'")
                 rows = cursor.fetchall()
                 flat_list.extend([item for sublist in rows for item in sublist])
 
