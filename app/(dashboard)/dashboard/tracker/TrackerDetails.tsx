@@ -38,6 +38,7 @@ const TrackerDetails = (data: { data: any }) => {
                         ? clrFilesArray.map((file: string, index: number) => {
                               return (
                                   <Link
+                                      key={index+1}
                                       href={`${BASE_URL}/attachments/${file}`}
                                       target="_blank"
                                   >
@@ -82,6 +83,7 @@ const TrackerDetails = (data: { data: any }) => {
                               (file: string, index: number) => {
                                   return (
                                       <Link
+                                          key={index+1}
                                           href={`${BASE_URL}/attachments/${file}`}
                                           target="_blank"
                                       >
