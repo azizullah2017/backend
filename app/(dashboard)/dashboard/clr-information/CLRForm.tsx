@@ -64,6 +64,7 @@ const CLRForm = ({
     const [formReset, setFormReset] = useState(false);
     const [blCount, setBlCount] = useState(1);
     const [blInput, setBlInput] = useState([]);
+    const [files, setFiles] = useState<string[]>([]);
     const router = useRouter();
     const { userData } = useAuth();
     const logout = useLogout(true);
@@ -73,6 +74,26 @@ const CLRForm = ({
     const form = useForm({
         defaultValues,
     });
+
+    const fileChangeHandler = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const fileInputs = e.target.files;
+        const myFiles = Array.from(fileInputs);
+
+        myFiles.forEach((file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file as File);
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setFiles((prevValue) => [
+                        ...prevValue,
+                        reader.result as string,
+                    ]);
+                }
+            };
+        });
+    };
 
     const onSubmit = async (data: { [key: string]: string }) => {
         let blList = [];
@@ -108,6 +129,7 @@ const CLRForm = ({
             eta_karachi: data.eta_karachi,
             shipment_comment: data?.shipment_comment,
             bls,
+            attachment: files && files.join(","),
         };
 
         if (!editing) {
@@ -164,8 +186,11 @@ const CLRForm = ({
 
     useEffect(() => {
         if (editing) {
-            Object.entries(clr).map((clr) => {
-                form.setValue(clr[0], clr[1]);
+            Object.entries(clr).map((clrInfo) => {
+                if (clrInfo[0] === "attachment") {
+                    return;
+                }
+                form.setValue(clrInfo[0], clrInfo[1]);
             });
 
             const bls = clr.bls?.split(",");
@@ -197,6 +222,7 @@ const CLRForm = ({
 
             setBlCount(1);
             setBlInput([]);
+            setFiles([]);
             setFormReset(true);
         }
     }, [isShowing]);
@@ -505,6 +531,26 @@ const CLRForm = ({
                                 )}
                             />
                         </div>
+                        <FormField
+                            control={form.control}
+                            name="attachment"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Attachment of deal</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="file"
+                                            placeholder=""
+                                            {...field}
+                                            multiple
+                                            onChange={(e) => {
+                                                fileChangeHandler(e);
+                                            }}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                     </div>
                     <Button type="submit" className="ml-7 mb-5">
                         Submit

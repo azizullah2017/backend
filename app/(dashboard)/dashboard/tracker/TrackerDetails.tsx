@@ -1,7 +1,13 @@
 "use client";
 
+import { BASE_URL } from "@/lib/constants";
+import Link from "next/link";
+
 const TrackerDetails = (data: { data: any }) => {
     const dataItem = data.data;
+
+    const clrFilesArray = dataItem.clr_attachment?.split(",");
+    const shipmentFilesArray = dataItem.shipment_attachment?.split(",");
 
     return (
         <div className="flex flex-col md:flex-row md:justify-center gap-1 bg-white p-3 md:p-5 xl:mx-44 shadow-md rounded-lg">
@@ -26,6 +32,25 @@ const TrackerDetails = (data: { data: any }) => {
                     <span className="font-semibold">FPOD: </span>
                     {dataItem.final_port_of_destination}
                 </p>
+                <div>
+                    <span className="font-semibold">CLR Attachments: </span>
+                    {clrFilesArray
+                        ? clrFilesArray.map((file: string, index: number) => {
+                              return (
+                                  <Link
+                                      href={`${BASE_URL}/attachments/${file}`}
+                                      target="_blank"
+                                  >
+                                      {index === clrFilesArray.length - 1 ? (
+                                          <span>Attachment {index + 1}</span>
+                                      ) : (
+                                          <span>Attachment {index + 1}, </span>
+                                      )}
+                                  </Link>
+                              );
+                          })
+                        : "None"}
+                </div>
             </div>
             <div className="flex flex-col gap-1 w-[400px]">
                 <p>
@@ -48,6 +73,34 @@ const TrackerDetails = (data: { data: any }) => {
                     <span className="font-semibold">ETA Karachi: </span>
                     {dataItem.eta_karachi}
                 </p>
+                <div>
+                    <span className="font-semibold">
+                        Shipment Attachments:{" "}
+                    </span>
+                    {shipmentFilesArray
+                        ? shipmentFilesArray.map(
+                              (file: string, index: number) => {
+                                  return (
+                                      <Link
+                                          href={`${BASE_URL}/attachments/${file}`}
+                                          target="_blank"
+                                      >
+                                          {index ===
+                                          shipmentFilesArray.length - 1 ? (
+                                              <span>
+                                                  Attachment {index + 1}
+                                              </span>
+                                          ) : (
+                                              <span>
+                                                  Attachment {index + 1},{" "}
+                                              </span>
+                                          )}
+                                      </Link>
+                                  );
+                              }
+                          )
+                        : "None"}
+                </div>
             </div>
             <div className="flex flex-col gap-1">
                 <p>

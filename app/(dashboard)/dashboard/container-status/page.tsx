@@ -111,7 +111,6 @@ const ContainerStatus = ({
                     });
                 } else {
                     const tableData = await res.json();
-
                     setData(tableData.ports);
                     setTotalRows(tableData.total_count);
                     setRevalidate(false);

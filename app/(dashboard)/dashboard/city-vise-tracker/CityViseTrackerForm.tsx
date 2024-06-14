@@ -66,6 +66,7 @@ const CityViseTrackerForm = ({
     const [truckDetails, setTruckDetails] = useState([]);
     const [truckData, setTruckData] = useState({});
     const [comments, setComments] = useState("");
+    const [bl, setBl] = useState("");
     const { userData } = useAuth();
     const logout = useLogout(true);
 
@@ -99,13 +100,16 @@ const CityViseTrackerForm = ({
         }
     }, [currentTruck]);
 
-    useEffect(() => {
-        const fetchTrucks = async () => {
-            const res = await fetch(`${BASE_URL}/api/tracker?query=truck`, {
-                headers: {
-                    Authorization: `Token ${userData?.token}`,
-                },
-            });
+    const getTrucks = async () => {
+        if (bl) {
+            const res = await fetch(
+                `${BASE_URL}/api/tracker?query=truck&bl=${bl}`,
+                {
+                    headers: {
+                        Authorization: `Token ${userData?.token}`,
+                    },
+                }
+            );
 
             if (!res.ok) {
                 if (res.status === 401) return;
@@ -119,10 +123,8 @@ const CityViseTrackerForm = ({
 
                 setTrucks(truck_list);
             }
-        };
-
-        fetchTrucks();
-    }, []);
+        }
+    };
 
     useEffect(() => {
         if (currentTruck || revalidate) {
@@ -348,7 +350,17 @@ const CityViseTrackerForm = ({
                 </Dialog>
             </div>
             <div className="mx-5 mt-5 space-y-3 mb-3">
-                <Label htmlFor="bl">Truck Number</Label>
+                <Label htmlFor="bl">BL</Label>
+                <div className="flex gap-2 pb-2">
+                    <Input
+                        type="text"
+                        id="bl"
+                        value={bl}
+                        onChange={(e) => setBl(e.target.value)}
+                    />
+                    <Button onClick={getTrucks}>Get Trucks</Button>
+                </div>
+                <Label>Truck Number</Label>
                 <Combobox
                     currentItem={currentTruck}
                     itemsArray={trucks}

@@ -63,7 +63,7 @@ const ShipmentStatusForm = ({
     const [formReset, setFormReset] = useState(false);
     const [bookingNumbers, setBookingNumbers] = useState([]);
     const [currentBookingNumber, setCurrentBookingNumber] = useState("");
-    const [file, setFile] = useState<string>();
+    const [files, setFiles] = useState<string[]>([]);
     const router = useRouter();
     const { userData } = useAuth();
     const logout = useLogout(true);
@@ -74,16 +74,24 @@ const ShipmentStatusForm = ({
         defaultValues,
     });
 
-    const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const myFile = e.target.files?.[0];
+    const fileChangeHandler = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const fileInputs = e.target.files;
+        const myFiles = Array.from(fileInputs);
 
-        const reader = new FileReader();
-        reader.readAsDataURL(myFile as File);
-        reader.onload = () => {
-            if (reader.readyState === 2) {
-                setFile(reader.result as string);
-            }
-        };
+        myFiles.forEach((file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file as File);
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setFiles((prevValue) => [
+                        ...prevValue,
+                        reader.result as string,
+                    ]);
+                }
+            };
+        });
     };
 
     const onSubmit = async (data) => {
@@ -114,7 +122,7 @@ const ShipmentStatusForm = ({
             port: data.port,
             status: data.status,
             surrender: data.surrender,
-            attachment: file,
+            attachment: files && files.join(","),
         };
 
         if (!editing) {
@@ -214,7 +222,9 @@ const ShipmentStatusForm = ({
             }
             setContainerCount(1);
             setContainerInput([]);
+            setFiles([]);
             setCurrentBookingNumber("");
+            setFormReset(true);
         }
     }, [isShowing]);
 
@@ -249,7 +259,6 @@ const ShipmentStatusForm = ({
         if (editing) {
             Object.entries(shipment).map((ship) => {
                 if (ship[0] === "attachment") {
-                    setFile(ship[1]);
                     return;
                 }
                 form.setValue(ship[0], ship[1]);
@@ -496,6 +505,7 @@ const ShipmentStatusForm = ({
                                             onChange={(e) => {
                                                 fileChangeHandler(e);
                                             }}
+                                            multiple
                                         />
                                     </FormControl>
                                     <FormDescription>

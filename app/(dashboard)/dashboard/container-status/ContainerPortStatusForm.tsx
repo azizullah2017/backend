@@ -226,15 +226,6 @@ const ContainerPortStatusForm = ({
         if (editing) {
             Object.entries(port).map((prt) => {
                 if (prt[0] === "attachment") {
-                    const items = prt[1].split(",");
-                    for (let i = 1; i <= items.length; i++) {
-                        if (i % 2 === 0) {
-                            setFiles((prevValue) => [
-                                ...prevValue,
-                                items[i - 2] + "," + items[i - 1] + ",",
-                            ]);
-                        }
-                    }
                     return;
                 }
                 if (prt[0] === "bl_containers") {
